@@ -1,0 +1,11 @@
+#!/bin/bash
+
+vol=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }' | cut -d'%' -f 1)
+tog=$(amixer sget Master | grep 'Right:' | cut -d'[' -f 3 | cut -d ']' -f 1)
+emo=
+if [ "$tog" == 'on' ]
+then
+	echo "$emo $vol"
+else
+	echo  mute
+fi

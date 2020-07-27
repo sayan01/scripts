@@ -1,0 +1,59 @@
+#!/bin/bash
+# Return the colorcode for the given color
+fg(){
+	declare -A fgcol=( ["Default"]="\[\e[39m\]" ["Black"]="\[\e[30m\]" ["Red"]="\[\e[31m\]" ["Green"]="\[\e[32m\]" ["Yellow"]="\[\e[33m\]" ["Blue"]="\[\e[34m\]" ["Magenta"]="\[\e[35m\]" ["Cyan"]="\[\e[36m\]" ["White"]="\[\e[37m\]" )
+	echo "${fgcol[$1]}"
+}
+# Command that prints the prompt
+prompt(){
+	ec=$?				# Get exit code of last run command
+	p=""				# Set prompt to null
+	def=$(fg Default)	# Default text color of terminal
+	if [ $UID != 0 ]	# if not root
+	then
+		userC=$(fg Green)	#set arrow as green
+	else
+		userC=$(fg Red)		#otherwise red
+	fi
+
+	if [ $ec != 0 ] # If last command returned an non zero exit code 
+	then			# Add (no of cols of terminal) gaps and print exit code
+		len=$(( $(tput cols) - ${#ec} -1 ))
+		while [[ $len -gt 0 ]] 
+		do
+			p=$p" "
+			len=$len-1
+		done
+		p=$p"$(fg Red)↩️$ec$def\n"	#then show exit code in red in prompt
+	fi
+
+					# No of files in current working directory (unhidden)
+	nof=$(find . -mindepth 1 -maxdepth 1 | grep -cv "^\./\.")
+	dir=$(pwd)		# Current working directory
+	if [ "$dir" == "${HOME}" ]		#If cwd is homedir then color it
+	then
+		dir="$userC\W$def"
+	else							#If not homedir, then show gitstatus
+		dir="\W"
+		br="$(gitstatus)"
+		if [ "$br" != "" ]
+		then
+			p="$p$br "
+		fi
+	fi
+	p="$p$dir ($nof) "		# show current working directory and no of files
+	p="$p$userC>$def "		# show > in appropiate color
+	export PS1="$p"
+}
+# Print git status if in a git repo
+gitstatus(){
+	git branch --show-current &>/dev/null || exit 0
+	branch=$(git branch --show-current 2>/dev/null)
+	mess=$(git status -z | head -c2)
+	if [ "$mess" = "" ]
+	then
+		echo "$(fg Green)[$branch]$def"	# Print green if no uncommited changes
+	else
+		echo  "$(fg Yellow)[$branch]$def" # Print yellow if uncommited chnages
+	fi
+}

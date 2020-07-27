@@ -1,0 +1,85 @@
+#!/bin/bash
+calc (){
+	rv=$(echo "scale=2;$1" | bc)
+	if echo "$rv" | grep -q .00$
+	then
+		echo "$rv" | cut -d"." -f1
+	else 
+		echo "$rv"
+	fi
+}
+
+help(){
+	echo -e "Usage: dirsize [OPTION]... DIRECTORY...
+Print the cumulative size of all files inside DIRECTORY(ies) 
+
+		-h, --help	display this help and exit
+		-c		show number of files, directories, and total files"
+	exit 0
+}
+
+if [ $# == 0 ]
+then
+	echo "dirsize: missing argument" && exit 1
+fi
+
+count=false
+for dir in "$@"
+do
+	if grep -q "^-" <(echo "$dir")
+	then
+		case "$dir" in
+			-h) help	;;
+			--help) help	;;
+			-c) count=true	;;
+			*) echo "dirsize: invalid option, type dirsize --help for help" && exit 1 ;
+		esac
+		continue
+	fi
+
+	if [ ! -d "$dir" ]
+	then
+		echo "dirsize: $dir is not a directory" && exit 1
+	fi
+
+	tmp="/tmp/dirsize.tmp"
+	find "$dir" -type f -exec stat -c %s {} \; > $tmp
+
+	if [ $count = true ]
+	then
+		numr=$(wc -l < $tmp)
+		numdf=$(find "$dir" -mindepth 1 -maxdepth 1 -type f | wc -l)
+		numdd=$(find "$dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
+	fi
+
+	size=$(	tr "\n" "+" < $tmp | sed -e "s/+$/\n/g" | bc)
+	rm -f $tmp
+
+	tb=1099511627776
+	gb=1073741824
+	mb=1048576
+	kb=1024
+
+	if [[ $size -ge $tb ]]
+	then
+		output="$(calc "$size/$tb") TB"
+	elif [[ $size -ge $gb ]]
+	then
+		output="$(calc "$size/$gb") GB"
+	elif [[ $size -ge $mb ]]
+	then
+		output="$(calc "$size/$mb") MB"
+	elif [[ $size -ge $kb ]]
+	then
+		output="$(calc "$size/$kb") KB"
+	else
+		output="$size bytes"
+	fi
+
+	if [ $count = true ]
+	then
+		output="$output (files: $numdf, dir: $numdd, allfiles: $numr)"
+	fi
+	echo "$dir: $output"
+
+done

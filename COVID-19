@@ -1,0 +1,32 @@
+#!/bin/bash
+updated=0
+get(){
+        notify-send -a "Corona Virus COVID-19 Cases" "Updating Database"
+        curl https://api.covid19india.org/data.json > ~/.cache/coronadata
+	[  "$(grep -c "statewise" ~/.cache/coronadata)" != 0  ] && updated=1
+
+}
+write(){
+	echo -e "$(date)\t$confirmed" >> ~/coronalog
+	cd ~/Files/Documents/Projects/CoronaData/ || exit 1
+	rm coronalog &>/dev/null
+	cp ~/coronalog . &>/dev/null
+	git add . &>/dev/null
+	git commit -m "Update" &>/dev/null
+	git push -u origin master &>/dev/null &
+}
+
+[ ! -e ~/.cache/coronadata ] && get
+
+[  "$(grep -c "statewise" ~/.cache/coronadata)" = 0  ] && get
+
+date1=$(date | awk -F'[ :]' '{print $5}')
+date2=$(date -r ~/.cache/coronadata | awk -F'[ :]' '{print $5}')
+[ "$date1" != "$date2" ] && get
+
+confirmed=$(grep "\"confirmed\":" ~/.cache/coronadata | head -n 1 | awk -F'["]' '{print $4}')
+deaths=$(grep "\"deaths\":" ~/.cache/coronadata | head -n 1 | awk -F'["]' '{print $4}')
+
+echo "| 😷 $confirmed 💀 $deaths |"
+[ "$updated" = 1 ] && write
+exit 0

@@ -1,0 +1,2 @@
+#!/bin/bash
+notify-send -a "Spotify" "$(~/scripts/spotify-song)" -h string:desktop-entry:spotify

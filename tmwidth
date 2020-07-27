@@ -1,0 +1,3 @@
+#!/bin/bash
+cd /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/ui || exit 1
+sudo "$EDITOR" main.qml

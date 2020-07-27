@@ -1,0 +1,2 @@
+#!/bin/bash
+while true; do date "+%d%t%b%t%Y%n      %I:%M:%S %p%n  %t%a"; sleep 0.1; clear;done 

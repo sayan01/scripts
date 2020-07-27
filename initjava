@@ -1,0 +1,3 @@
+#!/bin/bash
+echo -e "import java.util.*;\nimport java.lang.*;\nclass $1{\n\tpublic static void main(String[] args){\n\t\t\n\t}\n}" > "$1.java"
+$EDITOR "$1.java"

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# script to run during system logout 
+# to keep everything user script related here
+
+#date >> /home/sayan/Files/Documents/Data/logouttime
+#killall konsole

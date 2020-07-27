@@ -1,0 +1,21 @@
+#!/bin/bash
+temp=$(sensors | awk '/^Tctl/ {print $2}' | cut -d'+' -f2)
+raw=$(echo "$temp" | cut -d'.' -f1)
+emo=''
+if [[ raw -lt 30 ]]
+then
+	emo=''	
+elif [[ raw -lt 40 ]]
+then
+	emo=''
+elif [[ raw -lt 60 ]]
+then
+	emo=''
+elif [[ raw -lt 75 ]]
+then
+	emo=''
+else
+	emo=''
+fi
+echo "$emo $temp"
+

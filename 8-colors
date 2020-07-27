@@ -1,0 +1,10 @@
+#!/bin/bash
+echo -e "\e[39mDefault\t"  '\\e[39m '
+echo -e "\e[30mBlack\t" '\\e[30m' 
+echo -e "\e[31mRed\t" '\\e[31m'
+echo -e "\e[32mGreen\t" '\\e[32m'
+echo -e "\e[33mYellow\t"' \\e[33m'
+echo -e "\e[34mBlue\t"' \\e[34m '
+echo -e "\e[35mMagenta\t"' \\e[35m '
+echo -e "\e[36mCyan\t"' \\e[36m '
+echo -e "\e[37mWhite\t"' \\e[37m '

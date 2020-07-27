@@ -1,0 +1,47 @@
+#!/bin/bash
+calc (){
+	rv=$(echo "scale=2;$1" | bc)
+	if echo "$rv" | grep -q .00$
+	then
+		echo "$rv" | cut -d"." -f1
+	else 
+		echo "$rv"
+	fi
+}
+
+if [ $# = 0 ]
+then
+	echo "filesize: missing argument" && exit 1
+fi
+
+for file in "$@"
+do
+	if [ ! -f "$file" ]
+	then
+		echo "filesize: $file does not exist" && exit 1
+	fi
+
+	size=$(stat -c %s "$file")
+	tb=1099511627776
+	gb=1073741824
+	mb=1048576
+	kb=1024
+
+	if [[ $size -ge $tb ]]
+	then
+		output="$(calc "$size/$tb") TB"
+	elif [[ $size -ge $gb ]]
+	then
+		output="$(calc "$size/$gb") GB"
+	elif [[ $size -ge $mb ]]
+	then
+		output="$(calc "$size/$mb") MB"
+	elif [[ $size -ge $kb ]]
+	then
+		output="$(calc "$size/$kb") KB"
+	else
+		output="$size bytes"
+	fi
+
+	echo "$file: $output"
+done

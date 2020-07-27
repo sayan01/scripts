@@ -1,0 +1,7 @@
+#!/bin/bash
+while true;
+do
+	amixer sset Capture 30%
+	sleep 1
+	clear
+done

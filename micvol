@@ -1,0 +1,12 @@
+#!/bin/bash
+
+vol=$(amixer sget Capture | grep 'Right:' | cut -d'[' -f 2 | cut -d'%' -f 1)
+tog=$(amixer sget Capture | grep 'Right:' | cut -d'[' -f 3 | cut -d']' -f 1)
+emo=''
+emof=''
+if [ "$tog" == "off" ]
+then
+	echo "$emof"
+else
+	echo "$emo $vol"
+fi

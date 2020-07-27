@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+shopt -s nullglob
+
+# Check subcommand
+if [ "${1}" == 'type' ] || [ "${1}" == 'copy' ]; then
+  subcommand="${1}"
+else
+  echo "Usage: ${0} [copy|type] [DATAFILES*]"
+  echo "Quickly look up and input emoji and/or emoticons/kaomoji" \
+    "on your GNU/Linux desktop via pop-up menu."
+  exit 1
+fi
+shift
+
+# Determine config files
+scriptdir="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
+if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/splatmoji/splatmoji.config" ]; then
+  conffile="${XDG_CONFIG_HOME:-${HOME}/.config}/splatmoji/splatmoji.config"
+else
+  _old_IFS="$IFS"
+  IFS=":"
+  for dir in ${XDG_CONFIG_DIRS:-/etc/xdg}; do
+    if [ -f "$dir/splatmoji/splatmoji.config" ]; then
+      conffile="$dir/splatmoji/splatmoji.config"
+      break
+    fi
+  done
+  IFS="$_old_IFS"
+fi
+
+# Fallback to script location
+if [ -z "${conffile}" ]; then
+  conffile="${scriptdir}/splatmoji.config"
+fi
+
+datafiles_list=()
+
+# Read command line data files
+if [ $# -ne 0 ]; then
+  datafiles="${@:1}"
+  datafiles_list+=$(IFS=$'\n'; echo "${datafiles[*]}")
+fi
+
+# Read per-user data files
+if [ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/splatmoji/data" ]; then
+  datafiles="${XDG_DATA_HOME:-${HOME}/.local/share}/splatmoji/data/*"
+  datafiles_list+=$'\n'$(IFS=$'\n'; echo "${datafiles[*]}")
+fi
+
+# Read global data files
+_old_IFS="$IFS"
+IFS=":"
+for dir in ${XDG_DATA_DIRS:-/usr/local/share/:/usr/share/}; do
+  if [ -d "$dir/splatmoji/data" ]; then
+    datafiles="$dir/splatmoji/data/*"
+    datafiles_list+=$'\n'$(IFS=$'\n'; echo "${datafiles[*]}")
+  fi
+done
+IFS="$_old_IFS"
+
+# Fallback if we haven't found any data files
+if [ -z "${datafiles}" ]; then
+  datafiles=("${scriptdir}/data/*")
+  datafiles_list+=$(IFS=$'\n'; echo "${datafiles[*]}")
+fi
+
+# Read config
+declare -A config
+while IFS='' read -r line; do
+  if [[ -z "${line}" ]] || [ "${line:0:1}" == '#' ]; then
+    continue
+  fi
+  key="${line%%=*}"
+  val="${line#*=}"
+  config["${key}"]="${val}"
+done < "${conffile}"
+
+# Prompt user for selection
+selection=$(cat ${datafiles_list} | eval ${config[rofi_command]})
+moji="${selection%%$'\t'*}"
+
+# Results to clipboard or selected x window
+if [ "${subcommand}" == 'type' ]; then
+  ${config[xdotool_command]} "${moji}"
+  echo -n "${moji}" | ${config[xsel_command]}
+else
+  echo -n "${moji}" | ${config[xsel_command]}
+fi

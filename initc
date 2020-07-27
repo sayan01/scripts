@@ -1,0 +1,3 @@
+#!/bin/bash
+echo -e "#include <stdio.h>\n\nint main(){\n\t\n}" > "$1.c"
+"$EDITOR" "$1.c"

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+wmctrl -s $(( $(~/scripts/deskno) +1 ))

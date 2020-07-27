@@ -1,0 +1,14 @@
+#!/bin/bash
+
+cd ~/scripts/ || exit 1
+file="$(find -- * -executable -type f | rofi -theme ~/.local/share/rofi/themes/slate.rasi -dmenu -i -scroll-method 1 -p scripts)"
+
+if [ "$file" ]
+then
+	if [ -f "$HOME/scripts/$file" ]
+	then
+		konsole -e "vim $HOME/scripts/$file"
+	else
+		konsole -e "$HOME/scripts/initscript" "$file"
+	fi
+fi

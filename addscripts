@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd ~/scripts || exit 1
+git add -f .

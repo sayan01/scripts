@@ -1,0 +1,4 @@
+#!/bin/bash
+
+path="${HOME}/scripts/$1"
+cp ~/scripts/generic "$path" && vim "$path"

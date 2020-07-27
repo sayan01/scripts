@@ -1,0 +1,2 @@
+#! /bin/sh
+cd "$HOME/Files/Documents/Java/$1" || exit 1

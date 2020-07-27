@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# check if video0 is working or not
+if [ -e /dev/video0 ]
+then
+	echo "/dev/video0 is already installed"
+	exit 0
+fi
+
+#remove older version
+sudo /opt/droidcam-uninstall
+
+#download latest version
+cd /tmp/ || exit 1
+sudo rm droidcam_latest.zip
+sudo rm -rf droidcam/
+sudo wget https://www.dev47apps.com/files/linux/droidcam_latest.zip
+echo "7775e36b5325dc1f32d485eb3cc72fd1 droidcam_latest.zip" | md5sum -c --
+
+#install
+unzip droidcam_latest.zip -d droidcam && cd droidcam || exit 1
+sudo ./install
+

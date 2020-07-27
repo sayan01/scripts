@@ -1,0 +1,5 @@
+#!/bin/bash
+emo='⋅'
+other='.'
+output=$(wmctrl -d | cut -d' ' -f3 | sed -E -e "s/\*/$emo/g" -e "s/-/$other/g" | tr "\n" " ")
+echo "$output"

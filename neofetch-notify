@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#sends neofetch output as a critical notification
+
+notify-send "$(uname -n)" -a 'neofetch-notify' -i ~/.face "$(neofetch --disable de wm shell resolution memory term packages title uptime --stdout --underline off)"

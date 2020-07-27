@@ -1,0 +1,29 @@
+#!/bin/bash
+get(){
+	info=$(curl -sf wttr.in/?format=%c%t)
+	echo "$info" > ~/.cache/weatherinfo
+	notify-send -a "Weather" "Updating Weather" "$info"
+}
+
+if [ ! -e ~/.cache/weatherinfo ] || [ "$(grep -c '°C' ~/.cache/weatherinfo )" = 0 ] 
+then
+	get
+fi
+
+date1=$(date | awk -F'[ :]' '{print $5}')
+date2=$(date -r ~/.cache/weatherinfo | awk -F'[ :]' '{print $5}')
+
+if [ "$date1" != "$date2" ]
+then
+	get
+fi
+
+resp=$(cat ~/.cache/weatherinfo)
+
+emo="🔆"
+if [ "$(date +%H)" -ge 18 ] || [ "$(date +%H)" -lt 5 ]
+then
+	emo="🌙"
+fi
+
+echo "$emo $resp"

@@ -1,0 +1,3 @@
+#!/bin/bash
+out="$(date '+%I:%M:%S %Y-%b-%d (%a)')"
+echo "$out"
