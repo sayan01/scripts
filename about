@@ -1,9 +1,0 @@
-#!/bin/bash
-
-konsole --hold -e ~/scripts/aboutscripts/1 &
-
-konsole --hold -e ~/scripts/aboutscripts/2 &
-
-konsole -e ~/scripts/aboutscripts/3 &
-
-konsole -e ~/scripts/aboutscripts/4 &
