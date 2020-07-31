@@ -18,7 +18,7 @@ write(){
 
 [ ! -e ~/.cache/coronadata ] && get
 
-[  "$(grep -c "statewise" ~/.cache/coronadata)" = 0  ] && get
+[ "$(grep -c "statewise" ~/.cache/coronadata)" = 0 ] && get
 
 date1=$(date | awk -F'[ :]' '{print $5}')
 date2=$(date -r ~/.cache/coronadata | awk -F'[ :]' '{print $5}')
@@ -28,5 +28,8 @@ confirmed=$(grep "\"confirmed\":" ~/.cache/coronadata | head -n 1 | awk -F'["]' 
 deaths=$(grep "\"deaths\":" ~/.cache/coronadata | head -n 1 | awk -F'["]' '{print $4}')
 
 echo "| 😷 $confirmed 💀 $deaths |"
-[ "$updated" = 1 ] && write
+if [ "$updated" = 1 ] && [ "$1" == "-w" ]
+then
+	write
+fi
 exit 0
