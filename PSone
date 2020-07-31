@@ -18,13 +18,13 @@ prompt(){
 
 	if [ $ec != 0 ] # If last command returned an non zero exit code 
 	then			# Add (no of cols of terminal) gaps and print exit code
-		len=$(( $(tput cols) - ${#ec} -1 ))
+		len=$(( $(tput cols) - ${#ec} -2 ))
 		while [[ $len -gt 0 ]] 
 		do
 			p=$p" "
 			len=$len-1
 		done
-		p=$p"$(fg Red)↩️$ec$def\n"	#then show exit code in red in prompt
+		p=$p"$(fg Red) $ec$def\n"	#then show exit code in red in prompt
 	fi
 
 					# No of files in current working directory (unhidden)

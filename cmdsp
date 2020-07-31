@@ -1,0 +1,15 @@
+#!/bin/bash
+
+error (){
+	echo "error"
+	notify-send "error"
+}
+
+sel=$(ls /dev/video* | rofi -dmenu -no-custom)
+if [ "$sel" == "" ]
+then
+	exit 1;
+fi
+
+mpv --vf=hflip --profile=low-latency --untimed "av://v4l2:$sel" || error
+

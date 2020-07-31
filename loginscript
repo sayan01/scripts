@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# script to run during system login
-# to keep everything user script related here
-
-#date >> /home/sayan/Files/Documents/Data/logintime

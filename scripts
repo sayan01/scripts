@@ -7,8 +7,8 @@ if [ "$file" ]
 then
 	if [ -f "$HOME/scripts/$file" ]
 	then
-		konsole -e "vim $HOME/scripts/$file"
+		terminator -e "vim $HOME/scripts/$file"
 	else
-		konsole -e "$HOME/scripts/initscript" "$file"
+		terminator -e "$HOME/scripts/initscript $file"
 	fi
 fi
