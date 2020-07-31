@@ -1,7 +1,6 @@
 #!/bin/bash
 #    
-second=$(date | cut -d' ' -f5 | cut -d':' -f3)
-ind=$((second % 4))
+ind=$(($(sec) % 4))
 
 for i in {0..3}
 do
