@@ -1,9 +1,7 @@
 #!/bin/bash
-
-device1='nvme0n1p2'
-device2='sda3'
-
-size1=$(lsblk /dev/$device1 -o FSAVAIL -n)
-size2=$(lsblk /dev/$device2 -o FSAVAIL -n)
-
-echo "$size1" "$size2"
+output=""
+for dev in $(cat "${HOME}/.config/diskspace.conf")
+do
+	output="$output  $(lsblk /dev/$dev -o FSAVAIL -n | sed 's/^ *//g' )"
+done
+echo "$output"
