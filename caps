@@ -1,0 +1,4 @@
+#!/bin/bash
+notify-send "CapsLock mapped to Escape" -a caps
+setxkbmap -option caps:escape
+

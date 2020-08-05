@@ -1,5 +1,10 @@
 #!/bin/bash
 pnow=$(cat /sys/class/power_supply/BAT0/power_now )
 enow=$(cat /sys/class/power_supply/BAT0/energy_now )
+if [ "$pnow" = 0 ]
+then
+	echo "infinite"
+	exit 0
+fi
 hr=$(echo "scale=2;$enow / $pnow" | bc)
 echo "$hr hr(s)"
