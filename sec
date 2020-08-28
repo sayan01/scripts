@@ -1,3 +1,3 @@
 #!/bin/bash
-echo $(date | cut -d' ' -f5 | cut -d':' -f3 | bc)
+echo $(date +%S | bc)
 

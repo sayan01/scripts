@@ -10,8 +10,8 @@ then
 	get
 fi
 
-date1=$(date | awk -F'[ :]' '{print $5}')
-date2=$(date -r ~/.cache/weatherinfo | awk -F'[ :]' '{print $5}')
+date1=$(date +%H)
+date2=$(date -r ~/.cache/weatherinfo +%H)
 
 if [ "$date1" != "$date2" ]
 then
