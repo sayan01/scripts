@@ -8,5 +8,5 @@ then
 	chromium $input
 elif [ "$input" = "new" ]
 then
-	terminator -e "vim $HOME/.config/sites.conf"
+	konsole -e vim $HOME/.config/sites.conf
 fi

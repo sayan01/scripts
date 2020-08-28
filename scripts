@@ -5,11 +5,10 @@ file="$(find -- * -executable -type f | rofi -theme ~/.local/share/rofi/themes/s
 
 if [ "$file" ]
 then
-	ixon="stty -ixon &&"
 	if [ -f "$HOME/scripts/$file" ]
 	then
-		terminator -e "$ixon vim $HOME/scripts/$file"
+		konsole -e vim $HOME/scripts/$file
 	else
-		terminator -e "$ixon $HOME/scripts/initscript $file"
+		konsole -e $HOME/scripts/initscript $file
 	fi
 fi
