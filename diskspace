@@ -4,4 +4,4 @@ for dev in $(cat "${HOME}/.config/diskspace.conf")
 do
 	output="$output $(lsblk /dev/$dev -o FSAVAIL -n | sed 's/^ *//g' ) "
 done
-echo "$output"
+echo "$output" | sed -e "s/ $//g"
