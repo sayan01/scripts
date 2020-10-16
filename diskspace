@@ -2,6 +2,6 @@
 output=""
 for dev in $(cat "${HOME}/.config/diskspace.conf")
 do
-	output="$output  $(lsblk /dev/$dev -o FSAVAIL -n | sed 's/^ *//g' )"
+	output="$output $(lsblk /dev/$dev -o FSAVAIL -n | sed 's/^ *//g' ) "
 done
 echo "$output"
