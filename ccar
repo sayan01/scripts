@@ -1,2 +1,9 @@
-#!/bin/bash
-gcc "$1.c" -o "$1" && ./"$@"
+#!/bin/env python
+import sys
+import os
+filename = sys.argv[1]
+if filename.endswith(".c"):
+    filename = filename[0:-2]
+exec = "gcc " + filename + ".c -o " + filename + " && ./" + filename
+os.system(f"echo -e \"$(colr pink){exec}$(colr default)\"")
+os.system(exec)
