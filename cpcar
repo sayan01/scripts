@@ -1,9 +1,15 @@
 #!/bin/env python
 import sys
 import os
+if len(sys.argv) < 2:
+    print("Usage: cpcar filename[.cpp] [...arguments]")
+    exit(0)
 filename = sys.argv[1]
 if filename.endswith(".cpp"):
     filename = filename[0:-4]
-exec = "g++ " + filename + ".cpp -o " + filename + " && ./" + filename
+args = " "
+for i in range (2, len(sys.argv)):
+    args += sys.argv[i] + " "
+exec = "g++ " + filename + ".cpp -o " + filename + " && ./" + filename + args
 os.system(f"echo -e \"$(colr pink){exec}$(colr default)\"")
 os.system(exec)

@@ -1,9 +1,15 @@
 #!/bin/env python
 import sys
 import os
+if len(sys.argv) < 2:
+    print("Usage: ccar filename[.c] [...arguments]");
+    exit(0);
 filename = sys.argv[1]
+args = " "
+for i in range(2,len(sys.argv)):
+    args += sys.argv[i] + " "
 if filename.endswith(".c"):
     filename = filename[0:-2]
-exec = "gcc " + filename + ".c -o " + filename + " && ./" + filename
+exec = "gcc " + filename + ".c -o " + filename + " && ./" + filename + args
 os.system(f"echo -e \"$(colr pink){exec}$(colr default)\"")
 os.system(exec)
