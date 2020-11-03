@@ -1,2 +1,2 @@
 #!/bin/bash
-rofi -show window -theme .local/share/rofi/themes/onedark.rasi -width 70 -scroll-method 1 -show-icons -dpi 128 -window-format "{t}"
+rofi -show window -theme ~/.local/share/rofi/themes/onedark.rasi -width 70 -scroll-method 1 -show-icons -dpi 128 -window-format "{t}"
