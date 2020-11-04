@@ -1,2 +1,6 @@
-#! /bin/bash
-javac "$1.java" && java "$@"
+#!/bin/bash
+f="$1"
+shift
+f=${f%.java} # remove .java from filename if it exists
+echo "$(colr pink)javac $f.java && (java $f $@ ; rm $f.class) $(colr default)"
+javac "$f.java" && (java "$f" "$@" ; rm "$f.class")
