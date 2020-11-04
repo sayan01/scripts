@@ -1,0 +1,16 @@
+#!/bin/bash
+
+f="$1"
+if [[ "$f" == *.c ]] || [ -e "$f.c" ]
+then
+	ccar $@
+elif [[ "$f" == *.cpp ]] || [ -e "$f.cpp" ]
+then
+	cpcar $@
+elif [[ "$f" == *.java ]] || [ -e "$f.java" ]
+then
+	javacar $@
+else
+	echo "Unknown file format or file not present"
+	echo "Supported file formats: .c  .cpp  .java"
+fi
