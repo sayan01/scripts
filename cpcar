@@ -2,5 +2,5 @@
 f="$1"
 shift
 f=${f%.cpp} # remove .cpp from filename if exists
-echo "$(colr pink)g++ $f.cpp -o $f && ./$f $@ && rm ./$f $(colr default)"
+echo "$(colr pink)g++ $f.cpp -o $f && (./$f $@ ; rm ./$f)$(colr default)"
 g++ "$f.cpp" -o "$f" && (./"$f" "$@" ; rm "./$f")
