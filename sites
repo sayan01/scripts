@@ -4,7 +4,6 @@ input=$(rofi -theme ~/.local/share/rofi/themes/onedark.rasi -dmenu -i -scroll-me
 
 if [[ -n "$input" ]] && [ "$input" != "new" ]
 then
-							# shellcheck disable=SC2086
 	chromium $input
 elif [ "$input" = "new" ]
 then

@@ -19,5 +19,10 @@ echo "7775e36b5325dc1f32d485eb3cc72fd1 droidcam_latest.zip" | md5sum -c --
 
 #install
 unzip droidcam_latest.zip -d droidcam && cd droidcam || exit 1
-sudo ./install
+sudo ./install-client
+sudo ./install-video
 
+if [ "$?" != "0" ]
+then
+	sleep 5
+fi
