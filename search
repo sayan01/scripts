@@ -1,6 +1,6 @@
 #!/bin/bash
 
-input=$(rofi -theme ~/.local/share/rofi/themes/flat-orange.rasi -dmenu -i -scroll-method 1 -p ' search') 
+input=$(echo | rofi -theme ~/.local/share/rofi/themes/flat-orange.rasi -dmenu -i -scroll-method 1 -p ' search') 
 
 if [[ -n "$input" ]]
 then
