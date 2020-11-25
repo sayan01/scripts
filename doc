@@ -1,0 +1,2 @@
+#! /bin/sh
+cd "$HOME/Files/Documents/$1" || exit 1
