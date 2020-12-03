@@ -1,0 +1,2 @@
+#!/bin/bash
+chromium --disable-web-security --user-data-dir=/home/sayan/.config/chromium/debug >/dev/null
