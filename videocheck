@@ -1,6 +1,5 @@
 #!/bin/bash
-
-if [ -e /dev/video0 ]
+if  ls /dev/video* &> /dev/null 
 then
 	echo " "
 else
