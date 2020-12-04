@@ -1,11 +1,31 @@
 #!/bin/bash
+# one command to set, increase, decrease, mute, and 
+# display sink volume
 
-vol=$(amixer sget Master | grep 'Right:' | awk -F'[][]' '{ print $2 }' | cut -d'%' -f 1)
-tog=$(amixer sget Master | grep 'Right:' | cut -d'[' -f 3 | cut -d ']' -f 1)
-emo=
-if [ "$tog" == 'on' ]
+## usage:
+## vol           -> displays the current volume
+## vol up/down   -> increase/decrease volume by 5%
+## vol 52%       -> set the volume to 52%
+## vol +17%      -> increase the volume by 17%
+## vol -14%      -> decrease the volume by 14%
+## vol mute      -> toggle volume mute (turns mute on/off)
+cmd="volume"
+if [ -n "$1" ]
 then
-	echo "$emo $vol"
-else
-	echo  mute
+	case $1 in
+		up) val="+5%";;
+		down) val="-5%";;
+		mute) cmd="mute"; val="toggle";;
+		*) val=$1;;
+	esac
+	sink=$(pactl list sinks | grep -oP 'Sink #\K([0-9]+)')
+	pactl -- set-sink-"$cmd" "$sink" "$val"
 fi
+# display volume
+ps=$(pulseaudio-ctl full-status)
+vol=$(echo $ps | cut -d' ' -f1)
+mute=$(echo $ps | cut -d' ' -f2)
+case $mute in
+	no) echo "🔈$vol";;
+	*)  echo "🔇";;
+esac
