@@ -1,12 +1,7 @@
 #!/bin/bash
-
-vol=$(amixer sget Capture | grep 'Right:' | cut -d'[' -f 2 | cut -d'%' -f 1)
-tog=$(amixer sget Capture | grep 'Right:' | cut -d'[' -f 3 | cut -d']' -f 1)
-emo=''
-emof=''
-if [ "$tog" == "off" ]
-then
-	echo "$emof"
-else
-	echo "$emo $vol"
-fi
+vol=$(amixer sget Capture | grep -oP "Right:.+\[\K\d+")
+mute=$(amixer sget Capture | grep -oP "Right:.+\[\K\w+")
+case $mute in
+	off) echo "";;
+	*) echo " $vol";;
+esac
