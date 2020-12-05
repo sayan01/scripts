@@ -1,0 +1,36 @@
+#!/bin/bash
+# set, increase, decrease, toggle volume of a sink-input (application)
+rm -f /tmp/voli.* &>/dev/null
+pactl list sink-inputs | grep -e "Sink Input" -e "Vol" -e "application.name " > /tmp/voli.apps
+numbers=$(cat /tmp/voli.apps | grep -oP "Sink.*#\K\d+")
+names=$(cat /tmp/voli.apps | grep -oP "\"\K(\w+)[ \"]" | cut -d'"' -f1)
+volumes=$(cat /tmp/voli.apps | grep -oP "Volume.*/ \K.+%")
+len=$(echo $numbers | wc -w)
+for i in $(seq 1 $len)
+do
+	number=$(echo $numbers | cut -d' ' -f$i)
+	name=$(echo $names | cut -d' ' -f$i)
+	volume=$(echo $volumes | cut -d' ' -f$i)
+	echo $number $name $volume >> /tmp/voli.list
+done
+if [ ! -e /tmp/voli.list ]; then
+	echo "No applications are playing sound"
+	exit 0
+fi
+sinkinput=$(cat /tmp/voli.list | rofi -dmenu -no-custom -p Which\ application?)
+if [ "$?" != "0" ]; then
+	echo "Exiting"
+	exit
+fi
+sinkinput=$(echo $sinkinput | cut -d' ' -f1)
+echo "What you want to set the value to? (+x% for increase) "
+read response
+cmd="volume"
+case $response in
+	up) val="+5%";;
+	down) val="-5%";;
+	mute) cmd="mute"; val="toggle";;
+	*) val=$response;;
+esac
+pactl -- set-sink-input-"$cmd" "$sinkinput" "$val"
+
