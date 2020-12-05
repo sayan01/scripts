@@ -1,4 +1,10 @@
 #!/bin/bash
-
-path="${HOME}/scripts/$1"
-cp ~/scripts/generic "$path" && vim "$path"
+case $2 in
+	here) path="$1";;
+	*) path="${HOME}/scripts/$1";;
+esac
+if [ ! -e "$path" ]
+then
+	cp ~/scripts/generic "$path" 
+fi
+"$EDITOR" "$path"
