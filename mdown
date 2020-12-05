@@ -1,0 +1,27 @@
+#!/bin/bash
+# Download music from youtube/other platforms using yt-dl
+# set the name to be the second parameter if provided.
+# dont give any extension to the output name, if you want to specify
+# a different audio format, give it as third parameter.
+# providing format without name is not allowed
+
+# Usage:
+# mdown https://www.youtube.com/watch?v=dQw4w9WgXcQ
+# mdown https://www.youtube.com/watch?v=dQw4w9WgXcQ music
+# mdown https://www.youtube.com/watch?v=dQw4w9WgXcQ music opus
+
+link=$1
+name=$2
+format=$3
+if [ "$1" == "" ]; then
+	echo "Cannot run without an URL"; exit 1;
+fi
+if [ "$2" == "" ]; then
+	name="%(title)s-%(id)s"
+fi
+if [ "$3" == "" ]; then
+	format="mp3"
+fi
+
+youtube-dl -x --audio-format $format \
+	--embed-thumbnail $link -o "$name.%(ext)s"
