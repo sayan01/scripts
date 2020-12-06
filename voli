@@ -17,14 +17,18 @@ if [ ! -e /tmp/voli.list ]; then
 	echo "No applications are playing sound"
 	exit 0
 fi
-sinkinput=$(cat /tmp/voli.list | rofi -dmenu -no-custom -p Which\ application?)
+roficommands="rofi -dmenu -theme flat-orange"
+sinkinput=$(cat /tmp/voli.list | $roficommands -no-custom -p Which\ application?)
 if [ "$?" != "0" ]; then
 	echo "Exiting"
 	exit
 fi
 sinkinput=$(echo $sinkinput | cut -d' ' -f1)
-echo "What you want to set the value to? (+x% for increase) "
-read response
+
+#echo "What do you want to set the value to? (+x% for increase) "
+#read response
+response=$($roficommands -p "What value to set? (x%, ±x%, up, down, mute )")
+
 cmd="volume"
 case $response in
 	up) val="+5%";;
