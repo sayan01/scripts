@@ -1,9 +1,0 @@
-#!/bin/bash
-
-resp=$(curl -s wttr.in/?format=%l+%C+%t+%o+%w+%c)
-
-cache=$(echo "$resp" | awk '{print $7 $4}')
-
-notify-send -t 10000 -a Weather "$cache" "$( echo "$resp" | awk '{print $1 " " $2 "\n" $3 "\nTemperature: " $4 "\nWind: "  $5 $6}') "
-
-echo "$cache" > ~/.cache/weatherinfo
