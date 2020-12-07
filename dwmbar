@@ -1,0 +1,7 @@
+#!/bin/bash
+sep="|"
+while true
+do 
+	xsetroot -name "$(memused) $sep $(bat) $sep $(batback) $sep $(clock)"
+	sleep 1.11s
+done &
