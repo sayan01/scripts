@@ -1,0 +1,10 @@
+#!/bin/bash
+beep(){
+	sine 500 0.1
+	sine 600 0.1
+	sine 500 0.1
+	sine 600 0.1
+}
+sleep $1
+beep 
+notify-send "Times up" -a "timer"

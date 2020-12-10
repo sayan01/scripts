@@ -1,0 +1,14 @@
+#!/bin/bash
+freq=$1
+dur=$2
+if [ "$1" == "" ] || [ "$2" == "" ]
+then
+	echo -e "Usage:\nsine FREQUENCY DURATION"
+	exit 0
+fi
+if [ "$2" == "0" ]
+then
+	dur="0.000001"
+fi
+timeout -s HUP $dur speaker-test -f $freq -t sine > /dev/null
+exit 0
