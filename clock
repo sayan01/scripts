@@ -1,2 +1,2 @@
 #!/bin/bash
-date '+%Y-%b-%d (%a) | %I:%M:%S '
+date '+%b-%d %a | %I:%M%p '

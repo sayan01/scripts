@@ -23,7 +23,7 @@ then
 else
 	ind=$(($(~/scripts/sec)%5))
 	emos=(" " " " " " " " " ")
-	emoji=${emos[$ind]}
+	emoji="${emos[$ind]} "
 fi
 echo "$emoji $percent"
 
