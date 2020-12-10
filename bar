@@ -1,0 +1,4 @@
+#!/bin/bash
+sep=" | "
+echo "`vol` $sep `micvol` $sep `cputemp` $sep `memused` $sep `bat` $sep `batback` $sep `clock`"
+
