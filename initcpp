@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ ! -e "$1.cpp" ]
+then
+	cp ~/Files/Documents/Boilerplate/template.cpp "$1.cpp"
+fi
+"$EDITOR" "$1.cpp"
