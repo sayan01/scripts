@@ -25,5 +25,5 @@ else
 	emos=(" " " " " " " " " ")
 	emoji="${emos[$ind]} "
 fi
-echo "$emoji $percent"
+echo "$emoji $percent%"
 
