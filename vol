@@ -22,10 +22,10 @@ then
 	pactl -- set-sink-"$cmd" "$sink" "$val"
 fi
 # display volume
-ps=$(pulseaudio-ctl full-status)
-vol=$(echo $ps | cut -d' ' -f1)
-mute=$(echo $ps | cut -d' ' -f2)
+ps=$(amixer get Master | tail -n1)
+vol=$(echo $ps | grep -Po ".*\[\K\d*%")
+mute=$(echo $ps | grep -Po ".*\[\K\w*")
 case $mute in
-	no) echo "🔈$vol";;
+	on) echo "🔈$vol";;
 	*)  echo "🔇";;
 esac
