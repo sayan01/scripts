@@ -19,4 +19,4 @@ fi
 
 resp=$(cat ~/.cache/weatherinfo)
 
-echo "$resp"
+echo "$resp" | tr '+' ' '
