@@ -1,16 +1,14 @@
 #!/bin/bash
+PATH=$PATH:~/scripts/
 if [ -e ~/.config/bar ]
 then
 	commands=$(cat ~/.config/bar)
 else
 	commands="date"
 fi
-baritems(){
-	sep="|"
-	for com in $commands
-	do
-		echo "`$com` $sep"
-	done
-}
-baritems | tr '\n' ' '
+sep="|"
+for com in $commands
+do
+	echo -n "$($com) $sep "
+done
 echo
