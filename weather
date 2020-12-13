@@ -1,7 +1,12 @@
 #!/bin/bash
 get(){
 	info=$(curl -sf wttr.in/?format=%c%t)
-	echo "$info" > ~/.cache/weatherinfo
+	if [ "$(echo "$info" | grep -c '°C' )" = 0 ]
+	then
+		return
+	else
+		echo "$info" > ~/.cache/weatherinfo
+	fi
 }
 
 if [ ! -e ~/.cache/weatherinfo ] || [ "$(grep -c '°C' ~/.cache/weatherinfo )" = 0 ] 
