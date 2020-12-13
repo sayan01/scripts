@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo pacman-mirrors -c India && sudo pacman -Syy
+sudo pacman-mirrors -c all && sudo pacman -Syy
