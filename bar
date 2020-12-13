@@ -1,4 +1,16 @@
 #!/bin/bash
-sep=" | "
-echo "`vol` $sep `micvol` $sep `cputemp` $sep `memused` $sep `bat` $sep `batback` $sep `clock`"
-
+if [ -e ~/.config/bar ]
+then
+	commands=$(cat ~/.config/bar)
+else
+	commands="date"
+fi
+baritems(){
+	sep="|"
+	for com in $commands
+	do
+		echo "`$com` $sep"
+	done
+}
+baritems | tr '\n' ' '
+echo
