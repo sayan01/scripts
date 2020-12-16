@@ -1,0 +1,2 @@
+#!/bin/bash
+sensors | grep -Po '\d* RPM'
