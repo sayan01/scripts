@@ -1,0 +1,3 @@
+#!/bin/bash
+# output 0.1 seconds (deciseconds)
+echo "$(date +%N) / 100000000" | bc
