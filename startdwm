@@ -7,9 +7,6 @@ deadd-notification-center &
 killall picom
 picom &
 
-killall sxhkd
-sleep 2 && sxhkd &
-
 ~/.xprofile
 feh --no-fehbg --bg-scale '/home/sayan/.config/bg' &
 
