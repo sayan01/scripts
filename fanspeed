@@ -1,2 +1,6 @@
 #!/bin/bash
 sensors | grep -Po '\d* RPM'
+if [ "$?" != "0" ]
+then
+	echo No Fan
+fi
