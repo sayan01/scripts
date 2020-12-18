@@ -1,6 +1,7 @@
 #!/bin/bash
+PATH=$PATH:~/scripts/
 while true
 do 
-	xsetroot -name "$(bar)"
+	xsetroot -name "$(bar|rm-ansi-code)"
 	barsleep
 done 2>/dev/null &
