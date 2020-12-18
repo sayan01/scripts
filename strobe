@@ -1,0 +1,14 @@
+#!/bin/bash
+while true
+do 
+	for i in {0..255..50}
+	do 
+		echo $i > /sys/class/backlight/amdgpu_bl0/brightness 
+		sleep 0.05 
+	done
+	for i in {255..0..50}
+	do 
+		echo $i > /sys/class/backlight/amdgpu_bl0/brightness 
+		sleep 0.05 
+	done
+done
