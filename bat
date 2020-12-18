@@ -1,9 +1,9 @@
 #!/bin/bash
-
+PATH=$PATH:~/scripts
 percent=$(cat /sys/class/power_supply/BAT0/capacity)
 ac=$(cat /sys/class/power_supply/AC0/online)
 
-if [ "$ac" = 0 ]
+if [ "$ac" = 0 ] # if not charging, set emoji according to battery level
 then
 	if [[ $percent -ge 90 ]]
 	then
@@ -17,13 +17,16 @@ then
 	elif [[ $percent -ge 15 ]]
 	then
 		emoji=" "		# 15 - 35
+	elif [[ $percent -ge 5 ]]
+	then
+		emoji=" "		# 5 - 15
 	else
-		emoji=" "		# 0 - 15
+		emoji="$(colr red) " # 0 - 5
 	fi
-else
+else # if charging
 	ind=$(($(~/scripts/sec)%5))
 	emos=(" " " " " " " " " ")
-	emoji="${emos[$ind]} "
+	emoji="$(colr green)${emos[$ind]} "
 fi
-echo "$emoji $percent%"
+echo "$emoji $percent%$(colr default)"
 
