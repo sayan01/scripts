@@ -1,0 +1,4 @@
+#!/bin/bash
+# run spotify without ads
+env LD_PRELOAD=/usr/lib/spotify-adblock.so spotify %U
+
