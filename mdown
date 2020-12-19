@@ -24,4 +24,5 @@ if [ "$3" == "" ]; then
 fi
 
 youtube-dl -x --audio-format $format \
-	--embed-thumbnail $link -o "$name.%(ext)s"
+	--embed-thumbnail --add-metadata \
+	$link -o "$name.%(ext)s"
