@@ -1,8 +1,9 @@
 #!/bin/bash
 # relaunch DWM if the binary changes, otherwise bail
 
-killall deadd-notification-center
-deadd-notification-center &
+NOTICENTER="dunst"
+killall $NOTICENTER
+$NOTICENTER &
 
 killall picom
 picom &
