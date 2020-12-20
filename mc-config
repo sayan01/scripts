@@ -1,0 +1,7 @@
+#!/bin/bash
+# script to edit ~/.config/mc.conf with currently running music player names
+
+p=$(playerctl -l | rofi -dmenu -p "choose player:" -no-custom)
+if [ "$p" != "" ]; then
+	echo "$p" > ~/.config/mc.conf
+fi
