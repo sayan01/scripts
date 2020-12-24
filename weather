@@ -11,7 +11,8 @@ get(){
 
 if [ ! -e ~/.cache/weatherinfo ] || [ "$(grep -c '°C' ~/.cache/weatherinfo )" = 0 ] 
 then
-	get
+	get &
+	exit 0
 fi
 
 date1=$(date +%H)
@@ -19,7 +20,8 @@ date2=$(date -r ~/.cache/weatherinfo +%H)
 
 if [ "$date1" != "$date2" ]
 then
-	get
+	get &
+	exit 0
 fi
 
 resp=$(cat ~/.cache/weatherinfo)

@@ -1,8 +1,9 @@
 #!/bin/bash
 
-input=$(echo | rofi -theme ~/.local/share/rofi/themes/flat-orange.rasi -dmenu -i -scroll-method 1 -p ' search') 
+input=$(echo | rofi -dmenu -i -scroll-method 1 -p ' search') 
 
 if [[ -n "$input" ]]
 then
-	chromium "google.com/search?q=$input" &
+	if [ "$BROWSER" == "" ]; then BROWSER='chromium'; fi
+	$BROWSER "google.com/search?q=$input" &
 fi
