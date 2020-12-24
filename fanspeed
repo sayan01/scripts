@@ -1,4 +1,5 @@
 #!/bin/bash
+echo -n " "
 sensors | grep -Po '\d* RPM'
 if [ "$?" != "0" ]
 then

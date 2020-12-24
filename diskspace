@@ -1,7 +1,6 @@
 #!/bin/bash
-output=""
-for dev in $(cat "${HOME}/.config/diskspace.conf")
+for dev in $(cat "$HOME/.config/diskspace.conf")
 do
-	output="$output $(lsblk /dev/$dev -o FSAVAIL -n | sed 's/^ *//g' ) "
+	echo -n "  "
+	lsblk /dev/$dev -rno FSAVAIL
 done
-echo "$output" | sed -e "s/ $//g"

@@ -1,2 +1,2 @@
 #!/bin/bash
-free -h --giga | awk '/^Mem/ {print " " $3}'
+free -h --giga | awk '/^Mem/ {print " " $3}'

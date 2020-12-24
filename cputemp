@@ -1,21 +1,12 @@
 #!/bin/bash
-temp=$(sensors | awk '/^Tctl/ {print $2}' | cut -d'+' -f2)
-raw=$(echo "$temp" | cut -d'.' -f1)
-emo=''
-if [[ raw -lt 30 ]]
-then
-	emo=''	
-elif [[ raw -lt 40 ]]
-then
-	emo=''
-elif [[ raw -lt 60 ]]
-then
-	emo=''
-elif [[ raw -lt 75 ]]
-then
-	emo=''
-else
-	emo=''
-fi
-echo "$emo $temp"
+temp=$(sensors | grep -Po "^Tctl:.+\+\K\d+")
+case $temp in
+	[0123]?|?) emo="";;
+	4?) emo="";;
+	5?) emo="";;
+	6?) emo="";;
+	[78]?) emo="";;
+	*) emo="🌡";;
+esac
+echo "$emo $temp°C"
 

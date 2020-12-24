@@ -1,10 +1,10 @@
 #!/bin/bash
-pnow=$(cat /sys/class/power_supply/BAT0/power_now )
-enow=$(cat /sys/class/power_supply/BAT0/energy_now )
-if [ "$pnow" = 0 ]
-then
-	echo "infinite"
-	exit 0
-fi
-hr=$(echo "scale=2;$enow / $pnow" | bc)
-echo "$hr hr(s)"
+# print battery backup for all the batteries present
+for bat in /sys/class/power_supply/BAT*; do
+	power=$(cat $bat/power_now)
+	energy=$(cat $bat/energy_now)
+	case $pnow in
+		0) echo infinite;;
+		*) echo "$(echo "scale=1;$energy/$power" | bc) hr";;
+	esac
+done

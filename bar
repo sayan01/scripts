@@ -1,14 +1,13 @@
 #!/bin/bash
-PATH=$PATH:~/scripts/
-if [ -e ~/.config/bar ]
-then
+if [ -r $HOME/.config/bar ]; then
 	commands=$(cat ~/.config/bar)
-else
-	commands="date"
+else commands="date"
 fi
-sep="|"
+left=" [ "
+right=" ] "
 for com in $commands
 do
-	echo -n "$($com) $sep "
+	output="$output$left$($com)$right"
 done
+echo "$output" | tr -d '\n'
 echo
