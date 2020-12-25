@@ -7,7 +7,9 @@ left=" [ "
 right=" ] "
 for com in $commands
 do
-	output="$output$left$($com)$right"
+	co="$($com)"
+	if [ "$co" == "" ]; then continue; fi
+	output="$output$left$co$right"
 done
 echo "$output" | tr -d '\n'
 echo

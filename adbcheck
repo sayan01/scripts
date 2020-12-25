@@ -1,7 +1,5 @@
 #!/bin/bash
-
-emo=""
-devicecount=$(adb devices | grep -c device)
-[ "$devicecount" = "1" ] && emo=" "
-[ -e ~/.cache/webcam.lock ] && emo=$emo' '
-echo "$emo"
+if adb devices | grep -q device$; then
+	echo -n ""
+	if [ -e ~/.cache/webcam.lock ]; then echo " "; else echo; fi
+fi
