@@ -3,7 +3,7 @@
 for bat in /sys/class/power_supply/BAT*; do
 	power=$(cat $bat/power_now)
 	energy=$(cat $bat/energy_now)
-	case $pnow in
+	case $power in
 		0) echo infinite;;
 		*) echo "$(echo "scale=1;$energy/$power" | bc) hr";;
 	esac
