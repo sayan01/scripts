@@ -2,14 +2,15 @@
 # relaunch DWM if the binary changes, otherwise bail
 
 NOTICENTER="dunst"
+COMPOSITOR="picom"
 killall $NOTICENTER
 $NOTICENTER &
 
-killall picom
-picom &
+killall $COMPOSITOR
+$COMPOSITOR &
 
 ~/.xprofile
-feh --no-fehbg --bg-scale '/home/sayan/.config/bg' &
+[ -e ~/.fehbg ] && ~/.fehbg &
 
 csum=""
 new_csum=$(sha1sum $(which dwm))
