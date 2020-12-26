@@ -1,4 +1,6 @@
 #!/bin/bash
-killall -q $1
-while pgrep -x $1 >/dev/null; do sleep 0.05; done
-setsid -f "$1" </dev/null &>/dev/null
+for app in $@; do
+	killall -q $app
+	while pgrep -x $app >/dev/null; do sleep 0.05; done
+	setsid -f "$app" </dev/null &>/dev/null
+done
