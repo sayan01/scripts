@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ ! -e "$1.java" ]
 then
-	cp ~/Files/Documents/Boilerplate/template.java "$1.java"
+	cp ~/Files/Documents/Code/Boilerplate/template.java "$1.java"
 fi
 "$EDITOR" "$1.java"
