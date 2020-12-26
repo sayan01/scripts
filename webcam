@@ -1,4 +1,6 @@
 #!/bin/bash
+coff="/usr/share/icons/breath/status/22/camera-off.svg"
+con="/usr/share/icons/breeze-dark/status/22/camera-on.svg"
 if [ -e ~/.cache/webcam.lock ] # if client is already running
 then
 	killall mpv
@@ -6,34 +8,29 @@ then
 	adb shell am force-stop com.dev47apps.droidcam # kill client from mobile
 	killall mpv		# sometimes needed to be done twice
 	rm ~/.cache/webcam.lock -f # remove flag file
-	notify-send -h string:desktop-entry:droidcam -i camera-off.svg -a "Webcam" "Camera client killed"
+	notify-send -i $coff -a "Webcam" "Camera client killed" &
 	exit 0
 fi
 
 # start adb port forwarding from phone to pc
-adb forward tcp:4747 tcp:4747 
-if [ "$?" != "0" ]	# if failed to forward, notify and exit
-then
-	notify-send -i camera-off.svg -a "Webcam" "ADB port forwarding failed!" -h string:desktop-entry:droidcam
+if ! adb forward tcp:4747 tcp:4747; then
+	notify-send -i $coff -a "Webcam" "ADB port forwarding failed!"  &
 	exit 1
 fi
 
 # if phone is locked notify and exit
-if [ "$(adb shell dumpsys power | grep 'Screen off timeout' | awk '{print $4}')" = "10000" ] 
-then
-	notify-send -h string:desktop-entry:droidcam -i camera-off.svg -a "Webcam" "Phone is locked"
+if [ "$(adb shell dumpsys power | grep 'Screen off timeout' | awk '{print $4}')" = "10000" ]; then
+	notify-send -i $coff -a "Webcam" "Phone is locked" &
 	exit 1
 fi
 
 # start droidcam app in phone
-adb shell monkey -p com.dev47apps.droidcam 1 
-if [ "$?" != "0" ]	# if unable to start, notify and exit
-then
-	 notify-send -i camera-off.svg -a "Webcam" "Droidcam app not installed!" -h string:desktop-entry:droidcam
+if ! adb shell monkey -p com.dev47apps.droidcam 1 ; then
+	 notify-send -i $coff -a "Webcam" "Droidcam app not installed!" 
 	 exit 1
 fi
 
-notify-send -t 3000 -i camera-on.svg -a "Webcam" "Webcam ON" -h string:desktop-entry:droidcam
+notify-send -t 3000 -i $con -a "Webcam" "Webcam ON" 
 touch ~/.cache/webcam.lock # create flag file
 
 # to allow app to launch, delay for a few seconds
@@ -43,5 +40,5 @@ droidcam-cli 0.0.0.0 4747 </dev/null  &>/dev/null &
 
 if [ "$1" != "-q" ] # if not run quietly open mpv
 then
-	mpv --no-audio --untimed --profile=low-latency --ontop --force-window=immediate --on-all-workspaces --geometry=100%:100% --autofit=400 --cursor-autohide=no --no-input-cursor --osd-on-seek=no --vf=hflip av://v4l2:/dev/video0 &
+	cmdsp &
 fi
