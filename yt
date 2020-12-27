@@ -10,11 +10,15 @@ else
 fi
 if [ "$query" == "" ]; then exit; fi 
 query=$(sed 's| |+|g' <<< $query)	
-videoid=$(
+videoids=$(
 curl -s https://www.youtube.com/results?search_query=$query | \
 	grep -oP "\"videoRenderer\":{\"videoId\":\"...........\".+?\"text\":\".+?(?=\")" | \
-	awk -F\" '{ print $6 " " $NF}' | \
+	awk -F\" '{ print $6 " " $NF}')
+while true; do
+	videoid=$(
+	echo -e "$videoids" | \
 	fzf --with-nth='2..-1' | \
 	cut -d' ' -f1)
-if [ "$videoid" == "" ]; then exit; fi	
-mpv https://youtu.be/$videoid	
+	if [ "$videoid" == "" ]; then exit; fi	
+	mpv https://youtu.be/$videoid	
+done
