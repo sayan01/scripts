@@ -1,3 +1,0 @@
-#! /bin/sh
-cd ~/Files/Documents/ || exit 1
-git status -u

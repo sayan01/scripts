@@ -8,7 +8,7 @@ get(){
 }
 write(){
 	echo -e "$(date "+%a %d %b %Y %r")\t$confirmed" >> ~/coronalog
-	cd ~/Files/Documents/Projects/CoronaData/ || exit 1
+	cd ~/docs/projects/CoronaData/ || exit 1
 	git pull &>/dev/null
 	rm coronalog &>/dev/null
 	cp ~/coronalog . &>/dev/null

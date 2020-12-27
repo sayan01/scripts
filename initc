@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ ! -e "$1.c" ]
 then
-	cp ~/Files/Documents/Code/Boilerplate/template.c "$1.c"
+	cp ~/docs/code/boilerplate/template.c "$1.c"
 fi
 "$EDITOR" "$1.c"

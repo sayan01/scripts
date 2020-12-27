@@ -2,6 +2,6 @@
 PATH=$PATH:~/scripts/
 while true
 do 
-	xsetroot -name "$(bar|rm-ansi-code)"
+	xsetroot -name "$(bar|rm-ansi-code|sed 's/\xef\xb8\x8f//g')"
 	barsleep
 done 2>/dev/null &

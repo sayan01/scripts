@@ -1,2 +1,2 @@
 #! /bin/sh
-cd "$HOME/Files/Documents/$1" || return 1
+cd "$HOME/docs/$1" || return 1
