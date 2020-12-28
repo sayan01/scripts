@@ -4,14 +4,14 @@
 
 if [ "$1" == "" ]; then 
 	echo -n "Search: "
-	read query
+	read -r query
 else
-	query="$@"
+	query="$*"
 fi
 if [ "$query" == "" ]; then exit; fi 
-query=$(sed 's| |+|g' <<< $query)	
+query=${query// /+}
 videoids=$(
-curl -s https://www.youtube.com/results?search_query=$query | \
+curl -s https://www.youtube.com/results?search_query="$query" | \
 	grep -oP "\"videoRenderer\":{\"videoId\":\"...........\".+?\"text\":\".+?(?=\")" | \
 	awk -F\" '{ print $6 " " $NF}')
 while true; do
@@ -20,5 +20,5 @@ while true; do
 	fzf --with-nth='2..-1' | \
 	cut -d' ' -f1)
 	if [ "$videoid" == "" ]; then exit; fi	
-	mpv https://youtu.be/$videoid	
+	mpv "https://youtu.be/$videoid"
 done
