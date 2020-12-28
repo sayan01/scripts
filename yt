@@ -2,6 +2,11 @@
 # search videos on youtube and play them in mpv, without an API key
 # Sayan G
 
+#Install the required dependencies for apt based systems
+sudo apt-get install fzf mpv
+sudo dnf install fzf && sudo dnf install mpv
+
+
 if [ -z "$1" ]; then 
 	echo -n "Search: "
 	read -r query
