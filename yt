@@ -1,12 +1,20 @@
 #!/bin/bash
 # search videos on youtube and play them in mpv, without an API key
-# Sayan G
+# usage:
+# yt					asks for input in stdin, prompts using fzf
+# yt search query		takes input from the passed arg, prompts using fzf
+# yt -r					takes input and prompts using rofi
 
-if [ -z "$1" ]; then 
+promptcmd="fzf --with-nth=2..-1"
+if [ -z "$*" ]; then 
 	echo -n "Search: "
 	read -r query
 else
-	query="$*"
+	case "$1" in
+		-r) query=$(rofi -dmenu -p "Search: ")
+			promptcmd="rofi -dmenu -p Video:";;
+		*) query="$*";;
+	esac
 fi
 if [ -z "$query" ]; then exit; fi 
 # sanitise the query
@@ -28,7 +36,7 @@ videoids=$(
 while true; do
 	videoid=$(
 		echo -e "$videoids" | \
-		fzf --with-nth='2..-1' | \
+		$promptcmd | \
 		cut -d' ' -f1
 	)
 	if [ -z "$videoid" ]; then exit; fi	
