@@ -28,18 +28,19 @@ query=$(sed \
 	-e 's|&|%26|g'\
 	-e 's| |+|g'\
 	<<< "$query")
-# fetch the results with the $query 
-response="$(curl -s "https://www.youtube.com/results?search_query=$query")"
+# fetch the results with the $query and
+# delete all escaped characters
+response="$(curl -s "https://www.youtube.com/results?search_query=$query" |\
+	sed 's|\\.||g')"
 # if unable to fetch the youtube results page, inform and exit
 if ! grep -q "script" <<< "$response"; then echo "unable to fetch yt"; exit 1; fi
 # regex expression to match video and playlist entries from yt result page
 vgrep='"videoRenderer":{"videoId":"\K.{11}".+?"text":".+?[^\\](?=")'
 pgrep='"playlistRenderer":{"playlistId":"\K.{34}?","title":{"simpleText":".+?[^\"](?=")'
 # grep the id and title
-# replace \" with “ so that entire title is displayed even if it has "
 # return them in format id (type) title
 getresults() {
-	grep -oP "$1" <<< "$response" | sed 's|\\\"|“|g' | \
+	  grep -oP "$1" <<< "$response" |\
 		awk -F\" -v p="$2" '{ print $1 "\t" p " " $NF}'
 }
 # get the list of videos/playlists and their ids in videoids and playlistids
