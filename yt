@@ -58,7 +58,7 @@ while true; do
 	echo "Choose Video/Playlist to play: "
 	choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd) # dont show id
 	if [ -z "$choice" ]; then exit; fi	# if esc-ed then exit
-	id=$(echo -e "$ids" | grep -wm1 "$choice" | cut -d'	' -f1) # get id of choice
+	id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
 	echo -e "$choice\t($id)"
 	case $id in
 		# 11 digit id = video
