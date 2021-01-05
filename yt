@@ -54,7 +54,6 @@ videolink="https://youtu.be/"
 playlink="https://youtube.com/playlist?list="
 # prompt the results to user infinitely until they exit (escape)
 while true; do
-	clear
 	echo "Choose Video/Playlist to play: "
 	choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd) # dont show id
 	if [ -z "$choice" ]; then exit; fi	# if esc-ed then exit
