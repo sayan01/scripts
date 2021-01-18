@@ -8,7 +8,8 @@
 
 defcmd="fzf"
 guicmd="rofi -dmenu -i" #uncomment next line for dmenu
-#guicmd="dmenu -i -l 15"
+#guicmd="dmenu -l 15"
+#demnu -i is not a valid switch in dmenu-5.0
 promptcmd="$defcmd"
 if [ -z "$*" ]; then 
 	echo -n "Search: "
