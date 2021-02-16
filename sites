@@ -4,7 +4,7 @@ input=$(rofi -theme ~/.local/share/rofi/themes/onedark.rasi -dmenu -i -scroll-me
 
 if [[ -n "$input" ]] && [ "$input" != "new" ]
 then
-	chromium $input
+	${BROWSER:-chromium} $input
 elif [ "$input" = "new" ]
 then
 	konsole -e vim $HOME/.config/sites.conf

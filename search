@@ -4,6 +4,5 @@ input=$(echo | rofi -dmenu -i -scroll-method 1 -p ' search')
 
 if [[ -n "$input" ]]
 then
-	if [ "$BROWSER" == "" ]; then BROWSER='chromium'; fi
-	$BROWSER "google.com/search?q=$input" &
+	${BROWSER:-chromium} "google.com/search?q=$input" &
 fi
