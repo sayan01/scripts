@@ -1,0 +1,12 @@
+#!/bin/bash
+cachelocation="${HOME?:}/.cache/autolockcache"
+while true; do
+	if [ ! -e $cachelocation ];then
+		date +%s > $cachelocation
+	fi
+	if [[ "$(date +%s) - $(cat $cachelocation)" -gt 1 ]]; then
+		lock
+	fi
+	date +%s > $cachelocation
+	sleep 1s
+done
