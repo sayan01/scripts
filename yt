@@ -1,4 +1,5 @@
 #!/bin/bash
+# dependencies: mpv youtube-dl fzf rofi/dmenu
 
 # explain usage
 function usage () {
