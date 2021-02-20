@@ -87,7 +87,7 @@ if [ -z "$query" ]; then
     # ask for a channel
     if [[ $action = "c" ]]; then
         # if no channels in sub list -> exit
-        if [ -z "$query" ]; then
+        if [ -z "$sublist" ]; then
             echo "No chanels in subscription list, add some to use this feature"
             exit 1
         fi
@@ -188,4 +188,3 @@ else
         esac
     done
 fi
-
