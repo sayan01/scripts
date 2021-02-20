@@ -1,6 +1,7 @@
 #!/bin/bash
-if [ ! -e "$1.c" ]
+f=${1%.c} # remove .c from filename if it exists
+if [ ! -e "$f.c" ]
 then
-	cp ~/docs/code/boilerplate/template.c "$1.c"
+	cp ~/docs/code/boilerplate/template.c "$f.c"
 fi
-"$EDITOR" "$1.c"
+"$EDITOR" "$f.c"

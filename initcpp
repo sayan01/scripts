@@ -1,6 +1,7 @@
 #!/bin/bash
-if [ ! -e "$1.cpp" ]
+f=${1%.cpp} # remove .cpp from filename if it exists
+if [ ! -e "$f.cpp" ]
 then
-	cp ~/docs/code/boilerplate/template.cpp "$1.cpp"
+	cp ~/docs/code/boilerplate/template.cpp "$f.cpp"
 fi
-"$EDITOR" "$1.cpp"
+"$EDITOR" "$f.cpp"

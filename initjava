@@ -1,6 +1,7 @@
 #!/bin/bash
-if [ ! -e "$1.java" ]
+f=${1%.java} # remove .java from filename if it exists
+if [ ! -e "$f.java" ]
 then
-	cp ~/docs/code/boilerplate/template.java "$1.java"
+	cp ~/docs/code/boilerplate/template.java "$f.java"
 fi
-"$EDITOR" "$1.java"
+"$EDITOR" "$f.java"
