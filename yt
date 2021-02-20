@@ -24,7 +24,8 @@ optstring=":s:c:gh"
 
 defcmd="fzf"
 defaction="c"
-guicmd="rofi -dmenu -i"
+guicmd="rofi -dmenu -i" #uncomment next line for dmenu
+#guicmd="dmenu -i -l 15"
 
 #Defaults
 promptcmd="$defcmd"
