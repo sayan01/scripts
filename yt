@@ -3,13 +3,25 @@
 
 # explain usage
 function usage () {
-    echo "usage: $(basename $0)"
-    echo "    -h help"
-    echo "    -c channels/subscriptions"
-    echo "    -s search"
-    echo "    -g gui option"
-    echo "    nothing use defaults"
-    exit 1
+    echo "usage: yt"
+    echo "    -h			help"
+    echo "    -c 	 		channels/subscriptions"
+    echo "    -s query 		search"
+	echo "    -g / -r 		gui mode (rofi/dmenu)"
+	echo "    nothing 		use defaults (search from prompt)"
+	echo
+	echo "add channel names to the file $sublistpath to show them"
+	echo "in yt -c option. First word should be channel url, optionally"
+	echo "followed by tab and then anything else (channel name/description)"
+	echo "channels not in sublist can be viewed by typing their url in the prompt"
+	echo 
+	echo "example file format:"
+	echo "markrober       Mark Rober"
+	echo "vsauce1         VSauce          Michael Steven's Channel"
+	echo "BlackGryph0n    Black Gryph0n   Gabriel Brown signs stuff"
+	echo "TomScottGo      Tom Scott"
+	echo "danielthrasher  Daniel Thrasher"
+    exit 0
 }
 
 # dont use defaults
@@ -21,10 +33,10 @@ if [[ ${#} -eq 0 ]]; then
 fi
 
 # available flags
-optstring=":s:c:gh"
+optstring=":s:cgrh"
 
 defcmd="fzf"
-defaction="c"
+defaction="s"
 guicmd="rofi -dmenu -i" #uncomment next line for dmenu
 #guicmd="dmenu -i -l 15"
 
@@ -35,12 +47,10 @@ isGui="f"
 query=""
 
 # subscription list
+mkdir -p ${HOME:-}/.config/yt
+sublistpath="${HOME:-}/.config/yt/sublist"
 sublist=""
-# example of sublist
-# sublist="williamosman
-# gothamchess
-# thomasrandall"
-# (note that the newline between them is necessary)
+[ -f $sublistpath ] && sublist=$(cat $sublistpath) 
 
 # if not using defaults search for flags
 if [[ $useDefaults = "f" ]]; then
@@ -49,36 +59,30 @@ if [[ $useDefaults = "f" ]]; then
             s) 
                 # search in youtube for a query
                 action="s"
-                query="${OPTARG}"
-                ;;
+                query="${OPTARG}" ;;
             c) 
                 # search in subscriptions for specific channel
                 action="c"
-                query="${OPTARG}"
-                ;;
-            g) 
+                query="${OPTARG}" ;;
+            g|r) 
                 # set gui mode to true and change the prompt to gui prompt
                 isGui="t"
-                promptcmd="$guicmd"
-                ;;
+                promptcmd="$guicmd" ;;
             h) 
                 # display help / usage
-                echo "Help incoming!"
-                echo
-                usage
-                ;;
+                usage ;;
             \?) 
                 # wrong args -> exit with explanation of usage
                 echo "invalid option: -${OPTARG}"
                 echo
                 usage
-                ;;
+				exit 1 ;;
             :) 
                 # missing args -> exit with explanation of usage
                 echo "Option -${OPTARG} needs an argument"
                 echo
                 usage
-                ;;
+				exit 1 ;;
 
         esac
     done
@@ -88,17 +92,14 @@ fi
 if [ -z "$query" ]; then
     # ask for a channel
     if [[ $action = "c" ]]; then
-        # if no channels in sub list -> exit
-        if [ -z "$sublist" ]; then
-            echo "No chanels in subscription list, add some to use this feature"
-            exit 1
-        fi
         # if in gui mode use gui prompt
         if [[ $isGui = "t" ]]; then 
-            query=$($promptcmd -p "Channel: " <<< $sublist)
+			query=$($promptcmd -p "Channel: " <<< $sublist)
+            promptcmd="$promptcmd -p Video:"
         else
-            query=$($promptcmd <<< $sublist)
+            query=$($promptcmd --print-query <<< $sublist | tail -n1)
         fi
+		query=$(echo "$query" | awk '{print $1}')
     else
         # ask for a query
         # if in gui mode use gui prompt
