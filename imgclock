@@ -14,13 +14,10 @@ dest="${2:-output.jpg}"
 convert \
 	"$src" \
 	-geometry 1920:1080 \
+	-fill "#000000aa" \
+	-draw "roundrectangle 720,990 1200,1080 5,5" \
 	-gravity center \
-	-fill '#00000066' \
-	-draw 'circle  +960+540 960,695' \
-	-draw 'circle  +960+540 960,715' \
 	-pointsize 50 \
-	-weight bold \
-	-interline-spacing 30 \
-	-fill "#ffffff66" \
-	-annotate +0+0 "$(clock|tr ' ' '\n')" \
+	-fill "#ffffffcc" \
+	-annotate +0+505 "$(clock)" \
 	"$dest"

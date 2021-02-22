@@ -2,7 +2,7 @@
 betterlockscreen -l dimblur
 #source $HOME/.config/betterlockscreenrc
 #i3lock \
-#	-t -i "/home/sayan/pics/Wallpapers/pinksky.jpg" -e \
+#	-t -i "${HOME}/pics/Wallpapers/pinksky.jpg" -e \
 #	--timepos='x+960:h-70' \
 #	--datepos='x+960:h-35' \
 #	--timesize=48 --datesize=24 \
