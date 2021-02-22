@@ -1,14 +1,6 @@
 #!/bin/bash
 # relaunch DWM if the binary changes, otherwise bail
-
-NOTICENTER="dunst"
-COMPOSITOR="picom"
 conf="$HOME/.config/startdwm"
-killall $NOTICENTER
-$NOTICENTER &
-
-killall $COMPOSITOR
-$COMPOSITOR &
 
 ~/.xprofile
 [ -e ~/.fehbg ] && ~/.fehbg &

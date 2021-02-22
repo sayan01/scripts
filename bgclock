@@ -1,0 +1,25 @@
+#!/bin/bash
+# keeps running and update the wallpaper image with the current
+# time, also calls ~/.fehbg to re-apply new wallpaper.
+# creates .fehbg if doesn't exist.
+# this script will only work if fehbg is configured correctly or absent,
+# script will respect pre-existing .fehbg and not change it
+# setting any other image as wallpaper will render this useless
+
+originalimagefile="$1"
+if [ -z "$1" ]; then
+	originalimagefile="${HOME}/.config/wall/wall"
+fi
+if [ ! -r $originalimagefile ]; then
+	echo -e "usage\n  $(basename $0) [src] [dest]"
+	echo -e "$originalimagefile does not exist"
+	exit 1
+fi
+outputimagefile="${2:-${HOME}/.config/wall/wall_clock}"
+while true; do
+	imgclock "$originalimagefile" "$outputimagefile"
+	if [ ! -r ${HOME}/.fehbg ]; then feh --bg-fill "$outputimagefile"
+	else ${HOME}/.fehbg
+	fi
+	sleep 1
+done
