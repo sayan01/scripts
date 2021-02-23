@@ -20,4 +20,7 @@ convert \
 	-pointsize 50 \
 	-fill "#ffffffaa" \
 	-annotate +0+505 "$(clock)" \
+	-pointsize 24 \
+	-fill white \
+	-annotate +800-480 "$(bat|rm-ansi-code) $(batbar 15)" \
 	"$dest"

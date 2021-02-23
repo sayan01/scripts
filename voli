@@ -1,5 +1,8 @@
 #!/bin/bash
 # set, increase, decrease, toggle volume of a sink-input (application)
+# 
+# NOTE
+# This script has bugs and doesnt work properly, will fix when get time
 rm -f /tmp/voli.* &>/dev/null
 pactl list sink-inputs | grep -e "Sink Input" -e "Vol" -e "application.name " > /tmp/voli.apps
 numbers=$(cat /tmp/voli.apps | grep -oP "Sink.*#\K\d+")
