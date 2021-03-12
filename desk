@@ -6,4 +6,4 @@ then
 	emo="$1"
 	other="$2"
 fi
-echo $(wmctrl -d | cut -d' ' -f3 | sed -E -e "s/\*/$emo/g" -e "s/-/$other/g" | tr "\n" " ")
+wmctrl -d | cut -d' ' -f3 | sed -E -e "s/\*/$emo/g" -e "s/-/$other/g" | tr "\n" " "

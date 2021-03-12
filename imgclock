@@ -2,7 +2,7 @@
 # takes image input, puts clock in the center and renders output.
 if [ -z "$1" ]; then 
 	echo "usage: 
-	$(basename $0) src [dest]"
+	$(basename "$0") src [dest]"
 	exit
 fi
 if [ ! -r "$1" ]; then

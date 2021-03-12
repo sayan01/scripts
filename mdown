@@ -25,4 +25,4 @@ fi
 
 youtube-dl -x --audio-format $format \
 	--embed-thumbnail --add-metadata \
-	$link -o "$name.%(ext)s"
+	"$link" -o "$name.%(ext)s"

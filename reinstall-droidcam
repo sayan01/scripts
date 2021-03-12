@@ -19,4 +19,4 @@ sudo wget https://www.dev47apps.com/files/linux/droidcam_latest.zip
 unzip droidcam_latest.zip -d droidcam && cd droidcam || exit 1
 sudo ./install-client
 sudo ./install-video
-echo done
+echo "done"

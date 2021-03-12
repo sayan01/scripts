@@ -1,5 +1,5 @@
 #!/bin/bash
-if [ -r $HOME/.config/bar ]; then
+if [ -r "$HOME/.config/bar" ]; then
 	commands=$(cat ~/.config/bar)
 else commands="date"
 fi

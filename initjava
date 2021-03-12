@@ -1,4 +1,8 @@
 #!/bin/bash
+if [ -z "$1" ]; then 
+	echo "argument required"
+	exit 1
+fi
 f=${1%.java} # remove .java from filename if it exists
 if [ ! -e "$f.java" ]
 then

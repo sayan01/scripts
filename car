@@ -3,13 +3,13 @@
 f="$1"
 if [[ "$f" == *.c ]] || [ -e "$f.c" ]
 then
-	ccar $@
+	ccar "$@"
 elif [[ "$f" == *.cpp ]] || [ -e "$f.cpp" ]
 then
-	cpcar $@
+	cpcar "$@"
 elif [[ "$f" == *.java ]] || [ -e "$f.java" ]
 then
-	javacar $@
+	javacar "$@"
 else
 	echo "Unknown file format or file not present"
 	echo "Supported file formats: .c  .cpp  .java"

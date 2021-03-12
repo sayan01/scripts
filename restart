@@ -1,6 +1,6 @@
 #!/bin/bash
-for app in $@; do
-	killall -q $app
-	while pgrep -x $app >/dev/null; do sleep 0.05; done
+for app in "$@"; do
+	killall -q "$app"
+	while pgrep -x "$app" >/dev/null; do sleep 0.05; done
 	setsid -f "$app" </dev/null &>/dev/null
 done

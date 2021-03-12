@@ -6,4 +6,4 @@ fi
 keep=$1
 trim=$2
 keep=${keep%$trim}
-echo $keep
+echo "$keep"

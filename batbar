@@ -6,14 +6,14 @@ fi
 level=$(cat /sys/class/power_supply/BAT0/capacity)
 usage () {
 	echo 'usage'
-	echo '  $(basename $0) [columns] [options]'
+	echo "  $(basename $0) [columns] [options]"
 	echo '  options:'
 	echo '    -h --help      help'
 	echo '    -c --clean     dont print dashes and [ ]'
 }
 lb="["; rb="]"; uf="-"
 columns=$(($(tput cols) - 2))
-for arg in $@; do
+for arg in "$@"; do
 	case $arg in
 		--help) ;&
 		-h) usage; exit ;;
@@ -24,11 +24,11 @@ for arg in $@; do
 	esac
 done
 filled=$(( level * columns / 100 ))
-echo -n $lb
-for i in $(seq 1 $columns); do
+echo -n "$lb"
+for i in $(seq 1 "$columns"); do
 	if [[ $i -le filled ]]; then echo -n "#"
-	else echo -n $uf
+	else echo -n "$uf"
 	fi
 done
-echo $rb
+echo "$rb"
 exit 0

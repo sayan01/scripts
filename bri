@@ -1,51 +1,30 @@
 #!/bin/bash
 # control brightness
-# this script uses /sys/class/backlight/* directory to control brightness
-# if your system doesnt have such a directory, this script wont work
+# this script uses xbacklight
 
 # Usage
 # bri       -> outputs current brightness level
 # bri up    -> increases brightness
 # bri down  -> decreases brightness
-# bri 251   -> sets brightness to 251
+# bri 90   -> sets brightness to 90
 # bri +50   -> increases brightness by 50
 # bri -10   -> decreases brightness by 10
 
-# for brightness control to work correctly, either run script as root or run
-# sudo chmod a+w /sys/class/backlight/*/brightness once
-bpath="/sys/class/backlight/*/brightness"
-mb=$(cat /sys/class/backlight/*/max_brightness)
-cb=$(cat $bpath)
 # change this value to the number of levels you want brightness inc/dec to have
 levels=5
-inc=$(( $mb / $levels ))
+inc=$((100/levels))
 
-if [ "$1" != "" ] # if parameter passed, change brightness accordingly
-then
-	case $1 in   # if keyword passed (up/down) then set arg accordingly
+for args in "$@"; do
+	case $args in
+		-n) notify=true;;
 		up) arg="+$inc";;
 		down) arg="-$inc";;
-		*) arg=$1 ;;
+		*) arg=$args ;;
 	esac
-	if echo "$arg" | grep -q "[-\+]"
-	then     # if increment or decrement then calculate new brightness
-		b=$(($cb $arg))
-	else 
-		# if new brightness is absolute value, just change it
-		b=$arg
-	fi
-	if [[ $b -lt 0 ]]   # if new brightness out of bounds, correct it
-	then
-		b=0
-	elif [[ $b -gt $mb ]]
-	then
-		b=$mb
-	fi
-	echo $b > $bpath # set the new brightness 
-             # (may not work without sudo if permissions not set correctly)
-	# try to send the brightness to notification center if running and -n passed
-	if [ "$2" == "-n" ]; then	
-		notify-send -a "bri" "Brightness" "🔆$(($b*100/$mb))%" -t 1000 &
-	fi
+done
+if [ -n "$arg" ]; then xbacklight "$arg"; fi
+nb=$(xbacklight -get)
+if [ "$notify" == "true" ]; then	
+	notify-send -a "bri" "Brightness" "🔆$nb%" -t 500 &
 fi
-echo "🔆 $(cat $bpath)" # display current(new if changed) brightness level
+echo "🔆 $nb" # display current(new if changed) brightness level

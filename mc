@@ -20,8 +20,8 @@
 confpath="${HOME}/.config/mc.conf"
 if [ "$2" != "" ]; then
 	player="-p $2"
-elif [ -r $confpath ]; then
-	player="-p $(cat $confpath | head -n1)"
+elif [ -r "$confpath" ]; then
+	player="-p $(head -n1 "$confpath")"
 else
 	player=""
 fi
@@ -37,7 +37,7 @@ case $1 in
 	stop) ;&
 	next) ;&
 	previous) ;&
-	$m) $c $1;;
+	"$m") $c "$1";;
 	pp) $c play-pause;;
 	stat) $c status;;
 	n) $c next;;

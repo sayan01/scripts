@@ -5,28 +5,28 @@
 # This script has bugs and doesnt work properly, will fix when get time
 rm -f /tmp/voli.* &>/dev/null
 pactl list sink-inputs | grep -e "Sink Input" -e "Vol" -e "application.name " > /tmp/voli.apps
-numbers=$(cat /tmp/voli.apps | grep -oP "Sink.*#\K\d+")
-names=$(cat /tmp/voli.apps | grep -oP "\"\K(\w+)[ \"]" | cut -d'"' -f1)
-volumes=$(cat /tmp/voli.apps | grep -oP "Volume.*/ \K.+%")
-len=$(echo $numbers | wc -w)
-for i in $(seq 1 $len)
+numbers=$(grep -oP "Sink.*#\K\d+" /tmp/voli.apps)
+names=$(grep -oP "\"\K(\w+)[ \"]" /tmp/voli.apps | cut -d'"' -f1)
+volumes=$(grep -oP "Volume.*/ \K.+%" /tmp/voli.apps)
+len=$(echo "$numbers" | wc -w)
+for i in $(seq 1 "$len")
 do
-	number=$(echo $numbers | cut -d' ' -f$i)
-	name=$(echo $names | cut -d' ' -f$i)
-	volume=$(echo $volumes | cut -d' ' -f$i)
-	echo $number $name $volume >> /tmp/voli.list
+	number=$(echo "$numbers" | cut -d' ' -f"$i")
+	name=$(echo "$names" | cut -d' ' -f"$i")
+	volume=$(echo "$volumes" | cut -d' ' -f"$i")
+	echo "$number $name $volume" >> /tmp/voli.list
 done
 if [ ! -e /tmp/voli.list ]; then
 	echo "No applications are playing sound"
 	exit 0
 fi
 roficommands="rofi -dmenu -theme flat-orange"
-sinkinput=$(cat /tmp/voli.list | $roficommands -no-custom -p Which\ application?)
-if [ "$?" != "0" ]; then
+if sinkinput=$($roficommands -no-custom -p Which\ application? < /tmp/voli.list) 
+then
 	echo "Exiting"
 	exit
 fi
-sinkinput=$(echo $sinkinput | cut -d' ' -f1)
+sinkinput=$(echo "$sinkinput" | cut -d' ' -f1)
 
 #echo "What do you want to set the value to? (+x% for increase) "
 #read response

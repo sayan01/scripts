@@ -1,7 +1,6 @@
 #!/bin/bash
 echo -n " "
-sensors | grep -Po '\d* RPM'
-if [ "$?" != "0" ]
+if ! sensors | grep -Po '\d* RPM'
 then
 	echo No Fan
 fi

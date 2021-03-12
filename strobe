@@ -1,14 +1,11 @@
 #!/bin/bash
-while true
-do 
-	for i in {0..255..50}
-	do 
-		echo $i > /sys/class/backlight/amdgpu_bl0/brightness 
-		sleep 0.05 
-	done
-	for i in {255..0..50}
-	do 
-		echo $i > /sys/class/backlight/amdgpu_bl0/brightness 
-		sleep 0.05 
-	done
+prev=$(xbacklight -get)
+reset() {
+	xbacklight -set "$prev"
+}
+trap "reset" EXIT
+trap "exit 0" TERM INT
+while true; do 
+		xbacklight -steps 100 -set 0 &> /dev/null
+		xbacklight -steps 100 -set 100 &> /dev/null
 done

@@ -3,10 +3,10 @@ file="$HOME/.cache/weatherinfo"
 get(){
 	info=$(curl -sf wttr.in/bengaluru?format=%c%t | tr -d '+')
 	if echo "$info" |  grep -q '°'; then
-		echo "$info" > $file
+		echo "$info" > "$file"
 	fi
 }
-if [ -r $file ] && [ "$(date +%H)" == "$( date -r $file +%H)" ]; then
-	cat $file
+if [ -r "$file" ] && [ "$(date +%H)" == "$( date -r "$file" +%H)" ]; then
+	cat "$file"
 else get &
 fi

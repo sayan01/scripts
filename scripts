@@ -2,10 +2,10 @@
 
 temulator="konsole -e"
 cd ~/scripts/ || exit 1
-file="$(find -- * -executable -type f | rofi -theme ~/.local/share/rofi/themes/slate.rasi -dmenu -i -scroll-method 1 -p scripts)"
+file="$(find -- * -executable -type f | rofi -dmenu -i -p scripts)"
 
 if [ "$1" == "here" ]; then temulator=""; fi
 
 if [ "$file" ]; then
-	$temulator initscript $file
+	$temulator initscript "$file"
 fi

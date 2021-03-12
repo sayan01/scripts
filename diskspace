@@ -1,6 +1,4 @@
 #!/bin/bash
-for dev in $(cat "$HOME/.config/diskspace.conf")
-do
-	echo -n "  "
-	lsblk /dev/$dev -rno FSAVAIL
-done
+while IFS= read -r dev; do
+	echo " $(lsblk /dev/"$dev" -rno FSAVAIL) "
+done < "$HOME/.config/diskspace.conf"

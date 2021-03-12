@@ -1,6 +1,6 @@
 #!/bin/bash
 aout=$(amixer get Capture)
-vol=$(echo $aout | grep -oP "Right:.+\[\K\d+")
+vol=$(echo "$aout" | grep -oP "Right:.+\[\K\d+")
 case $aout in
 	*off*) echo "";;
 	*) echo " $vol%";;

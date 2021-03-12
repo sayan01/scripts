@@ -2,5 +2,5 @@
 f="$1"
 shift
 f=${f%.c} # remove .c from filename if it exists
-echo "$(colr pink)gcc $f.c -o $f -lm && (./$f $@ ; rm ./$f)$(colr default)"
+echo "$(colr pink)gcc $f.c -o $f -lm && (./$f $* ; rm ./$f)$(colr default)"
 gcc "$f.c" -o "$f" -lm && (./"$f" "$@" ; rm "./$f")

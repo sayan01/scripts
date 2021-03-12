@@ -2,13 +2,13 @@
 camera=$(v4l2-ctl --list-devices | \
  sed -e 's/\t//g' -e 's/ (.*$//g' | \
  tr -d '\n' | \
- sed -e 's|\(/dev/video.\)| (\1)\n|g' | \
+ sed -e 's|\(/dev/.....[0-9]\)| (\1)\n|g' | \
  rofi -dmenu -no-custom | \
- grep -o '/dev/video.')
-if echo $camera | grep -q .; then
+ grep -o '/dev/......')
+if [ -n "$camera" ]; then
 	mpv --profile=low-latency \
 		--untimed \
 		--vf=hflip \
 		"av://v4l2:$camera" || \
-	notify-send -a cmdsp "Cannot play webcam" "$camera" -i none
+	notify-send -a cmdsp "Cannot play webcam" "$camera" -i none &
 fi

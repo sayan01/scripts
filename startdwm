@@ -6,7 +6,7 @@ conf="$HOME/.config/startdwm"
 [ -e ~/.fehbg ] && ~/.fehbg &
 
 csum=""
-new_csum=$(sha1sum $(which dwm))
+new_csum=$(sha1sum "$(which dwm)")
 while true
 do
     if [ "$csum" != "$new_csum" ]
@@ -18,6 +18,6 @@ do
 	else
         exit 0
     fi
-    new_csum=$(sha1sum $(which dwm))
+    new_csum=$(sha1sum "$(which dwm)")
     sleep 0.1
 done

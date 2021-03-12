@@ -47,10 +47,10 @@ isGui="f"
 query=""
 
 # subscription list
-mkdir -p ${HOME:-}/.config/yt
+mkdir -p "${HOME:-}/.config/yt"
 sublistpath="${HOME:-}/.config/yt/sublist"
 sublist=""
-[ -f $sublistpath ] && sublist=$(cat $sublistpath) 
+[ -f "$sublistpath" ] && sublist=$(cat "$sublistpath") 
 
 # if not using defaults search for flags
 if [[ $useDefaults = "f" ]]; then
@@ -94,10 +94,10 @@ if [ -z "$query" ]; then
     if [[ $action = "c" ]]; then
         # if in gui mode use gui prompt
         if [[ $isGui = "t" ]]; then 
-			query=$($promptcmd -p "Channel: " <<< $sublist)
+			query=$($promptcmd -p "Channel: " <<< "$sublist")
             promptcmd="$promptcmd -p Video:"
         else
-            query=$($promptcmd --print-query <<< $sublist | tail -n1)
+            query=$($promptcmd --print-query <<< "$sublist" | tail -n1)
         fi
 		query=$(echo "$query" | awk '{print $1}')
     else
@@ -136,7 +136,7 @@ if [[ $action = "c" ]]; then
 
     # regex expression to match video entries from yt channel page
     # get the list of videos and their ids to ids
-    ids=$(awk -F '[""]' '{print $6 "\t" $50;}' <<< $response| grep "^\S")
+    ids=$(awk -F '[""]' '{print $6 "\t" $50;}' <<< "$response" | grep "^\S")
 
     # url prefix for videos
     videolink="https://youtu.be/"
