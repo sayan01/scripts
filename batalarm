@@ -1,0 +1,10 @@
+#!/bin/bash
+while true; do
+	capacity=$(cat /sys/class/power_supply/BAT*/capacity )
+	if [[ $capacity -lt 10 ]] && [ "$(echo $(sec) % 10 | bc)" == 0 ]; then 
+		sine 500 0.1
+		sine 300 0.1
+		sine 250 0.1
+	fi
+	sleep 1
+done
