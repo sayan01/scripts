@@ -1,5 +1,7 @@
 #!/bin/bash
-# dependencies: mpv youtube-dl fzf rofi/dmenu
+# dependencies: mpv youtube-dl fzf rofi/dmenu gnu-grep
+
+# NOTE:  if you dont have gnu grep you can replace grep with rg
 
 # explain usage
 function usage () {
