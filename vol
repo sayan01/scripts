@@ -18,8 +18,7 @@ then
 		mute) cmd="mute"; val="toggle";;
 		*) val=$1;;
 	esac
-	sink=$(pactl list sinks | grep -oP 'Sink #\K([0-9]+)')
-	pactl -- set-sink-"$cmd" "$sink" "$val"
+	pactl -- set-sink-"$cmd" "@DEFAULT_SINK@" "$val"
 fi
 # display volume
 ps=$(amixer get Master | tail -n1)
