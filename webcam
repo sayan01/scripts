@@ -3,10 +3,8 @@ coff="/usr/share/icons/breath/status/22/camera-off.svg"
 con="/usr/share/icons/breeze-dark/status/22/camera-on.svg"
 if [ -e ~/.cache/webcam.lock ] # if client is already running
 then
-	killall mpv
 	killall droidcam-cli	# kill client
 	adb shell am force-stop com.dev47apps.droidcam # kill client from mobile
-	killall mpv		# sometimes needed to be done twice
 	rm ~/.cache/webcam.lock -f # remove flag file
 	notify-send -i $coff -a "Webcam" "Camera client killed" &
 	exit 0
