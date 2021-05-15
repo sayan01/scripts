@@ -1,0 +1,21 @@
+#!/bin/bash
+
+listpath="${HOME}/.config/autostart"
+if ! test -d "$listpath"; then
+	echo "$(basename "$0"): $listpath does not exist" >&2
+	exit 1
+fi
+
+for file in "$listpath"/*; do
+	trunclist="$(grep -o "^\w*" "$file" | tr '\n' ' ')"
+	choice=$( echo "yes|no" | \
+		rofi -dmenu -no-custom -i -sep '|' \
+			-p "Execute $(basename "$file")? ( $trunclist)")
+	if test "$choice" != "yes"; then
+		continue
+	fi
+	while IFS= read -r line; do
+		if pgrep -x "$line"; then continue; fi
+		setsid -f "$line"
+	done < "$file"
+done
