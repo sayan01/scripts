@@ -1,0 +1,44 @@
+#!/bin/env python3
+import string
+from hashlib import sha512
+
+def_charset = string.ascii_letters + string.digits + string.punctuation
+def_length = 32
+header = 'PASS - password generator'
+
+print('*'*len(header))
+print(header)
+print('*'*len(header))
+
+def repeated_input(prompt):
+    rv = ""
+    while not rv:
+        rv = input(prompt)
+    return rv
+
+specific_key = repeated_input('enter specific key: ')
+generic_key = repeated_input('enter secret generic key: ')
+charset = input(f'enter allowed character set (default = \'{def_charset}\'): ').strip()
+length = input(f'enter length of password (default = {def_length}): ').strip()
+
+if not charset:
+    charset = def_charset
+if not length:
+    length = def_length
+else:
+    length = int(length)
+
+salted = ( generic_key * len(specific_key) ) + ( specific_key * len(generic_key) )
+password = ''
+hashobj = sha512(salted.encode())
+charset_len = len(charset)
+while len(password) < length:
+    for byte in hashobj.digest():
+        ind = byte % charset_len
+        password += charset[ind]
+        if len(password) > length:
+            break
+    hashobj.update(salted.encode())
+password = password[:length]
+
+print(password)
