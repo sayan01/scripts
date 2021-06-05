@@ -23,6 +23,10 @@ length = input(f'enter length of password (default = {def_length}): ').strip()
 
 if not charset:
     charset = def_charset
+else:
+    if len(charset) > 256:
+        print('charset cannot be longer than 256 characters, taking first 256 values')
+        charset = charset[:256]
 if not length:
     length = def_length
 else:
