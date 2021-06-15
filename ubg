@@ -24,8 +24,7 @@ if test -z "$1"; then error "usage: ubg image"; fi
 if test ! -r "$src" ; then error "File $src does not exist or is unreadable"; fi
 if test -d "$src" ; then error "$src is not a image file, it is a directory"; fi
 if test -d "$src"; then error "$src is a directory, not an image" ; fi
-if ! identify "$src"; then error "$src is not a valid image file" ; fi
-
+if ! isimage "$src"; then error "$src is not a valid image file" ; fi
 
 delta="$2"
 if test -z "$2"; then delta=50; fi

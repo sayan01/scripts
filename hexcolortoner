@@ -7,7 +7,7 @@
 
 hex=$1
 
-if test -z $1; then
+if test -z "$1"; then
 	echo -n "Type a hex color: "
 	read -r hex
 fi

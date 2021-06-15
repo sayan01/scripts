@@ -10,6 +10,6 @@ error(){
 if test -z "$1"; then error "usage $(basename $0) imagefile" ; fi
 if test ! -r "$src"; then error "File $src does not exist or is unreadable" ; fi
 if test -d "$src"; then error "$src is a directory, not an image" ; fi
-if ! identify "$src"; then error "$src is not a valid image file" ; fi
+if ! isimage "$src"; then error "$src is not a valid image file" ; fi
 
 convert $src -scale 50x50! -depth 8 +dither -colors 8 -format "%c" histogram:info: | sed -n 's/^[ ]*\(.*\):.*[#]\([0-9a-fA-F]*\) .*$/\1,#\2/p' | sort -r -n -k 1 -t "," | head -n1 | cut -d, -f2
