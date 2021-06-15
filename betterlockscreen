@@ -78,16 +78,16 @@ lock() {
 
 	i3lock \
 		-t -i "$1" -en \
-		--timepos='x+960:h-70' \
-		--datepos='x+960:h-35' \
-		--timesize=48 --datesize=24 \
-		--insidecolor=$insidecolor --ringcolor=$ringcolor --line-uses-inside \
-		--keyhlcolor=$keyhlcolor --bshlcolor=$bshlcolor --separatorcolor=$separatorcolor \
-		--insidevercolor=$insidevercolor --insidewrongcolor=$insidewrongcolor \
-		--ringvercolor=$ringvercolor --ringwrongcolor=$ringwrongcolor \
-		--radius=100 --ring-width=20 --veriftext='...' --wrongtext='' \
-		--verifcolor="$verifcolor" --timecolor="$timecolor" --datecolor="$datecolor" \
-		--noinputtext=':O' --force-clock --timestr="%H:%M" $lockargs
+		--time-pos='x+960:h-70' \
+		--date-pos='x+960:h-35' \
+		--time-size=48 --date-size=24 \
+		--inside-color=$insidecolor --ring-color=$ringcolor --line-uses-inside \
+		--keyhl-color=$keyhlcolor --bshl-color=$bshlcolor --separator-color=$separatorcolor \
+		--insidever-color=$insidevercolor --insidewrong-color=$insidewrongcolor \
+		--ringver-color=$ringvercolor --ringwrong-color=$ringwrongcolor \
+		--radius=100 --ring-width=20 --verif-text='' --wrong-text='' \
+		--verif-color="$verifcolor" --time-color="$timecolor" --date-color="$datecolor" \
+		--noinput-text=':O' --force-clock --time-str="%H:%M" $lockargs
 }
 
 
