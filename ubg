@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# ubg - universal background wallpaper changer
+# changes background as well as lockscreen picture to provided image
+# dont use if you want different images as bg and lockscreen.
+
+# works only with bgclock and betterlockscreen already set up
+
+# usage: ubg image [delta]
+
+# if you feel the accent color generated is too similar or too dissimilar to 
+# dominant color of image, then pass 2nd argument delta. higher delta = more difference
+# default value of delta = 50
+
+error(){
+	echo $@
+	exit 1
+}
+src="$1"
+
+path="${HOME}/.config/wall"
+
+if test -z "$1"; then error "usage: ubg image"; fi
+if test ! -r "$src" ; then error "File $src does not exist or is unreadable"; fi
+if test -d "$src" ; then error "$src is not a image file, it is a directory"; fi
+if test -d "$src"; then error "$src is a directory, not an image" ; fi
+if ! identify "$src"; then error "$src is not a valid image file" ; fi
+
+
+delta="$2"
+if test -z "$2"; then delta=50; fi
+
+if ! mkdir -p "$path"; then echo "unable to create directory"; exit 1; fi
+cp -f "$src" "${path}/"
+cd "$path" || exit 1
+src="$(basename $src)"
+rm wall || exit 1
+# set background to be read by bgclock
+ln -s "$src" wall || exit 1
+echo "background set"
+# set lockscreen to be used by betterlockscreen, this takes a while
+betterlockscreen -u "$src" || exit 1
+echo "lockscreen set"
+# get dominant color of picture
+dc="$(domcol "$src")"
+# get if image color is light or dark
+contrast="$(lord "$dc")"
+# if image is dark, make accent lighter. if image is light, make accent darker
+case "$contrast" in 
+	"light") tone=-${delta} ;;
+	"dark") tone=${delta} ;;
+esac
+# get accent color
+accentcolor="$(hexcolortoner "$dc" "$tone")"
+# get accentcolor contrast (light or dark)
+contrast="$(lord "$accentcolor")"
+
+# if accentcolor is light, make text black, else make text white
+case "$contrast" in 
+	"light") textcolor="#111111";;
+	"dark") textcolor="#eeeeee";;
+esac
+
+echo "dominantcolor= $dc"
+echo "accentcolor= $accentcolor"
+echo "textcolor= $textcolor"
+
+# write the theme to .theme file in ~/.config/wall
+printf "dwm.selfgcolor:\t%s\ndwm.selbordercolor:\t%s\ndwm.selbgcolor:\t%s\n" \
+	"$textcolor" "$accentcolor" "$accentcolor" > .theme
+echo "theme written to $path"
+
+echo -n "do you want to write these themes to xresources? [Y/n] "
+read -r ch
+
+if test "$ch" == "n"; then exit 0; fi
+xrdb -merge .theme
+xrdb -edit "${HOME}/.Xresources"
+echo "theme applied and written to .Xresources. Restart dwm to reflect changes"
