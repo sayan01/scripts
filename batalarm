@@ -7,8 +7,8 @@ ring(){
 while true; do
 	capacity=$(cat /sys/class/power_supply/BAT*/capacity )
 	status=$(cat /sys/class/power_supply/BAT*/status )
+	sleep 1
 	if [ "$status" != "Discharging" ]; then
-		sleep 1
 		continue
 	fi
 	if [[ $capacity -lt 10 ]] ; then 
