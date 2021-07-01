@@ -1,5 +1,6 @@
 #!/bin/env python3
 import string
+from getpass import getpass
 from hashlib import sha512
 
 def_charset = string.ascii_letters + string.digits + string.punctuation
@@ -16,8 +17,14 @@ def repeated_input(prompt):
         rv = input(prompt)
     return rv
 
+def repeated_input_hidden(prompt):
+    rv = ""
+    while not rv:
+        rv = getpass(prompt=prompt)
+    return rv
+
 specific_key = repeated_input('enter specific key: ')
-generic_key = repeated_input('enter secret generic key: ')
+generic_key = repeated_input_hidden('enter secret generic key: ')
 charset = input(f'enter allowed character set (default = \'{def_charset}\'): ').strip()
 length = input(f'enter length of password (default = {def_length}): ').strip()
 
@@ -45,4 +52,7 @@ while len(password) < length:
     hashobj.update(salted.encode())
 password = password[:length]
 
-print(password)
+#print(password)
+import pyperclip # install pyperclip
+pyperclip.copy(password)
+print('password copied to clipboard')
