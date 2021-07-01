@@ -14,7 +14,7 @@ init_filenames() {
 
 	# custom i3lock colors
 	theme_rc="$HOME/.config/betterlockscreenrc"
-	if [ -e $theme_rc ]; then
+	if [ -e "$theme_rc" ]; then
 	    source "$theme_rc"
 	else
         # copy this block to ~/.config/betterlockscreenrc" to customize
@@ -30,16 +30,16 @@ init_filenames() {
 	    verifcolor=ffffffff
 	    timecolor=ffffffff
 	    datecolor=ffffffff
-	    loginbox=00000066
+	    #loginbox=00000066
 	fi
 
 	# create folder in ~/.cache/i3lock directory
 	res_folder="$HOME/.cache/i3lock/$1"
 	folder="$HOME/.cache/i3lock/current"
-	echo "Got" $@ $res_folder
-	if [ ! -d $folder -o -n "$2" ]; then
-		rm -f $folder
-		ln -s $res_folder $folder
+	echo "Got $@ $res_folder"
+	if [ ! -d "$folder" -o -n "$2" ]; then
+		rm -f "$folder"
+		ln -s "$res_folder" "$folder"
 	fi
 
 	# ratio for rectangle to be drawn for time background on lockscreen
@@ -57,17 +57,14 @@ init_filenames() {
 	dimblur="$folder/dimblur.png"
 
 	# lockscreen images (images to be used as lockscreen background)
-	l_resized="$folder/l_resized.png"
 	l_dim="$folder/l_dim.png"
-	l_blur="$folder/l_blur.png"
-	l_dimblur="$folder/l_dimblur.png"
 }
 
-init_filenames $res
+init_filenames "$res"
 
 
 prelock() {
-	if [ ! -z "$(pidof dunst)" ]; then
+	if [ -n "$(pidof dunst)" ]; then
 		pkill -u "$USER" -USR1 dunst
 	fi
 }
@@ -87,7 +84,7 @@ lock() {
 		--ringver-color=$ringvercolor --ringwrong-color=$ringwrongcolor \
 		--radius=100 --ring-width=20 --verif-text='' --wrong-text='' \
 		--verif-color="$verifcolor" --time-color="$timecolor" --date-color="$datecolor" \
-		--noinput-text=':O' --force-clock --time-str="%H:%M" $lockargs
+		--noinput-text=':O' --force-clock --time-str="%H:%M" "$lockargs"
 }
 
 

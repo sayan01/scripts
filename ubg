@@ -13,7 +13,7 @@
 # default value of delta = 50
 
 error(){
-	echo $@
+	echo "$@"
 	exit 1
 }
 src="$1"
@@ -32,7 +32,7 @@ if test -z "$2"; then delta=50; fi
 if ! mkdir -p "$path"; then echo "unable to create directory"; exit 1; fi
 cp -f "$src" "${path}/"
 cd "$path" || exit 1
-src="$(basename $src)"
+src="$(basename "$src")"
 rm wall || exit 1
 # set background to be read by bgclock
 ln -s "$src" wall || exit 1

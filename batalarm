@@ -13,6 +13,6 @@ while true; do
 	fi
 	if [[ $capacity -lt 10 ]] ; then 
 		ring
-		sleep $capacity
+		sleep "$capacity"
 	fi
 done

@@ -6,7 +6,7 @@ fi
 level=$(cat /sys/class/power_supply/BAT0/capacity)
 usage () {
 	echo 'usage'
-	echo "  $(basename $0) [columns] [options]"
+	echo "  $(basename "$0") [columns] [options]"
 	echo '  options:'
 	echo '    -h --help      help'
 	echo '    -c --clean     dont print dashes and [ ]'

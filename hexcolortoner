@@ -12,34 +12,34 @@ if test -z "$1"; then
 	read -r hex
 fi
 
-initpound=$(echo $hex | grep -o '^#')
-hex=$( echo $hex | cut -d'#' -f2)
+initpound=$(echo "$hex" | grep -o '^#')
+hex=$( echo "$hex" | cut -d'#' -f2)
 
 hextoint() {
-	echo $(( 16#$1 ))
+	echo "$(( 16#$1 ))"
 }
 
 inttohex() {
-	printf "%02x\n" $1
+	printf "%02x\n" "$1"
 }
 
 amount=$2
 
-if test -z $2; then
+if test -z "$2"; then
 	echo -n "Type amount to change: "
 	read -r amount
 fi
 
-if test "$(echo -n $hex | wc -c)" -ne 6; then
+if test "$(echo -n "$hex" | wc -c)" -ne 6; then
 	echo "Hex color has to be 6 digits"
 	exit 1
 fi
-red=$(hextoint $( echo $hex | cut -c1-2 ) )
-green=$(hextoint $( echo $hex | cut -c3-4 ) )
-blue=$(hextoint $( echo $hex | cut -c5-6 ) )
-let red+=amount
-let green+=amount
-let blue+=amount
+red=$(hextoint "$( echo "$hex" | cut -c1-2 )" )
+green=$(hextoint "$( echo "$hex" | cut -c3-4 )" )
+blue=$(hextoint "$( echo "$hex" | cut -c5-6 )" )
+(( red+=amount ))
+(( green+=amount ))
+(( blue+=amount ))
 if test "$red" -gt 255; then red=255; fi
 if test "$green" -gt 255; then green=255; fi
 if test "$blue" -gt 255; then blue=255; fi
