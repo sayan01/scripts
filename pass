@@ -13,31 +13,31 @@ print('*'*len(header))
 
 def repeated_input(prompt):
     rv = ""
-    while not rv:
-        rv = input(prompt)
+    while not rv: rv = input(prompt)
     return rv
 
 def repeated_input_hidden(prompt):
     rv = ""
-    while not rv:
-        rv = getpass(prompt=prompt)
+    while not rv: rv = getpass(prompt=prompt)
     return rv
 
 specific_key = repeated_input('enter specific key: ')
 generic_key = repeated_input_hidden('enter secret generic key: ')
+d_generic_key = repeated_input_hidden('confirm secret generic key: ')
+
+if generic_key != d_generic_key:
+    print('generic key doesnt match')
+    exit(1)
+
 charset = input(f'enter allowed character set (default = \'{def_charset}\'): ').strip()
 length = input(f'enter length of password (default = {def_length}): ').strip()
 
-if not charset:
-    charset = def_charset
-else:
-    if len(charset) > 256:
-        print('charset cannot be longer than 256 characters, taking first 256 values')
-        charset = charset[:256]
-if not length:
-    length = def_length
-else:
-    length = int(length)
+length = int(length) if length else def_length
+charset = charset if charset else def_charset
+
+if len(charset) > 256:
+    print('charset cannot be longer than 256 characters, taking first 256 values')
+    charset = charset[:256]
 
 salted = ( generic_key * len(specific_key) ) + ( specific_key * len(generic_key) )
 password = ''
