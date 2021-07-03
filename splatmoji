@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 shopt -s nullglob
-
 # Check subcommand
 if [ "${1}" == 'type' ] || [ "${1}" == 'copy' ]; then
   subcommand="${1}"
@@ -79,10 +78,9 @@ done < "${conffile}"
 selection=$(cat ${datafiles_list} | eval ${config[rofi_command]})
 moji="${selection%%$'\t'*}"
 
+if [ -z "$moji" ]; then exit; fi
 # Results to clipboard or selected x window
 if [ "${subcommand}" == 'type' ]; then
   ${config[xdotool_command]} "${moji}"
-  echo -n "${moji}" | ${config[xsel_command]}
-else
-  echo -n "${moji}" | ${config[xsel_command]}
 fi
+echo -n "${moji}" | ${config[xsel_command]}
