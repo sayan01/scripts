@@ -15,18 +15,22 @@ if test "$#" -lt 1 ; then
 	echo "usage: $(basename "$0") filename.ext"
 	exit 1
 fi
+if test -z "$EDITOR" ; then EDITOR=vi; fi
 
 extension=$(echo "$1" | cut -d '.' -f2-)
 TMPDIR="${HOME}/docs/libraries/templates"
 
 if ! test -r "${TMPDIR}/template.${extension}"; then
 	echo "$extension template not present in ${TMPDIR}"
-	exit 1
+  echo -n "create it? y/N: "
+  read -r answer
+  if test "$answer" == 'y' ; then "$EDITOR" "${TMPDIR}/template.${extension}";
+    if ! test -r "${TMPDIR}/template.${extension}" ; then echo "file not saved" ; exit 1; fi
+  else exit 1; fi
 fi
 
 if ! test -e "${1}"; then
 	cp "${TMPDIR}/template.${extension}" "./${1}"
 fi
 
-if test -z "$EDITOR" ; then EDITOR=vi; fi
 "$EDITOR" "${1}"
