@@ -6,11 +6,12 @@
 # explain usage
 function usage () {
     echo "usage: yt"
-    echo "    -h			help"
-    echo "    -c 	 		channels/subscriptions"
-    echo "    -s query 		search"
-	echo "    -g / -r 		gui mode (rofi/dmenu)"
-	echo "    nothing 		use defaults (search from prompt)"
+    echo "    -h        help"
+    echo "    -c        channels/subscriptions"
+    echo "    -s query  search"
+    echo "    -g / -r   gui mode (rofi/dmenu)"
+    echo "    -m        music mode (audio only) [dont use with -r]"
+    echo "  nothing     use defaults (search from prompt)"
 	echo
 	echo "add channel names to the file $sublistpath to show them"
 	echo "in yt -c option. First word should be channel url, optionally"
@@ -35,7 +36,7 @@ if [[ ${#} -eq 0 ]]; then
 fi
 
 # available flags
-optstring=":s:cgrh"
+optstring=":s:cgrhm"
 
 defcmd="fzf"
 defaction="s"
@@ -47,6 +48,7 @@ promptcmd="$defcmd"
 action="$defaction"
 isGui="f"
 query=""
+mpv_options=""
 
 # subscription list
 mkdir -p "${HOME:-}/.config/yt"
@@ -70,6 +72,9 @@ if [[ $useDefaults = "f" ]]; then
                 # set gui mode to true and change the prompt to gui prompt
                 isGui="t"
                 promptcmd="$guicmd" ;;
+            m)
+               # make the mpv headless
+                mpv_options+="--no-video" ;;
             h) 
                 # display help / usage
                 usage ;;
@@ -150,7 +155,7 @@ if [[ $action = "c" ]]; then
       id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
       echo -e "$choice\t($id)"
       case $id in
-          ???????????) mpv "$videolink$id";;
+          ???????????) mpv "$videolink$id" "$mpv_options" ;;
           *) exit ;;
       esac
     done
@@ -186,9 +191,9 @@ else
         echo -e "$choice\t($id)"
         case $id in
             # 11 digit id = video
-            ???????????) mpv "$videolink$id";;
+            ???????????) mpv "$videolink$id" "$mpv_options" ;;
             # 34 digit id = playlist
-            ??????????????????????????????????) mpv "$playlink$id";;
+            ??????????????????????????????????) mpv "$playlink$id" "$mpv_options" ;;
             *) exit ;;
         esac
     done
