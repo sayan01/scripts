@@ -10,6 +10,7 @@ function usage () {
     echo "    -c 	 		channels/subscriptions"
     echo "    -s query 		search"
 	echo "    -g / -r 		gui mode (rofi/dmenu)"
+    echo "    -m            music mode (audio only)"
 	echo "    nothing 		use defaults (search from prompt)"
 	echo
 	echo "add channel names to the file $sublistpath to show them"
@@ -47,6 +48,7 @@ promptcmd="$defcmd"
 action="$defaction"
 isGui="f"
 query=""
+mpv_options=""
 
 # subscription list
 mkdir -p "${HOME:-}/.config/yt"
@@ -70,6 +72,8 @@ if [[ $useDefaults = "f" ]]; then
                 # set gui mode to true and change the prompt to gui prompt
                 isGui="t"
                 promptcmd="$guicmd" ;;
+            m)
+                mpv_options+="--no-video ";;
             h) 
                 # display help / usage
                 usage ;;
@@ -150,7 +154,7 @@ if [[ $action = "c" ]]; then
       id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
       echo -e "$choice\t($id)"
       case $id in
-          ???????????) mpv "$videolink$id";;
+          ???????????) mpv "$mpv_options" "$videolink$id";;
           *) exit ;;
       esac
     done
@@ -186,9 +190,9 @@ else
         echo -e "$choice\t($id)"
         case $id in
             # 11 digit id = video
-            ???????????) mpv "$videolink$id";;
+            ???????????) mpv "$mpv_options" "$videolink$id";;
             # 34 digit id = playlist
-            ??????????????????????????????????) mpv "$playlink$id";;
+            ??????????????????????????????????) mpv "$mpv_options" "$playlink$id";;
             *) exit ;;
         esac
     done
