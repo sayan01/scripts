@@ -84,7 +84,7 @@ lock() {
 		--ringver-color=$ringvercolor --ringwrong-color=$ringwrongcolor \
 		--radius=100 --ring-width=20 --verif-text='' --wrong-text='' \
 		--verif-color="$verifcolor" --time-color="$timecolor" --date-color="$datecolor" \
-		--noinput-text=':O' --force-clock --time-str="%H:%M" "$lockargs"
+		--noinput-text=':O' --force-clock --time-str="%H:%M" --date-str="%A, %d %b" "$lockargs"
 }
 
 
