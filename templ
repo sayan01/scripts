@@ -22,11 +22,11 @@ TMPDIR="${HOME}/docs/libraries/templates"
 
 if ! test -r "${TMPDIR}/template.${extension}"; then
 	echo "$extension template not present in ${TMPDIR}"
-  echo -n "create it? y/N: "
-  read -r answer
-  if test "$answer" == 'y' ; then "$EDITOR" "${TMPDIR}/template.${extension}";
-    if ! test -r "${TMPDIR}/template.${extension}" ; then echo "file not saved" ; exit 1; fi
-  else exit 1; fi
+	echo -n "create it? y/N: "
+	read -r answer
+	if test "$answer" == 'y' ; then "$EDITOR" "${TMPDIR}/template.${extension}";
+		if ! test -r "${TMPDIR}/template.${extension}" ; then echo "file not saved" ; exit 1; fi
+	else exit 1; fi
 fi
 
 if ! test -e "${1}"; then
