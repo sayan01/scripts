@@ -22,11 +22,5 @@
 
 pkglist > ${PACKLIST}
 
-# once generated, use the pkglist to install any missing packages in others systems
-# using the command:
-# pkglist > pkghere
-# yay -S --needed $(diff pkghere pkglist | grep '^>' | cut -d' ' -f2 | tr '\n' ' ')
-
-# then remove extra packages present using:
-# pkglist > pkghere
-# yay -Rns $(diff pkghere pkglist  | grep "^<" | cut -d' ' -f2 | tr '\n' ' ')
+# once generated, use pkgsync to install any missing packages in others systems
+# and remove extra packages present
