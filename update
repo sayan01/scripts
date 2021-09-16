@@ -1,2 +1,0 @@
-#!/bin/bash
-sudo pacman-mirrors -c all && sudo pacman -Syy

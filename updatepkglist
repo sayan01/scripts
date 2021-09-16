@@ -1,2 +1,24 @@
 #!/bin/bash
+
+# To be run as a pacman hook, so PKGLIST should be defined in /etc/environment
+# and a hook file to be created and put in /etc/pacman.d/hooks/
+# Example hooks file:
+
+#[Trigger]
+#Operation = Install
+#Operation = Upgrade
+#Operation = Remove
+#Type = Package
+#Target = *
+#
+#[Action]
+#Description = Update the package list
+#Exec = /home/sayan/scripts/updatepkglist
+#When = PostTransaction
+#Depends = coreutils
+#Depends = pacman
+
+
+
 pacman -Q | cut -d' ' -f1 > ${PKGLIST}
+
