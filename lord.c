@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 	}
 
 	lower(color); // convert hex to lowercase
-	if (! validatehex(color)) error("Invalid hex code"); // if hexcode not valid
+	if (! validatehex(color)) error("Invalid hex code"); // if hexcode not valid, checks length = 6 too
 	int icolor = hextoint(color); // get int representation of 16bit hex
 	free(color);	// the string is no longer needed
 	int r = (icolor >> 16) & 0xff;	// get red value (0-255)
