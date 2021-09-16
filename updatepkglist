@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# To be run as a pacman hook, so PKGLIST should be defined in /etc/environment
+# To be run as a pacman hook, so PACKLIST should be defined in /etc/environment
 # and a hook file to be created and put in /etc/pacman.d/hooks/
 # Example hooks file:
 
@@ -20,5 +20,13 @@
 
 
 
-pacman -Q | cut -d' ' -f1 > ${PKGLIST}
+pkglist > ${PACKLIST}
 
+# once generated, use the pkglist to install any missing packages in others systems
+# using the command:
+# pkglist > pkghere
+# yay -S --needed $(diff pkghere pkglist | grep '^>' | cut -d' ' -f2 | tr '\n' ' ')
+
+# then remove extra packages present using:
+# pkglist > pkghere
+# yay -Rns $(diff pkghere pkglist  | grep "^<" | cut -d' ' -f2 | tr '\n' ' ')
