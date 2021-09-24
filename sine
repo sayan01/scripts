@@ -10,5 +10,5 @@ if [ "$2" == "0" ]
 then
 	dur="0.000001"
 fi
-timeout -s HUP "$dur" speaker-test -f "$freq" -t sine > /dev/null
+ffplay -f lavfi -i "sine=frequency=${freq}:duration=${dur}" -nodisp -autoexit &> /dev/null
 exit 0
