@@ -1,0 +1,88 @@
+#!/bin/bash
+# netspeed
+# print the system's download and upload speed
+# using /sys/class/net files
+# stores a temporary file in HOME/.cache/netspeed 
+# uses formula SPEED = ( BYTES_NOW - BYTES_THEN (file) ) / TIME_DIFFERENCE
+# this gives the average speed between this and last call
+# to keep it close to instantaneous speed, keep call delta low (near to 1/sec)
+
+# usage:
+# netspeed [device name]
+# device name - the name of the net adapter. Find yours using `ip link`
+# ignore the lo (loopback device)
+# if not providing device name on commandline arguments then make a file at
+# HOME/.config/netspeed and store the device name in it
+# example `echo "eth0" > ~/.config/netspeed" `
+
+
+printspeed(){
+  speed=$1 # in bytes per second
+  speed=$( bc -l <<< "$speed * 8") # comment if you want BYTES/s instead of BITS/s
+  
+  kb=$((1000)) # using decimal ( 1kb = 1000b)
+  mb=$((kb*1000))
+  gb=$((mb*1000))
+  tb=$((gb*1000))
+
+  if (( $(bc -l <<< "$speed >= $tb") )); then
+		printf "%3.0f Tb/s" "$(bc -l <<< "$speed / $tb")" 
+	elif (( $(bc -l <<< "$speed >= $gb") )); then
+		printf "%3.0f Gb/s" "$(bc -l <<< "$speed / $gb")" 
+	elif (( $(bc -l <<< "$speed >= $mb") )); then
+		printf "%3.0f Mb/s" "$(bc -l <<< "$speed / $mb")" 
+	elif (( $(bc -l <<< "$speed >= $kb") )); then
+		printf "%3.0f Kb/s" "$(bc -l <<< "$speed / $kb")" 
+	else
+		printf "%4.0f b/s" "$speed"
+	fi
+}
+
+TMPFILE="$HOME/.cache/netspeed"
+CONFFILE="$HOME/.config/netspeed"
+
+if test -n "$1"; then DEV="$1";
+elif test -e "$CONFFILE" && test -n "$(cat "$CONFFILE")"; then
+  DEV="$(cat "$CONFFILE")"
+else 
+  echo "Either create a ${CONFFILE} with device name, or pass device name as arguments"
+  echo "Maybe device name is $(netadn)"
+  echo "Usage $( basename "$0") [device name]"
+  exit 1
+fi
+RXFILE="/sys/class/net/$DEV/statistics/rx_bytes"
+TXFILE="/sys/class/net/$DEV/statistics/tx_bytes"
+
+if test -e "$TMPFILE" && test -n "$(cat "$TMPFILE")"; then
+  TMPDATA="$(cat "$TMPFILE")"
+
+  EPOCHOLD="$(echo "$TMPDATA" | cut -f 1)"
+  RXOLD="$(echo "$TMPDATA" | cut -f 2)"
+  TXOLD="$(echo "$TMPDATA" | cut -f 3)"
+
+  EPOCHNEW="$(date +%s.%N)"
+  RXNEW="$(cat "$RXFILE")"
+  TXNEW="$(cat "$TXFILE")"
+  
+
+  EPOCHDIFF="$(bc -l <<< "$EPOCHNEW - $EPOCHOLD")" #seconds
+  RXDIFF="$(bc -l <<< "$RXNEW - $RXOLD")" #bytes
+  TXDIFF="$(bc -l <<< "$TXNEW - $TXOLD")" #bytes
+
+  UPSPEED="$(bc -l <<< "$TXDIFF / $EPOCHDIFF")" #bps
+  DOWNSPEED="$(bc -l <<< "$RXDIFF / $EPOCHDIFF")" #bps
+
+  printf ""
+  printspeed "$DOWNSPEED"
+  printf " "
+  printspeed "$UPSPEED"
+  echo
+
+  echo -e "$EPOCHNEW\t$RXNEW\t$TXNEW" > "$TMPFILE"
+else
+  EPOCHNEW="$(date +%s.%N)"
+  RXNEW="$(cat "$RXFILE")"
+  TXNEW="$(cat "$TXFILE")"
+  echo -e "$EPOCHNEW\t$RXNEW\t$TXNEW" > "$TMPFILE"
+  $0
+fi
