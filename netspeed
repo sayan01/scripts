@@ -26,15 +26,15 @@ printspeed(){
   tb=$((gb*1000))
 
   if (( $(bc -l <<< "$speed >= $tb") )); then
-		printf "%3.0f Tb/s" "$(bc -l <<< "$speed / $tb")" 
+		printf "%3.0f T" "$(bc -l <<< "$speed / $tb")" 
 	elif (( $(bc -l <<< "$speed >= $gb") )); then
-		printf "%3.0f Gb/s" "$(bc -l <<< "$speed / $gb")" 
+		printf "%3.0f G" "$(bc -l <<< "$speed / $gb")" 
 	elif (( $(bc -l <<< "$speed >= $mb") )); then
-		printf "%3.0f Mb/s" "$(bc -l <<< "$speed / $mb")" 
+		printf "%3.0f M" "$(bc -l <<< "$speed / $mb")" 
 	elif (( $(bc -l <<< "$speed >= $kb") )); then
-		printf "%3.0f Kb/s" "$(bc -l <<< "$speed / $kb")" 
+		printf "%3.0f K" "$(bc -l <<< "$speed / $kb")" 
 	else
-		printf "%4.0f b/s" "$speed"
+		printf "%4.0f B" "$speed"
 	fi
 }
 
