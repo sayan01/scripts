@@ -34,7 +34,7 @@ printspeed(){
 	elif (( $(bc -l <<< "$speed >= $kb") )); then
 		printf "%3.0f K" "$(bc -l <<< "$speed / $kb")" 
 	else
-		printf "%4.0f B" "$speed"
+		printf "%3.0f B" "$speed"
 	fi
 }
 
