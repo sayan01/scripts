@@ -48,7 +48,7 @@ promptcmd="$defcmd"
 action="$defaction"
 isGui="f"
 query=""
-mpv_options=""
+mpv_options="--cache=auto"
 
 # subscription list
 mkdir -p "${HOME:-}/.config/yt"
