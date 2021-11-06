@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ -r "$HOME/.config/bar" ]; then
-	commands=$(cat ~/.config/bar)
+	commands="$(cat ~/.config/bar)"
 else commands="date"
 fi
 left="["
@@ -9,7 +9,7 @@ for com in $commands
 do
 	co="$($com)"
 	if [ "$co" == "" ]; then continue; fi
-	output="$output$left$co$right"
+	output="${output}${left}${co}${right}"
 done
 echo "$output" | tr -d '\n'
 echo
