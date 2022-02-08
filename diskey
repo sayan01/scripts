@@ -1,0 +1,4 @@
+#!/bin/bash
+# disables internal keyboard of laptop
+
+xinput float $(xinput list | grep -Po 'AT Translated Set 2.*id=\K\d*')

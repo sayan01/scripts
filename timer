@@ -1,11 +1,11 @@
 #!/bin/bash
 beep(){
-	sine 500 0.1
-	sine 600 0.1
-	sine 500 0.1
-	sine 600 0.1
+	sine 500 0.05
+	sine 600 0.05
+	sine 500 0.05
+	sine 600 0.05
 }
-if [ -z "$1" ]; then echo "usage: $(basename "$0") time"
+if [ -z "$1" ]; then echo "usage: $(basename "$0") time [&]"
 	exit
 fi
 sleep "$1"

@@ -1,0 +1,3 @@
+#!/bin/bash
+path="${HOME}/docs/libraries/snippets"
+cat "$path/$(find "$path" -type f | xargs -I{} basename {} |  rofi -dmenu )" | xsel -ib
