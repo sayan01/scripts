@@ -50,6 +50,22 @@ isGui="f"
 query=""
 mpv_options=""
 
+max_resolution="480"
+max_fps="30"
+ignore_codec=""
+ytdlformats="bestvideo"
+
+if [ -n "$max_resolution" ] ; then
+  ytdlformats+="[height<=?$max_resolution]"
+fi
+if [ -n "$max_fps" ] ; then
+  ytdlformats+="[fps<=?$max_fps]"
+fi
+if [ -n "$ignore_codec" ] ; then
+  ytdlformats+="[vcodec!=$ignore_codec]"
+fi
+ytdlformats+="+bestaudio/best"
+
 # subscription list
 mkdir -p "${HOME:-}/.config/yt"
 sublistpath="${HOME:-}/.config/yt/sublist"
@@ -155,7 +171,7 @@ if [[ $action = "c" ]]; then
       id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
       echo -e "$choice\t($id)"
       case $id in
-          ???????????) mpv "$videolink$id" "$mpv_options" ;;
+          ???????????) mpv "$videolink$id" "$mpv_options" --ytdl-format="$ytdlformats";;
           *) exit ;;
       esac
     done
@@ -191,9 +207,9 @@ else
         echo -e "$choice\t($id)"
         case $id in
             # 11 digit id = video
-            ???????????) mpv "$videolink$id" "$mpv_options" ;;
+            ???????????) mpv "$videolink$id" $mpv_options --ytdl-format="$ytdlformats";;
             # 34 digit id = playlist
-            ??????????????????????????????????) mpv "$playlink$id" "$mpv_options" ;;
+            ??????????????????????????????????) mpv "$playlink$id" $mpv_options --ytdl-format="$ytdlformats";;
             *) exit ;;
         esac
     done
