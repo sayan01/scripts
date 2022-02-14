@@ -28,13 +28,13 @@ if ! adb shell monkey -p com.dev47apps.droidcam 1 ; then
 	 exit 1
 fi
 
-notify-send -t 3000 -i $con -a "Webcam" "Webcam ON" 
 touch ~/.cache/webcam.lock # create flag file
 
 # to allow app to launch, delay for a few seconds
-sleep 2.5
+sleep 5.5
 # start the droidcam client
 droidcam-cli 0.0.0.0 4747 </dev/null  &>/dev/null & 
+notify-send -t 3000 -i $con -a "Webcam" "Webcam ON" 
 
 if [ "$1" != "-q" ] # if not run quietly open mpv
 then

@@ -13,4 +13,5 @@ cb=$(xbacklight -get)
 trap 'exit 0' TERM INT
 trap 'xbacklight -set $cb' EXIT
 xbacklight -time $fade_time -steps $fade_steps -set $min_brightness
+notify-send "Locking Screen due to Inactivity"
 sleep inf
