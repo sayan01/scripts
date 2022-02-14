@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# dependencies - jq, sxiv, xclip, rofi
+
+exito(){
+  rm "$output"
+  rm "$names"
+  exit "$1"
+}
+
+output="$(mktemp)"
+names="$(mktemp)"
+configdir="${HOME}/.config/memer"
+config="${configdir}/imgflip-credentials"
+
+curl -s -X GET https://api.imgflip.com/get_memes > "$output"
+if [ ! -r "$output" ] ; then exito ; fi
+jq .data.memes[].name -r <"$output" > "$names"
+if [ ! -r "$names" ] ; then exito ; fi
+name="$(rofi -dmenu -p "memes" -no-custom -i <"$names")"
+
+if [ -z "$name" ]; then exito; fi
+
+uo="$(echo -e "1 Copy Template\n2 Copy with Text" | rofi -dmenu -no-custom -p "Mode?")"
+
+if  echo "$uo" | grep -q "1" ; then
+  url="$(jq <"$output" | grep "$name" -A1 -m1 | grep -Po 'http.*((jpg)|(png))')" # most proabably there is a way of doing this with jq, too lazy to figure it out
+else
+# if copying with text, first get meme with placeholder text
+  if [ ! -r "${config}" ] ; then 
+    echo "config file at $config is absent, quitting"
+    exito 1
+  fi
+
+  username="$(head -n1 "$config")"
+  password="$(tail -n1 "$config")"
+  boxcount="$(jq <"$output" | grep "$name" -A4 | tail -n1 | grep -Po '\d*')"
+  id="$(jq <"$output" | grep "$name" -B1 -m1 | grep -Po '\d*')"
+
+# show template with placeholder numbers
+
+  echo "form \"template_id=$id\"" > "$configdir/t"
+  echo "form \"username=$username\"" >> "$configdir/t"
+  echo "form \"password=$password\"" >> "$configdir/t"
+  
+  for i in $(seq "$boxcount" ) ; do
+    echo "form \"boxes[$(( i - 1 ))][text]=$i\"" >> "$configdir/t"
+  done
+  echo "url = \"https://api.imgflip.com/caption_image\" " >> "$configdir/t"
+
+  textedres="$(curl -s -X POST -K "$configdir/t" )"
+
+  if echo "$textedres" | grep -q "false" ; then 
+    echo "Failure!"
+    echo "$textedres" | jq
+    notify-send -a "memer" "Error getting meme"
+    exito 1
+  fi
+  url=$(echo "$textedres" | jq -r .data.url )
+
+  if [ -z "$url" ]; then exito; fi
+
+  curl -s "$url" -o "$configdir/${name}"
+
+  sxiv "$configdir/${name}" &  # show template with placeholder text to user
+  notify-send -a "memer" "Enter textboxes according to order given"
+
+# take actual input
+
+  echo "form \"template_id=$id\"" > "$configdir/t"
+  echo "form \"username=$username\"" >> "$configdir/t"
+  echo "form \"password=$password\"" >> "$configdir/t"
+  for i in $(seq "$boxcount" ) ; do
+    text=$(echo "" | rofi -dmenu -p "Enter text${i}/${boxcount}: ")
+    echo "form \"boxes[$(( i - 1 ))][text]=$text\"" >> "$configdir/t"
+  done
+  echo "url = \"https://api.imgflip.com/caption_image\" " >> "$configdir/t"
+
+  textedres="$(curl -s -X POST -K "$configdir/t" )"
+
+  if echo "$textedres" | grep -q "false" ; then 
+    echo "Failure!"
+    echo "$textedres" | jq
+    notify-send -a "memer" "Error getting meme"
+    exito 1
+  fi
+  url=$(echo "$textedres" | jq -r .data.url )
+fi
+
+echo "$name - $url"
+
+if [ -z "$url" ]; then exito; fi
+
+curl -s "$url" -o "$configdir/${name}"
+
+if xclip -selection clipboard -t image/png -i "$configdir/${name}" ;
+then
+  notify-send -a "memer" "Meme Copied to Clipboard"
+fi
+
