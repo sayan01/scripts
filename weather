@@ -1,7 +1,8 @@
 #!/bin/bash
 file="$HOME/.cache/weatherinfo"
+location="$(cat "$HOME/.config/weatherloc")"
 get(){
-	info=$(curl -sf wttr.in/?format=%c%t | tr -d '+')
+	info=$(curl -sf "wttr.in/${location}?format=%c%t" | tr -d '+')
 	if echo "$info" |  grep -q '°'; then
 		echo "$info" > "$file"
 	fi
