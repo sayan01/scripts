@@ -1,0 +1,19 @@
+#!/bin/bash
+tmpfile=$(mktemp)
+scriptfile="${HOME}/.config/keyboardhook"
+
+while true; do
+	keyids="$(lsusb | grep -i 'keyboard' | grep -oP 'ID \K.{4}:.{4}')"
+	prevkeyids="$(cat "$tmpfile")"
+	if [ "$keyids" != "$prevkeyids" ] ; then
+		
+		while IFS="" read -r com || [ -n "$com" ]
+		do
+			$com 
+		done <"$scriptfile"
+	fi
+	echo "$keyids" > "$tmpfile"
+	sleep 0.1
+done
+
+rm "$tmpfile"

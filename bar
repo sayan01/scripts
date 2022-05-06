@@ -5,11 +5,11 @@ else commands="date"
 fi
 left="["
 right="]"
-for com in $commands
+while IFS="" read -r com || [ -n "$com" ]
 do
 	co="$($com)"
 	if [ "$co" == "" ]; then continue; fi
 	output="${output}${left}${co}${right}"
-done
+done < <(echo "$commands")
 echo "$output" | tr -d '\n'
 echo
