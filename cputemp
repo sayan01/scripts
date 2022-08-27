@@ -8,5 +8,9 @@ case $temp in
 	[78]?) emo="";;
 	*) emo="🌡";;
 esac
-echo "$emo $temp°C"
+if [ $test -gt 70 ]; then
+	echo "$emo $temp°C"
+else
+	echo "$emo"
+fi
 

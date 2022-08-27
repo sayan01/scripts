@@ -13,7 +13,7 @@ while true; do
 		done <"$scriptfile"
 	fi
 	echo "$keyids" > "$tmpfile"
-	sleep 0.1
+	sleep 0.01
 done
 
 rm "$tmpfile"

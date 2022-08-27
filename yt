@@ -1,4 +1,11 @@
 #!/bin/bash
+# DISCLAIMER: this script has been started solely by me (sayan01)
+# and has had contributions from others like Nicholas-Baron and 
+# juanCortelezzi (refer to contributors on github for details)
+# this script is not based off of any other work by anyone else, 
+# nor is it made in association with anyone else, regardless of 
+# their claims.
+
 # dependencies: mpv youtube-dl fzf rofi/dmenu gnu-grep
 
 # NOTE:  if you dont have gnu grep you can replace grep with rg
