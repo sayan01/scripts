@@ -2,7 +2,8 @@
 # relaunch DWM if the binary changes, otherwise bail
 conf="$HOME/.config/startdwm"
 
-~/.xprofile
+~/.xprofile &
+# ~/.local/share/dwm/autostart.sh &
 [ -e ~/.fehbg ] && ~/.fehbg &
 
 csum=""
