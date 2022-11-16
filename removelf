@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xsel -ob | tr '\n' ' ' | xsel -ib
