@@ -26,6 +26,10 @@ prompt(){
 		done
 		p=$p"$(color Red) $ec$def\n"	#then show exit code in red in prompt
 	fi
+  
+  if type deactivate &> /dev/null ; then
+    p=$p"(venv)\n" # show (venv) if inside a python venv
+  fi
 
 					# No of files in current working directory (unhidden)
 	nof=$(find . -mindepth 1 -maxdepth 1 | grep -cv "^\./\.")
