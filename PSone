@@ -28,7 +28,7 @@ prompt(){
 	fi
   
   if type deactivate &> /dev/null ; then
-    p=$p"(venv)\n" # show (venv) if inside a python venv
+    p=$p"$(color Yellow)(venv)\n" # show (venv) if inside a python venv
   fi
 
 					# No of files in current working directory (unhidden)
