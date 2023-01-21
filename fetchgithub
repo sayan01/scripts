@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "# Remove which repositories you dont want to clone here or comment them" > repos
+curl -H "Authorization: token $(echo $GITHUB_FETCH_TOKEN)"  "https://api.github.com/search/repositories?q=user:sayan01" | grep 'ssh_url' | cut -d'"' -f4  >> repos
+vim repos
+grep -v "^#" repos | xargs -I{} git clone {}

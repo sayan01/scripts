@@ -1,11 +1,2 @@
 #!/bin/bash
-# print battery backup for all the batteries present
-for bat in /sys/class/power_supply/BAT*; do
-	power=$(cat "$bat"/power_now)
-	energy=$(cat "$bat"/energy_now)
-	status=$(cat "$bat"/status)
-	case $status in
-		Charging|Not*) exit;;
-		*) echo "$(echo "scale=1;$energy/$power" | bc) hr";;
-	esac
-done
+echo "$(acpi -b | cut -d, -f3 | cut -d: -f1-2) hr"
