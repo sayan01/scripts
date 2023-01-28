@@ -10,6 +10,9 @@ then
 elif [[ "$f" == *.java ]] || [ -e "$f.java" ]
 then
 	javacar "$@"
+elif [[ "$f" == *.py ]] || [ -e "$f.py" ]
+then
+	pycar "$@"
 else
 	echo "Unknown file format or file not present"
 	echo "Supported file formats: .c  .cpp  .java"

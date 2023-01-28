@@ -1,0 +1,6 @@
+#!/bin/bash
+f="$1"
+shift
+f=${f%.py} # remove .py from filename if it exists
+echo "$(colr pink)python3 ${f}.py $* $(colr default)"
+python3 "${f}.py" "$@"
