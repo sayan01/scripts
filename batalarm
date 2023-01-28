@@ -11,7 +11,7 @@ while true; do
 	if [ "$status" != "Discharging" ]; then
 		continue
 	fi
-	if [[ $capacity -lt 10 ]] ; then 
+	if [[ $capacity -lt 15 ]] ; then 
 		ring
 		sleep "$capacity"
 	fi
