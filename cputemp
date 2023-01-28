@@ -1,5 +1,5 @@
 #!/bin/bash
-temp=$(sensors | grep -Pio "^tctl|cpu:.+\+\K\d+")
+temp=$(sensors | grep -Pio "^(tctl|cpu):.+\+\K\d+")
 case $temp in
 	[0123]?|?) emo="";;
 	4?) emo="";;
