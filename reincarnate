@@ -1,0 +1,16 @@
+#!/bin/bash
+
+cache="$HOME/.cache/reincarnate"
+
+if ! [ -f "$cache" ] ; then
+  echo "$cache is not present, nothing to restore"
+  exit
+fi
+
+echo "# delete or comment out applications you dont want to restore" > "${cache}.tmp"
+cat "$cache" >> "${cache}.tmp"
+${EDITOR:=vi} "${cache}.tmp"
+grep -v '^#' "${cache}.tmp" | cut -f2 | while IFS="" read line ; do coproc "$line" ; done
+notify-send -a "reincarnate" "Reincarnation Successful"
+
+restart reincarnate-d && echo "Started reincarnate-d daemon. Watching"

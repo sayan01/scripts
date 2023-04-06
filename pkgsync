@@ -18,15 +18,6 @@ else
   echo "Nothing to install"
 fi
 
-# then remove extra packages present:
-pkglist > "$pkghere"
-dellist="$(diff "$pkghere" "$pkglist"  | grep "^<" | cut -d' ' -f2 | tr '\n' ' ')"
-if test -n "$dellist" ; then
-  echo "Removing packages: $dellist"
-  yay -Rns $dellist
-else
-  echo "Nothing to remove"
-fi
 
 # remove temporary files
 rm "$pkglist"
