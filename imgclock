@@ -13,11 +13,8 @@ src="$1"
 dest="${2:-output.jpg}"
 convert \
 	"$src" \
-	-geometry 1920:1080 \
-	-fill "#00000066" \
-	-draw "roundrectangle 720,990 1200,1080 5,5" \
-	-gravity center \
-	-pointsize 50 \
-	-fill "#ffffffaa" \
-	-annotate +0+505 "$(clock)" \
+	-gravity North \
+	-pointsize 500 \
+	-fill "#ffffff88" \
+	-annotate +0+405 "$(clock)" \
 	"$dest"
