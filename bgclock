@@ -21,5 +21,5 @@ while true; do
 	if [ ! -r "${HOME}"/.fehbg ]; then feh --bg-fill "$outputimagefile"
 	else "${HOME}"/.fehbg
 	fi
-	sleep 1
+	sleep 0.1
 done

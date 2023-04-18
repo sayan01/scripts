@@ -22,7 +22,7 @@ then
 fi
 # display volume
 ps=$(amixer get Master | tail -n1)
-vol=$(echo "$ps" | grep -Po ".*\[\K\d*%")
+vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
 mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
 case $mute in
 	on) echo " $vol";;

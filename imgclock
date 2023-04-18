@@ -11,10 +11,15 @@ if [ ! -r "$1" ]; then
 fi
 src="$1"
 dest="${2:-output.jpg}"
-convert \
-	"$src" \
+
+configpath="$HOME/.config/imgclock"
+
+if [ -x "$configpath" ] ; then "$configpath" "$src" "$dest" ;
+else 
+  convert "$src" \
 	-gravity North \
-	-pointsize 500 \
+	-pointsize 100 \
 	-fill "#ffffff88" \
-	-annotate +0+405 "$(clock)" \
-	"$dest"
+	-annotate +0+155 "$(clock)" \
+  "$dest"
+fi
