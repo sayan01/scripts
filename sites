@@ -1,6 +1,6 @@
 #!/bin/bash
 # open favourite sites with browser through rofi menu
-input=$(rofi -theme ~/.local/share/rofi/themes/onedark.rasi -dmenu -i -scroll-method 1 -p ' open' <  ~/.config/sites.conf | cut -d'	' -f2)
+input=$(rofi -dmenu -i -scroll-method 1 -p ' open' <  ~/.config/sites.conf | cut -d'	' -f2)
 
 if [[ -n "$input" ]] && [ "$input" != "new" ]
 then
