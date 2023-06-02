@@ -14,8 +14,11 @@ dest="${2:-output.jpg}"
 
 configpath="$HOME/.config/imgclock"
 
-if [ -x "$configpath" ] ; then "$configpath" "$src" "$dest" ;
+if [ -x "$configpath" ] ; then 
+  "$configpath" "$src" "$dest" ;
+  echo "Using $configpath"
 else 
+  echo "Using defaults"
   convert "$src" \
 	-gravity North \
 	-pointsize 100 \
