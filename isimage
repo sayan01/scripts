@@ -1,2 +1,2 @@
 #!/bin/bash
-file "$1" | grep -qE 'image|bitmap' && identify "$1" >/dev/null 2>&1
+file "$(realpath $1)" | grep -qE 'image|bitmap' && identify "$1" >/dev/null 2>&1

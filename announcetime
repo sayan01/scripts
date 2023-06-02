@@ -1,0 +1,12 @@
+#!/bin/bash
+# announce the time every hour
+#
+while true; do
+  min="$(date +%M)"
+
+  if [[ "$min" =~ (00|15|30|45) ]] ; then
+    echo "It is now $(date +%l%t%M%t%p)" | flite
+  fi
+
+  sleep 60
+done

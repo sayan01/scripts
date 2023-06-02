@@ -6,7 +6,7 @@ if ! test -d "$listpath"; then
 	exit 1
 fi
 
-for file in "$listpath"/*; do
+for file in "$listpath"/*.auto; do
 	trunclist="$(grep -o "^\w*" "$file" | tr '\n' ' ')"
 	choice=$( echo "yes|no" | \
 		rofi -dmenu -no-custom -i -sep '|' \
