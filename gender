@@ -1,0 +1,21 @@
+#!/bin/bash
+
+usage(){
+  echo " usage:
+  $(basename "$0") name "
+
+}
+
+if [[ -z "$1" ]] ; then
+  usage
+  exit
+fi
+
+name="$1"
+
+output="$(curl -s "https://api.genderize.io/?name=${name}")"
+gender="$(jq -r .gender <<<"$output")"
+probability="$(jq -r .probability <<<"$output")"
+echo "$gender ($probability)"
+
+

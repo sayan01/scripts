@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# extract a youtube thumbnail from link using yt-dlp
+
+# get the link
+link="$1"
+
+#extract id from link
+
+id="$(echo "$link" | grep -oP '.{11}$')"
+
+# get the thumbnail
+thumbnail="$(yt-dlp --get-thumbnail "$link")"
+
+# get the extension
+ext="$(echo "$thumbnail" | awk -F. '{print $NF}')"
+
+filename="${id}.${ext}"
+
+echo "$thumbnail"
+echo "download? [Y/n]"
+read -r download
+
+# download the thumbnail if requested
+if [[ "$download" != "n" ]]; then
+    echo "downloading into $filename"
+    wget "$thumbnail" --quiet -O "$filename" || exit 1
+fi
+
