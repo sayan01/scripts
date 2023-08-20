@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# open recently downloaded item
+
+cd "$HOME/down" || exit 1
+xdg-open "$(ls -t | head -n 1)"
