@@ -1,0 +1,7 @@
+#!/bin/bash
+
+words=$(xsel -ob | wc -w)
+chars=$(xsel -ob | wc -c)
+lines=$(xsel -ob | wc -l)
+
+notify-send -a "clipwords" "Cliboard has $words words" "Words: $words\nChars: $chars\nLines: $lines"

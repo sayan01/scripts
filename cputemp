@@ -8,7 +8,7 @@ case $temp in
 	[78]?) emo="";;
 	*) emo="🌡";;
 esac
-if [ $temp -gt 70 ]; then
+if [[ $temp -gt 70 || "$1" == "-v" || "$1" == "--verbose" ]]; then
 	echo "$emo $temp°C"
 else
 	echo "$emo"
