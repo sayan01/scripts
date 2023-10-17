@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# run the last created file
+
+car "$(ls -t | head -n1)"

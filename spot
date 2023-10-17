@@ -1,4 +1,4 @@
 #!/bin/bash
 # run spotify without ads
-env LD_PRELOAD=/usr/lib/spotify-adblock.so spotify --no-zygote %U
+env LD_PRELOAD=/usr/lib/spotify-adblock.so /opt/spotify/spotify --no-zygote %U
 
