@@ -1,5 +1,5 @@
 #!/bin/bash
-# one command to set, increase, decrease, mute, and 
+# one command to set, increase, decrease, mute, and
 # display sink volume
 
 ## usage:
@@ -10,12 +10,14 @@
 ## vol -14%      -> decrease the volume by 14%
 ## vol mute      -> toggle volume mute (turns mute on/off)
 cmd="volume"
-if [ -n "$1" ]
+step="5"
+if [[ -n "$1" ]]
 then
 	case $1 in
-		up) val="+5%";;
-		down) val="-5%";;
+		up) val="+${step}%";;
+		down) val="-${step}%";;
 		mute) cmd="mute"; val="toggle";;
+		bar) val="+0%" ;;
 		*) val=$1;;
 	esac
 	pactl -- set-sink-"$cmd" "@DEFAULT_SINK@" "$val"
@@ -24,7 +26,25 @@ fi
 ps=$(amixer get Master | tail -n1)
 vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
 mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
+# show the volume bar using ascii characters
+display_steps=10
+bar=""
+for i in $(seq 0 $((100 / display_steps)) 100) ; do
+  # compare the vol with i after removing the % from end of vol
+  if [[ "${vol//%/}" -ge "$i" ]]; then
+    bar="${bar}#"
+  else
+    bar="${bar}-"
+  fi
+done
+if [[ ${vol//%/} -gt 100 ]]; then
+  bar="${bar}+"
+fi
+output="$vol"
+if [[ "$1" == "bar" ]]; then
+  output="$bar"
+fi
 case $mute in
-	on) echo " $vol";;
+	on) echo " $output";;
 	*)  echo "🔇";;
 esac
