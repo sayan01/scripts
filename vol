@@ -31,9 +31,9 @@ display_steps=5
 filled_symbol="█"
 empty_symbol="░"
 bar=""
-for i in $(seq 0 $((100 / display_steps)) 100) ; do
+for i in $(seq 1 $((100 / display_steps)) 100) ; do
   # compare the vol with i after removing the % from end of vol
-  if [[ "${vol//%/}" -gt "$i" ]]; then
+  if [[ "${vol//%/}" -ge "$i" ]]; then
     bar="${bar}${filled_symbol}"
   else
     bar="${bar}${empty_symbol}"
