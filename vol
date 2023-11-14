@@ -27,14 +27,16 @@ ps=$(amixer get Master | tail -n1)
 vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
 mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
 # show the volume bar using ascii characters
-display_steps=10
+display_steps=5
+filled_symbol="█"
+empty_symbol="░"
 bar=""
 for i in $(seq 0 $((100 / display_steps)) 100) ; do
   # compare the vol with i after removing the % from end of vol
-  if [[ "${vol//%/}" -ge "$i" ]]; then
-    bar="${bar}#"
+  if [[ "${vol//%/}" -gt "$i" ]]; then
+    bar="${bar}${filled_symbol}"
   else
-    bar="${bar}-"
+    bar="${bar}${empty_symbol}"
   fi
 done
 if [[ ${vol//%/} -gt 100 ]]; then

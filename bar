@@ -7,7 +7,7 @@ left="|"
 right=""
 while IFS="" read -r com || [ -n "$com" ]
 do
-	co="$(timeout 0.1s $com || echo "⚠️")"
+	co="$(timeout 0.5s $com || echo "⚠️")"
 	if [ "$co" == "" ]; then continue; fi
 	output="${output}${left}${co}${right}"
 done < <(echo "$commands"|grep -v '^#')

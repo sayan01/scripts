@@ -5,7 +5,7 @@ case $2 in
 esac
 if [ ! -e "$path" ]
 then
-	cp "${HOME}/scripts/generic" "$path" 
+	cp "${HOME}/scripts/generic" "$path"
 fi
 if [ "$EDITOR" = "" ]; then EDITOR=vim; fi
 "$EDITOR" "$path"
