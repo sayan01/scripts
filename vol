@@ -28,8 +28,8 @@ vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
 mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
 # show the volume bar using ascii characters
 display_steps=5
-filled_symbol="█"
-empty_symbol="░"
+filled_symbol="▰"
+empty_symbol="▱"
 bar=""
 for i in $(seq 1 $((100 / display_steps)) 100) ; do
   # compare the vol with i after removing the % from end of vol

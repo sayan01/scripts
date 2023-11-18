@@ -1,4 +1,3 @@
 #!/bin/bash
-while IFS= read -r dev; do
-	echo " $(lsblk /dev/"$dev" -rno FSAVAIL) "
-done < "$HOME/.config/diskspace.conf"
+cd /dev || exit 1
+lsblk $(< ~/.config/diskspace.conf) -rno FSAVAIL | paste -s
