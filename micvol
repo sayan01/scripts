@@ -1,7 +1,8 @@
 #!/bin/bash
-aout=$(amixer get Capture)
-vol=$(echo "$aout" | grep -oP "Right:.+\[\K\d+")
-case $aout in
-	*off*) echo "";;
-	*) echo " $vol%";;
+vol=$(amixer get Capture | grep '\[.*' -o | uniq)
+case $vol in
+  *off*)
+    echo "";;
+  *)
+    echo " ${vol:1:-6}";;
 esac
