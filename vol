@@ -25,24 +25,27 @@ fi
 # display volume
 ps=$(amixer get Master | tail -n1)
 vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
+vol=${vol//%/}
 mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
 # show the volume bar using ascii characters
-display_steps=5
-filled_symbol="▰"
-empty_symbol="▱"
+volume_symbol=(" " "_" "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█" )
+# print volume symbol according to percentage (using blocks and ascii chars)
 bar=""
-for i in $(seq 1 $((100 / display_steps)) 100) ; do
-  # compare the vol with i after removing the % from end of vol
-  if [[ "${vol//%/}" -ge "$i" ]]; then
-    bar="${bar}${filled_symbol}"
-  else
-    bar="${bar}${empty_symbol}"
-  fi
-done
-if [[ ${vol//%/} -gt 100 ]]; then
-  bar="${bar}+"
+if [[ "$1" == "bar" ]]; then
+  bar=""
+  bars=$(echo "scale=2; $vol/10" | bc)
+  bars=${bars%.*}
+    if [[ "$bars" -ge 10 ]]; then
+      index=9
+    else
+      index=$bars
+    fi
+    bar="$bar${volume_symbol[$index]}"
 fi
-output="$vol"
+if [[ "$vol" -ge 100 ]]; then
+  bar="${bar}⁺"
+fi
+output="${vol}%"
 if [[ "$1" == "bar" ]]; then
   output="$bar"
 fi
