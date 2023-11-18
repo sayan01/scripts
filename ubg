@@ -8,7 +8,7 @@
 
 # usage: ubg image [delta]
 
-# if you feel the accent color generated is too similar or too dissimilar to 
+# if you feel the accent color generated is too similar or too dissimilar to
 # dominant color of image, then pass 2nd argument delta. higher delta = more difference
 # default value of delta = 50
 
@@ -20,9 +20,8 @@ src="$1"
 
 path="${HOME}/.config/wall"
 
-if test -z "$1"; then error "usage: ubg image"; fi
+if test -z "$1"; then error "usage: ubg image [delta=50]"; fi
 if test ! -r "$src" ; then error "File $src does not exist or is unreadable"; fi
-if test -d "$src" ; then error "$src is not a image file, it is a directory"; fi
 if test -d "$src"; then error "$src is a directory, not an image" ; fi
 if ! isimage "$src"; then error "$src is not a valid image file" ; fi
 
@@ -36,7 +35,13 @@ src="$(basename "$src")"
 rm wall || exit 1
 # set background to be read by bgclock
 ln -s "$src" wall || exit 1
-echo "background set"
+echo "background symlink set"
+echo "set that as bg itself? (select n if using bgclock) [Y/n]"
+read -r ch
+if test "$ch" != "n"; then
+  feh --bg-fill "$src" || exit 1
+  echo "background set"
+fi
 # set lockscreen to be used by betterlockscreen, this takes a while
 betterlockscreen -u "$src" || exit 1
 echo "lockscreen set"
@@ -45,7 +50,7 @@ dc="$(domcol "$src")"
 # get if image color is light or dark
 contrast="$(lord "$dc")"
 # if image is dark, make accent lighter. if image is light, make accent darker
-case "$contrast" in 
+case "$contrast" in
 	"light") tone=-${delta} ;;
 	"dark") tone=${delta} ;;
 esac
@@ -55,7 +60,7 @@ accentcolor="$(hexcolortoner "$dc" "$tone")"
 contrast="$(lord "$accentcolor")"
 
 # if accentcolor is light, make text black, else make text white
-case "$contrast" in 
+case "$contrast" in
 	"light") textcolor="#111111";;
 	"dark") textcolor="#eeeeee";;
 esac
@@ -72,7 +77,15 @@ echo "theme written to $path"
 echo -n "do you want to write these themes to xresources? [Y/n] "
 read -r ch
 
-if test "$ch" == "n"; then exit 0; fi
-xrdb -merge .theme
-xrdb -edit "${HOME}/.Xresources"
-echo "theme applied and written to .Xresources. Restart dwm to reflect changes"
+if test "$ch" != "n"; then
+  echo "writing to xresources"
+  xrdb -merge .theme
+  xrdb -edit "${HOME}/.Xresources"
+  echo "theme applied and written to .Xresources. Restart dwm to reflect changes"
+  echo "restart dwm? [Y/n]"
+  read -r ch
+  if test "$ch" != "n"; then
+    restartdwm
+  fi
+fi
+
