@@ -1,0 +1,33 @@
+#!/bin/bash
+
+handle_property_change() {
+  music_album_dir="$HOME/.cache/music-albumart"
+  metadata=$(echo "$1" | grep -oP "(?<='Metadata': )<\{.*\}>")
+  artist=$(echo "$metadata" | grep -oP "(?<='xesam:artist': )<\[\K[^\]]+" | tr -d "'")
+  title=$(echo "$metadata" | grep -oP "(?<='xesam:title': )<'\K[^']+" )
+  album=$(echo "$metadata" | grep -oP "(?<='xesam:album': )<'\K[^']+" )
+  artUrl=$(echo "$metadata" | grep -oP "(?<='mpris:artUrl': )<'\K[^']+")
+  status=$(echo "$1" | grep -oP "(?<='PlaybackStatus': )<'\K[^']+" )
+  if [[ $status == "Playing" ]]; then
+    if [[ -n $artUrl ]]; then
+      baseurl=$(basename "$artUrl")
+      if [[ ! -f "$music_album_dir/$baseurl" ]]; then
+        convert "$artUrl" -resize 100x100 "$music_album_dir/$baseurl"
+      fi
+    fi
+    notify-send -t 5000 "$title" "$artist" -a "$album" -i "$music_album_dir/$baseurl"
+  fi
+}
+
+player=$(cat "${HOME}/.config/mc.conf")
+if [[ -z $player ]]; then
+  player=$(playerctl -l | head -n 1)
+fi
+
+command="gdbus monitor --session --dest org.mpris.MediaPlayer2.$player --object-path /org/mpris/MediaPlayer2"
+
+while read -r line; do
+    if [[ $line == *"PropertiesChanged"* ]]; then
+        handle_property_change "$line"
+    fi
+done < <($command)
