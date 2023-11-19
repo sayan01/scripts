@@ -1,8 +1,40 @@
 #!/bin/bash
+# one command to set, increase, decrease, mute, and
+# display mic volume
+# usage:
+# micvol           -> displays the current volume
+# micvol up/down   -> increase/decrease volume by 5%
+# micvol 52%       -> set the volume to 52%
+# micvol 17%+      -> increase the volume by 17%
+# micvol 14%+      -> decrease the volume by 14%
+# micvol mute      -> toggle volume mute (turns mute on/off)
+# micvol bar       -> display volume as a bar
+
+step="5"
+if [[ -n "$1" ]]
+then
+  case $1 in
+    up) val="${step}%+";;
+    down) val="${step}%-";;
+    mute) val="toggle";;
+    bar) val="0%+" ;;
+    *) val=$1;;
+  esac
+  # if + at start, move to end
+  if [[ "${val:0:1}" == "+" ]]; then
+    val="${val:1}${val:0:1}"
+  fi
+  amixer set Capture "$val" -q
+fi
+# display volume
 vol=$(amixer get Capture | grep '\[.*' -o | uniq)
+# print volume symbol according to percentage
+if [[ "$1" == "bar" ]]; then
+  output="$(vbar 0 100 "${vol:1:-7}")"
+else
+  output="${vol:1:-6}"
+fi
 case $vol in
-  *off*)
-    echo "";;
-  *)
-    echo " ${vol:1:-6}";;
+  *off*) echo "";;
+  *) echo " $output";;
 esac

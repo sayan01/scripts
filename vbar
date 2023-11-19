@@ -1,0 +1,32 @@
+#!/bin/bash
+# usage:
+# vbar min max value
+
+if [ $# -ne 3 ]; then
+    echo "usage: vbar min max value"
+    exit 1
+fi
+
+symbols=(" " "_" "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█")
+
+min=$1
+max=$2
+value=$3
+
+if [[ "$value" -lt "$min" ]]; then
+    value=$min
+fi
+
+index=$(echo "($value - $min) / ($max - $min) * 10" | bc -l | cut -d '.' -f 1)
+
+if [[ "$index" -gt 9 ]]; then
+    index=9
+fi
+
+output="${symbols[$index]}"
+
+if [[ $value -gt $max ]]; then
+  output="${output}⁺"
+fi
+
+echo "$output"

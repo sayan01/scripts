@@ -9,6 +9,7 @@
 ## vol +17%      -> increase the volume by 17%
 ## vol -14%      -> decrease the volume by 14%
 ## vol mute      -> toggle volume mute (turns mute on/off)
+## vol bar       -> display volume as a bar
 cmd="volume"
 step="5"
 if [[ -n "$1" ]]
@@ -20,24 +21,22 @@ then
 		bar) val="+0%" ;;
 		*) val=$1;;
 	esac
+	# if + at end, move to start
+	if [[ "${val: -1}" == "+" ]]; then
+    val="${val: -1}${val:0: -1}"
+  fi
 	pactl -- set-sink-"$cmd" "@DEFAULT_SINK@" "$val"
 fi
 # display volume
-ps=$(amixer get Master | tail -n1)
 vol=$(pactl -- get-sink-volume "@DEFAULT_SINK@" | grep -oP '\d*%' | uniq)
 vol=${vol//%/}
-mute=$(echo "$ps" | grep -Po ".*\[\K\w*")
-volume_symbol=(" " "_" "▁" "▂" "▃" "▄" "▅" "▆" "▇" "█" )
 # print volume symbol according to percentage
 if [[ "$1" == "bar" ]]; then
-  index=${vol:0:-1}
-  if [[ "$index" -ge 10 ]]; then index=9; fi
-  output="${volume_symbol[$index]}"
-  if [[ "$vol" -gt 100 ]]; then output="${output}⁺" ; fi
+  output="$(vbar 0 100 "$vol")"
 else
   output="${vol}%"
 fi
-case $mute in
-	on) echo " $output";;
-	*)  echo "🔇";;
+case "$(amixer get Master | tail -n1)" in
+	*off*)  echo "🔇";;
+	*) echo " $output";;
 esac
