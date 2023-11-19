@@ -1,0 +1,25 @@
+#!/bin/bash
+# send libnotify notification about currently playing media
+# get data from playerctl metadata
+# requires: playerctl, libnotify
+
+music_albumart_dir="${HOME}/.cache/music-albumart"
+
+# get metadata
+metadata=$(mc meta)
+album=$(echo "$metadata" | grep -w album | awk '{ for(i=3;i<=NF;i++) printf $i " "; printf "\n" }' )
+artist=$(echo "$metadata" | grep -w artist | awk '{ for(i=3;i<=NF;i++) printf " " $i; printf "\n" }' | paste -s -d ',' )
+artist=${artist:1}
+title=$(echo "$metadata" | grep -w title | awk '{ for(i=3;i<=NF;i++) printf $i " "; printf "\n" }' )
+albumart=$(echo "$metadata" | grep -w artUrl | awk '{ print $NF }' )
+
+
+
+if [[ -n "$albumart" ]]; then
+      baseurl=$(basename "$albumart")
+      if [[ ! -f "$music_albumart_dir/$baseurl" ]]; then
+        curl -s "$albumart" > "$music_albumart_dir/$baseurl"
+      fi
+fi
+
+notify-send -t 5000 "$title" "$artist" -a "$album" -i "$music_albumart_dir/$baseurl"
