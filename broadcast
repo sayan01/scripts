@@ -1,0 +1,35 @@
+#!/bin/bash
+# share the entire screen (X11) to v4l2 loopback device
+# if file is passed then broadcast that instead
+
+if [[ "$#" -eq 1 ]] ; then
+  if [[ -r "$1" ]] ; then
+    mimetype=$(file --mime-type "$1" | cut -d' ' -f2)
+    if [[ "$mimetype" == "video/"* ]] ; then
+      echo "Broadcasting file $1"
+      command=(ffmpeg -re -i "$1" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p)
+    elif [[ "$mimetype" == "image/"* ]] ; then
+      echo "Broadcasting image $1"
+      command=(ffmpeg -loop 1 -re -i "$1" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p)
+    else
+      echo "File $1 is not a video"
+      exit 1
+    fi
+  else
+    echo "File $1 not found"
+    exit 1
+  fi
+else
+  command=(ffmpeg -f x11grab -framerate 60 -video_size 1920x1080 -i ":0.0+0,0" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p)
+fi
+
+for device in /dev/video* ; do
+    if [ -c "$device" ] ; then
+      echo "Broadcasting to $device"
+      "${command[@]}" "$device"
+      if [[ $? -eq 0 || $? -eq 255 ]] ; then
+        exit 0
+      fi
+    fi
+done
+echo "No video devices found"
