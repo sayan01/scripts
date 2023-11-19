@@ -1,0 +1,70 @@
+#!/bin/bash
+# playerctl, but fast
+# skip the fetching of metadata overhead of playerctl
+# author: Ayose C (ayosec)
+# adapted and modified by: Sayan Ghosh (sayan01)
+#
+usage(){
+  echo "Usage: $0 [player] n|next|p|prev|previous|play|pause|pp|play-pause|s|stop|stat|status|v|vol|volume" >&2
+  exit 1
+}
+if [[ "$#" -eq 0 ]]; then
+  usage
+fi
+if [[ "$#" -gt 1 ]]; then
+  player="$1"
+else
+  player="$(playerctl -l | head -n 1)"
+fi
+command="${*: -1}"
+case "${command:-}" in
+  n) ;& # fallthrough
+  next)
+    MEMBER=Next
+    ;;
+
+  p) ;& # fallthrough
+  prev) ;& # fallthrough
+  previous)
+    MEMBER=Previous
+    ;;
+
+  play)
+    MEMBER=Play
+    ;;
+
+  pause)
+    MEMBER=Pause
+    ;;
+
+  pp) ;& # fallthrough
+  play-pause)
+    MEMBER=PlayPause
+    ;;
+
+  s) ;& # fallthrough
+  stop)
+    MEMBER=Stop
+    ;;
+
+  stat) ;& # fallthrough
+  status)
+    PROPERTY=PlaybackStatus ;;
+
+  v) ;& # fallthrough
+  vol) ;& # fallthrough
+  volume)
+    PROPERTY=Volume ;;
+
+  *)
+    usage
+    ;;
+
+esac
+
+if [[ -n "$PROPERTY" ]] ; then
+  dbus-send --print-reply --dest="org.mpris.MediaPlayer2.$player" /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:"org.mpris.MediaPlayer2.Player" string:"$PROPERTY" | awk 'END{ print $NF }'
+else
+  dbus-send --print-reply --dest="org.mpris.MediaPlayer2.$player" /org/mpris/MediaPlayer2 "org.mpris.MediaPlayer2.Player.$MEMBER"
+fi
+

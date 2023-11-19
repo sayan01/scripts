@@ -30,19 +30,27 @@ m="metadata"
 mf="metadata --format"
 tf="{{title}}"
 af="{{artist}}"
+# Usage: /home/sayan/scripts/pctl [player] n|next|p|prev|previous|play|pause|pp|play-pause|s|stop|stat|status|v|vol|volume
 case $1 in
-	play) ;&
-	pause) ;&
-	status) ;&
-	stop) ;&
-	next) ;&
-	previous) ;&
-	"$m") $c "$1";;
-	pp) $c play-pause;;
-	stat) $c status;;
-	n) $c next;;
-	p) ;&
-	prev) $c previous;;
+  n) ;&
+  next) ;&
+  p) ;&
+  prev) ;&
+  previous) ;&
+  play) ;&
+  pause) ;&
+  pp) ;&
+  play-pause) ;&
+  s) ;&
+  stop) ;&
+  stat) ;&
+  status) ;&
+  v) ;&
+  vol) ;&
+  volume)
+    pctl "${player:3}" "$1" ;;
+
+
 	meta) $c $m;;
 	t) ;&
 	tit) ;&
