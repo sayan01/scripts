@@ -3,7 +3,7 @@ if [ -r "$HOME/.config/bar" ]; then
 	commands="$(cat ~/.config/bar)"
 else commands="date"
 fi
-left="|"
+left=" "
 right=""
 while IFS="" read -r com || [ -n "$com" ]
 do
