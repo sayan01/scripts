@@ -1,2 +1,12 @@
 #!/bin/bash
-free -h --giga | awk '/^Mem/ {print " " $3}'
+mu="$(\free -h --giga | awk '/^Mem/ {print $3}')"
+if [[ "$1" == "bar" ]] ; then
+  mu="$(\free | awk '/Mem/{ print $3 }')"
+  mt="$(\free | awk '/Mem/{ print $2 }')"
+  bar="$(vbar 0 "$mt" "$mu")"
+  output="$bar"
+else
+  output="$mu"
+fi
+
+echo " $output"
