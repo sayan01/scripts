@@ -15,7 +15,14 @@ for file in "$listpath"/*.auto; do
 		continue
 	fi
 	while IFS= read -r line; do
-		if pgrep -x "$line"; then continue; fi
-		setsid -f "$line"
+	  # if comment, ignore
+	  if [[ "$line" =~ ^# ]]; then continue; fi
+		if pgrep -fx "$line" > /dev/null || pgrep -x "$line" > /dev/null; then
+		  echo "$line: already running"
+		  continue
+		fi
+		echo "Starting $line"
+		# run the command with the arguments (cannot quote)
+		setsid -f $line > /dev/null 2>&1
 	done < "$file"
 done
