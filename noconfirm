@@ -1,6 +1,0 @@
-#!/bin/bash
-
-while true; do
-  echo "y"
-  sleep 0.1
-done | "$@"
