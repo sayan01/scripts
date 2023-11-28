@@ -12,10 +12,11 @@ handle_property_change() {
     if [[ -n $artUrl ]]; then
       baseurl=$(basename "$artUrl")
       if [[ ! -f "$music_album_dir/$baseurl" ]]; then
-        convert "$artUrl" -resize 100x100 "$music_album_dir/$baseurl"
+        curl "$artUrl" > "$music_album_dir/$baseurl"
       fi
     fi
     notify-send -t 5000 "$title" "$artist" -a "$album" -i "$music_album_dir/$baseurl"
+    convert "$music_album_dir/$baseurl" -resize 100x100 "$music_album_dir/$baseurl"
   fi
 }
 

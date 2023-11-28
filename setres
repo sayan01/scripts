@@ -1,0 +1,10 @@
+#!/bin/bash
+
+config="$HOME/.config/setres"
+[[ -f "$config" ]] || touch "$config"
+res=$(<"$config")
+res=${res:-"1920x1080"}
+
+display="$(xrandr --listmonitors | grep '\*' | awk '{print $NF}')"
+
+xrandr --output "$display" --mode "$res"

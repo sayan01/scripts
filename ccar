@@ -2,5 +2,6 @@
 f="$1"
 shift
 f=${f%.c} # remove .c from filename if it exists
-echo "$(colr pink)gcc $f.c -o $f -lm -Wall -O2 -std=c17 && (./$f $* ; rm $f)$(colr default)"
-gcc "$f.c" -o "$f" -lm -Wall -O2 -std=c17 && (./"$f" "$@" ; rm "$f")
+CFLAGS=(-Wall -Wextra -Werror -O3 -std=c17 -g -lm -pedantic)
+echo "$(colr pink)gcc $f.c -o $f ${CFLAGS[*]} && (./$f $* ; rm $f)$(colr default)"
+gcc "$f.c" -o "$f" "${CFLAGS[@]}" && (./"$f" "$@" ; rm "$f")
