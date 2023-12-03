@@ -64,3 +64,8 @@ case $1 in
 	arttit) $c $mf "$af - $tf";;
 	*) echo "invalid argument";;
 esac
+# if player not correct, re-ask
+if [[ "$?" -ne 0 ]]; then
+  mc-config
+  mc "$@"
+fi
