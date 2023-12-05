@@ -9,5 +9,5 @@ if [ -z "$1" ]; then echo "usage: $(basename "$0") time [&]"
 	exit
 fi
 sleep "$1"
-beep 
 notify-send "Times up" -a "timer" &
+beep
