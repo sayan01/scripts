@@ -157,12 +157,12 @@ query=$(sed \
 # if channel look for channel vids
 if [[ $action = "c" ]]; then
     response=$(curl -s "https://www.youtube.com/c/$query/videos" |\
-      sed "s/{\"gridVideoRenderer/\n\n&/g" |\
+      sed "s/{\"videoRenderer/\n\n&/g" |\
       sed "s/}]}}}]}}/&\n\n/g" |\
-      awk -v ORS="\n\n" '/gridVideoRenderer/')
+      awk -v ORS="\n\n" '/videoRenderer/')
 
     # if unable to fetch the youtube results page, inform and exit
-    if ! grep -q "gridVideoRenderer" <<< "$response"; then echo "unable to fetch yt"; exit 1; fi
+    if ! grep -q "videoRenderer" <<< "$response"; then echo "unable to fetch yt"; exit 1; fi
 
     # regex expression to match video entries from yt channel page
     # get the list of videos and their ids to ids
