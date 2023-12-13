@@ -1,37 +1,37 @@
 #!/bin/bash
 # DISCLAIMER: this script has been started solely by me (sayan01)
-# and has had contributions from others like Nicholas-Baron and 
-# juanCortelezzi (refer to contributors on github for details)
-# this script is not based off of any other work by anyone else, 
-# nor is it made in association with anyone else, regardless of 
+# and has had contributions from others like Nicholas-Baron,
+# juanCortelezzi, and mfoep (refer to contributors on Github)
+# this script is not based off of any other work by anyone else,
+# nor is it made in association with anyone else, regardless of
 # their claims.
 
-# dependencies: mpv youtube-dl fzf rofi/dmenu gnu-grep
+# dependencies: mpv yt-dlp fzf rofi/dmenu grep (GNU grep)
 
-# NOTE:  if you dont have gnu grep you can replace grep with rg
+# NOTE:  if you dont have GNU grep you can replace grep with rg
 
 # explain usage
 function usage () {
-    echo "usage: yt"
-    echo "    -h        help"
-    echo "    -c        channels/subscriptions"
-    echo "    -s query  search"
-    echo "    -g / -r   gui mode (rofi/dmenu)"
-    echo "    -m        music mode (audio only) [dont use with -r]"
-    echo "  nothing     use defaults (search from prompt)"
+  echo "usage: yt"
+  echo "    -h        help"
+  echo "    -c        channels/subscriptions"
+  echo "    -s query  search"
+  echo "    -g / -r   gui mode (rofi/dmenu)"
+  echo "    -m        music mode (audio only) [dont use with -r]"
+  echo "  nothing     use defaults (search from prompt)"
 	echo
 	echo "add channel names to the file $sublistpath to show them"
 	echo "in yt -c option. First word should be channel url, optionally"
 	echo "followed by tab and then anything else (channel name/description)"
 	echo "channels not in sublist can be viewed by typing their url in the prompt"
-	echo 
+	echo
 	echo "example file format:"
 	echo "markrober       Mark Rober"
 	echo "vsauce1         VSauce          Michael Steven's Channel"
 	echo "BlackGryph0n    Black Gryph0n   Gabriel Brown signs stuff"
 	echo "TomScottGo      Tom Scott"
 	echo "danielthrasher  Daniel Thrasher"
-    exit 0
+  exit 0
 }
 
 # dont use defaults
@@ -77,43 +77,40 @@ ytdlformats+="+bestaudio/best"
 mkdir -p "${HOME:-}/.config/yt"
 sublistpath="${HOME:-}/.config/yt/sublist"
 sublist=""
-[ -f "$sublistpath" ] && sublist=$(cat "$sublistpath") 
+[ -f "$sublistpath" ] && sublist=$(cat "$sublistpath")
 
 # if not using defaults search for flags
 if [[ $useDefaults = "f" ]]; then
     while getopts ${optstring} arg; do
         case "${arg}" in
-            s) 
+            s)
                 # search in youtube for a query
                 action="s"
                 query="${OPTARG}" ;;
-            c) 
+            c)
                 # search in subscriptions for specific channel
                 action="c"
                 query="${OPTARG}" ;;
-            g|r) 
+            g|r)
                 # set gui mode to true and change the prompt to gui prompt
                 isGui="t"
                 promptcmd="$guicmd" ;;
             m)
                # make the mpv headless
                 mpv_options+="--no-video" ;;
-            h) 
+            h)
                 # display help / usage
                 usage ;;
-            \?) 
+            \?)
                 # wrong args -> exit with explanation of usage
                 echo "invalid option: -${OPTARG}"
                 echo
-                usage
-				exit 1 ;;
-            :) 
+                usage ;;
+            :)
                 # missing args -> exit with explanation of usage
                 echo "Option -${OPTARG} needs an argument"
                 echo
-                usage
-				exit 1 ;;
-
+                usage ;;
         esac
     done
 fi
@@ -123,7 +120,7 @@ if [ -z "$query" ]; then
     # ask for a channel
     if [[ $action = "c" ]]; then
         # if in gui mode use gui prompt
-        if [[ $isGui = "t" ]]; then 
+        if [[ $isGui = "t" ]]; then
 			query=$($promptcmd -p "Channel: " <<< "$sublist")
             promptcmd="$promptcmd -p Video:"
         else
@@ -133,7 +130,7 @@ if [ -z "$query" ]; then
     else
         # ask for a query
         # if in gui mode use gui prompt
-        if [[ $isGui = "t" ]]; then 
+        if [[ $isGui = "t" ]]; then
             query=$(echo | $promptcmd -p "Search: ")
             promptcmd="$promptcmd -p Video:"
         else
@@ -141,10 +138,10 @@ if [ -z "$query" ]; then
             read -r query
         fi
     fi
-fi 
+fi
 
 # program cancelled -> exit
-if [ -z "$query" ]; then exit; fi 
+if [ -z "$query" ]; then exit; fi
 
 # clean query / channel
 query=$(sed \
