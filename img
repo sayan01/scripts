@@ -15,16 +15,14 @@ curl -G "https://serpapi.com/search.json" --data-urlencode "engine=google" --dat
 rm "${df}" -rf
 mkdir -p "${df}"
 while IFS="" read -r line || [ -n "$line" ]; do
-  timeout 2s wget -P "${df}" -T 1 --quiet "${line}" &
+  timeout 10s wget -P "${df}" --quiet "${line}" &
 done < <(cat "${tmp1}")
 
-rm "$tmp1"
-
 echo "Waiting for downloads to finish"
-while echo "$(jobs)" | grep -q "Running" ; do echo > /dev/null ; done
+while jobs | grep -q "Running" ; do echo > /dev/null ; done
 echo "Opening images for selection"
 images="$(sxiv "${df}" -otr)"
 if [[ -z "$images" ]]; then exit ; fi
-echo "$images" | while read image; do
+echo "$images" | while read -r image; do
   xclip -selection clipboard -t image/png -i "$image" && notify-send "Image copied"
 done
