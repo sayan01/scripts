@@ -1,7 +1,14 @@
 #!/bin/bash
 # script to edit ~/.config/mc.conf with currently running music player names
 
-p=$(playerctl -l | rofi -dmenu -p "choose player:" -no-custom)
+players="$(playerctl -l)"
+
+if [[ "$1" == "-f" ]] && [[ "$(echo "$players" | wc -l )" -eq 1 ]]; then
+  p="$players"
+else
+  p=$(echo "$players" | rofi -dmenu -p "choose player:" -no-custom)
+fi
+
 if [ "$p" != "" ]; then
 	echo "$p" > ~/.config/mc.conf
 fi

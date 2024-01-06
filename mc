@@ -66,6 +66,6 @@ case $1 in
 esac
 # if player not correct, re-ask
 if [[ "$?" -ne 0 ]]; then
-  mc-config
+  mc-config -f
   mc "$@"
 fi
