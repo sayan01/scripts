@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <input_video> <timestamps_file>"
+    exit 1
+fi
+
+input_video="$1"
+timestamps_file="$2"
+output_prefix="$1"
+
+IFS=$'\n' read -d '' -r -a timestamps < "$timestamps_file"
+
+for ((i = 0; i < ${#timestamps[@]}; i++)); do
+    start_time="${timestamps[$i]}"
+    end_time="${timestamps[$((i + 1))]}"
+
+ if [ -z "$end_time" ]; then
+        output_file="${output_prefix}_$(printf "%03d" $((i + 1))).mp4"
+        ffmpeg -i "$input_video" -c copy -ss "$start_time" "$output_file"
+    else
+        output_file="${output_prefix}_$(printf "%03d" $((i + 1))).mp4"
+        ffmpeg -i "$input_video" -c copy -ss "$start_time" -to "$end_time" "$output_file"
+    fi
+done
