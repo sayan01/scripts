@@ -7,7 +7,6 @@ color(){
 # Command that prints the prompt
 prompt(){
 	ec=$?				# Get exit code of last run command
-	p=""				# Set prompt to null
 	def=$(color Default)	# Default text color of terminal
 	if [ $UID != 0 ]	# if not root
 	then
@@ -16,19 +15,10 @@ prompt(){
 		userC=$(color Red)		#otherwise red
 	fi
 
-	if [ $ec != 0 ] # If last command returned an non zero exit code 
-	then			# Add (no of cols of terminal) gaps and print exit code
-		len=$(( $(tput cols) - ${#ec} -2 ))
-		while [[ $len -gt 0 ]] 
-		do
-			p=$p" "
-			len=$len-1
-		done
-		p=$p"$(color Red) $ec$def\n"	#then show exit code in red in prompt
-	fi
-  
-  if type deactivate &> /dev/null ; then
-    p=$p"$(color Green)(venv)\n" # show (venv) if inside a python venv
+	p="$userC╭ $def"				# Set prompt to null
+
+  if [[ -n ${VIRTUAL_ENV+x} ]]  ; then
+    p=$p"$(color Green)${VIRTUAL_ENV_PROMPT}$def" # show (venv) if inside a python venv
   fi
 
 					# No of files in current working directory (unhidden)
@@ -36,17 +26,21 @@ prompt(){
 	dir=$(pwd)		# Current working directory
 	if [ "$dir" == "${HOME}" ]		#If cwd is homedir then color it
 	then
-		dir="$userC\W$def"
+		dir="$userC\w$def"
 	else							#If not homedir, then show gitstatus
-		dir="\W"
+		dir="\w"
 		br="$(gitstatus)"
-		if [ "$br" != "" ]
+		if [[ -n $br ]]		# If in a git repo
 		then
 			p="$p$br "
 		fi
 	fi
-	p="$p$dir ($nof) "		# show current working directory and no of files
-	p="$p$userC>$def "		# show > in appropiate color
+	p="$p$dir ($nof)"		# show current working directory and no of files
+	if [ $ec != 0 ] # If last command returned an non zero exit code
+	then			# Add (no of cols of terminal) gaps and print exit code
+		p=$p" $(color Red) $ec$def"	#then show exit code in red in prompt
+	fi
+	p="$p\n$userC╰>$def "		# show > in appropiate color
 	export PS1="$p"
 }
 # Print git status if in a git repo

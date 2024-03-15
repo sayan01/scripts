@@ -4,6 +4,7 @@ lock="   Lock"
 logout="󰗼   Logout"
 shutdown="   Shutdown"
 reboot="󰁯   Reboot"
+rebootfirmware="󰁯   Reboot Firmware"
 sleep="  Sleep"
 
 opt=$(echo -e "$lock\n$logout\n$sleep\n$reboot\n$shutdown" | rofi -dmenu -i -p "Power")
@@ -14,4 +15,5 @@ case "$opt" in
     "$shutdown") poweroff ;;
     "$reboot") reboot ;;
     "$sleep") amixer set Master mute ; systemctl suspend ;;
+    "$rebootfirmware") systemctl reboot --firmware-setup ;;
 esac
