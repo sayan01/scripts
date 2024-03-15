@@ -28,12 +28,15 @@ prompt(){
 	then
 		dir="$userC\w$def"
 	else							#If not homedir, then show gitstatus
-		dir="\w"
 		br="$(gitstatus)"
 		if [[ -n $br ]]		# If in a git repo
 		then
 			p="$p$br "
 		fi
+		dir=$(sed "s|${HOME}|~|g" <<< "$dir")	# Replace homedir with ~
+	  dir_dirname=$(dirname $dir)	# Get the dirname of cwd
+	  dir_basename=$(basename $dir)	# Get the basename of cwd
+    dir="${dir_dirname}/$(color Blue)$dir_basename$def"	# Set the color of basename to blue
 	fi
 	p="$p$dir ($nof)"		# show current working directory and no of files
 	if [ $ec != 0 ] # If last command returned an non zero exit code
