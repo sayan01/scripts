@@ -1,60 +1,102 @@
 #!/bin/bash
 # Return the colorcode for the given color
 color(){
-	declare -A fgcol=( ["Default"]="\[\e[39m\]" ["Black"]="\[\e[30m\]" ["Red"]="\[\e[31m\]" ["Green"]="\[\e[32m\]" ["Yellow"]="\[\e[33m\]" ["Blue"]="\[\e[34m\]" ["Magenta"]="\[\e[35m\]" ["Cyan"]="\[\e[36m\]" ["White"]="\[\e[37m\]" )
+	declare -A fgcol=(
+	  ["Default"]="\[\e[39m\]"
+	  ["Black"]="\[\e[30m\]"
+	  ["Red"]="\[\e[31m\]"
+	  ["Green"]="\[\e[32m\]"
+	  ["Yellow"]="\[\e[33m\]"
+	  ["Blue"]="\[\e[34m\]"
+	  ["Magenta"]="\[\e[35m\]"
+	  ["Cyan"]="\[\e[36m\]"
+	  ["White"]="\[\e[37m\]"
+  )
 	echo "${fgcol[$1]}"
 }
+# Print git status if in a git repo
+_git_status(){
+  if [[ $PWD == "$HOME" ]]; then return ; fi
+	if ! git branch --show-current &>/dev/null ; then return ; fi
+	branch=$(git branch --show-current 2>/dev/null)
+	mess=$(git status -z | head -c2)
+	clean_color=$(color Green)
+	dirty_color=$(color Yellow)
+	hash=":$(git rev-parse --short HEAD)"
+	cols=$(tput cols)
+	msg="[${branch}${hash}]"
+	if [[ ${#msg} -gt $((cols/4)) ]]; then
+    msg="[${branch}]"
+  else
+    msg="[${branch}${hash}]"
+  fi
+	if [[ -z "$mess" ]]; then
+	  git_color=$clean_color
+	else
+	  git_color=$dirty_color
+	fi
+	echo "$git_color$msg$def"
+}
+_venv_status(){
+  if [[ -n ${VIRTUAL_ENV+x} ]]  ; then
+    echo "$(color Green)${VIRTUAL_ENV_PROMPT}$def" # show (venv) if inside a python venv
+  fi
+}
+
+_path_print(){
+  if [[ $PWD == "$HOME" ]]; then
+    echo "~"
+  else
+    dir=${PWD%/*}
+    # shellcheck disable=2001
+    dir=$(sed "s|${HOME}|~|g" <<< "$dir")
+    cols=$(tput cols)
+    if [[ ${#dir} -gt $((cols/4)) ]]; then
+      dir="...${dir: -((cols/4-3))}"
+    fi
+    echo "$dir/$(color Blue)${PWD##*/}$def"
+  fi
+}
+
+_file_count(){
+  files=$(find . -mindepth 1 -maxdepth 1)
+  files_unhidden=$(grep -cv "^\./\." <<< "$files")
+  files_total=$(wc -l <<< "$files")
+  if [[ $files_unhidden -eq $files_total ]]; then
+    output="($files_total)"
+  else
+    output="($files_unhidden, $files_total)"
+  fi
+  echo "$output"
+}
+
+_exit_code(){
+  ec=${1:-0}
+  if [[ $ec -ne 0 ]]; then
+    echo "$(color Red) $ec$def"	#then show exit code in red in prompt
+  fi
+}
+
 # Command that prints the prompt
 prompt(){
 	ec=$?				# Get exit code of last run command
+
 	def=$(color Default)	# Default text color of terminal
-	if [ $UID != 0 ]	# if not root
-	then
-		userC=$(color Green)	#set arrow as green
+	if [[ $UID != 0 ]]; then
+		user_color=$(color Green)	#set arrow as green
 	else
-		userC=$(color Red)		#otherwise red
+		user_color=$(color Red)		#otherwise red
 	fi
 
-	p="$userC╭ $def"				# Set prompt to null
+	p="$user_color╭ $def"
 
-  if [[ -n ${VIRTUAL_ENV+x} ]]  ; then
-    p=$p"$(color Green)${VIRTUAL_ENV_PROMPT}$def" # show (venv) if inside a python venv
-  fi
+	p+="$(_venv_status)"
+	p+="$(_git_status) "
+  p+="$(_path_print) "
+  p+="$(_file_count) "
+	p+="$(_exit_code $ec) "
 
-					# No of files in current working directory (unhidden)
-	nof=$(find . -mindepth 1 -maxdepth 1 | grep -cv "^\./\.")
-	dir=$(pwd)		# Current working directory
-	if [ "$dir" == "${HOME}" ]		#If cwd is homedir then color it
-	then
-		dir="$userC\w$def"
-	else							#If not homedir, then show gitstatus
-		br="$(gitstatus)"
-		if [[ -n $br ]]		# If in a git repo
-		then
-			p="$p$br "
-		fi
-		dir=$(sed "s|${HOME}|~|g" <<< "$dir")	# Replace homedir with ~
-	  dir_dirname=$(dirname $dir)	# Get the dirname of cwd
-	  dir_basename=$(basename $dir)	# Get the basename of cwd
-    dir="${dir_dirname}/$(color Blue)$dir_basename$def"	# Set the color of basename to blue
-	fi
-	p="$p$dir ($nof)"		# show current working directory and no of files
-	if [ $ec != 0 ] # If last command returned an non zero exit code
-	then			# Add (no of cols of terminal) gaps and print exit code
-		p=$p" $(color Red) $ec$def"	#then show exit code in red in prompt
-	fi
-	p="$p\n$userC╰>$def "		# show > in appropiate color
+	p+="\n"
+	p+="$user_color╰>$def "
 	export PS1="$p"
-}
-# Print git status if in a git repo
-gitstatus(){
-	git branch --show-current &>/dev/null || exit 0
-	branch=$(git branch --show-current 2>/dev/null)
-	mess=$(git status -z | head -c2)
-	if [ "$mess" = "" ]
-	then
-		echo "$(color Green)[$branch]$def"	# Print green if no uncommited changes
-	else
-		echo  "$(color Yellow)[$branch]$def" # Print yellow if uncommited chnages
-	fi
 }
