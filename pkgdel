@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if test -z "$PACKLIST" ;then
+  if [[ -r $XDG_CONFIG_HOME/pkgsync/pkgsync.conf ]] ; then
+    # shellcheck disable=1091
+    source "$XDG_CONFIG_HOME"/pkgsync/pkgsync.conf
+  fi
+fi
+
+if test -z "$PACKLIST" ;then
+  echo 'PACKLIST not defined'
+  exit 1
+fi
+
+cd "$( dirname "$PACKLIST" )" || exit
+
+pkg=$1
+while [[ -z "$pkg" ]] ; do
+  read -rp "Enter package name: " pkg
+done
+
+if ! pacman -Q "$pkg" &>/dev/null ; then
+  echo "Package $pkg not installed"
+else
+  echo "Removing package $pkg"
+  sudo pacman -Rns "$pkg"
+fi
+
+if ! grep -xq "$pkg" "$PACKLIST" ; then
+  echo "Package $pkg not in $PACKLIST"
+else
+  echo "Removing package $pkg from $PACKLIST"
+  sed -i "/^$pkg$/d" "$PACKLIST"
+fi
+

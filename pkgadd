@@ -1,0 +1,42 @@
+#!/bin/bash
+
+if test -z "$PACKLIST" ;then
+  if [[ -r $XDG_CONFIG_HOME/pkgsync/pkgsync.conf ]] ; then
+    # shellcheck disable=1091
+    source "$XDG_CONFIG_HOME"/pkgsync/pkgsync.conf
+  fi
+fi
+
+if test -z "$PACKLIST" ;then
+  echo 'PACKLIST not defined'
+  exit 1
+fi
+
+cd "$( dirname "$PACKLIST" )" || exit
+
+pkg=$1
+while [[ -z "$pkg" ]] ; do
+  read -rp "Enter package name: " pkg
+done
+
+
+if grep -xq "$pkg" "$PACKLIST" ; then
+  echo "Package $pkg is already in $PACKLIST"
+else
+  tmp=$(mktemp /tmp/pkgadd.XXXXXX)
+  trap 'rm -f "$tmp"' EXIT
+  cp "$PACKLIST" "$tmp"
+  echo "$pkg" >> "$tmp"
+  sort -u "$tmp" -o "$tmp" && mv "$tmp" "$PACKLIST" && \
+    echo "Package $pkg added to $PACKLIST"
+fi
+
+if pacman -Q "$pkg" &>/dev/null ; then
+  echo "Package $pkg is already installed"
+else
+  read -rp 'Run pkgsync? [Y/n]: ' ans
+  case "$ans" in
+    [Nn]*) ;;
+    *) PACKLIST="$PACKLIST" pkgsync ;;
+  esac
+fi

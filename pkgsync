@@ -1,25 +1,23 @@
 #!/bin/bash
 
+if test -z "$PACKLIST" ;then
+  if [[ -r $XDG_CONFIG_HOME/pkgsync/pkgsync.conf ]] ; then
+    # shellcheck disable=1091
+    source "$XDG_CONFIG_HOME"/pkgsync/pkgsync.conf
+  fi
+fi
+
 if test -z "$PACKLIST" ;then echo 'PACKLIST not defined' ; exit 1; fi
 cd "$( dirname "$PACKLIST" )" || exit
 
-# make temporary files to store current system state and backup pkglist
-pkghere=$(mktemp pkgsyncXXXXXXX)
-pkglist=$(mktemp pkgsyncXXXXXXX)
-pkglist > "$pkghere"
-cat "$(basename "$PACKLIST")" > "$pkglist"
 
 # install any missing packages in this systems
-inslist="$(diff "$pkghere" "$pkglist" | grep "^>" | cut -d' ' -f2 | tr '\n' ' ')"
+inslist="$(grep -xvf <(pkglist) "$(basename "$PACKLIST")" | tr '\n' ' ')"
 if test -n "$inslist" ; then
   echo "Installing packages: $inslist"
-  yay -S --needed $inslist
+  yay -S --noconfirm --needed $inslist
 else
   echo "Nothing to install"
 fi
 
-
-# remove temporary files
-rm "$pkglist"
-rm "$pkghere"
 
