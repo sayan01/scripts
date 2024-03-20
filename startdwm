@@ -2,9 +2,10 @@
 # relaunch DWM if the binary changes, otherwise bail
 conf="$HOME/.config/startdwm"
 
-~/.xprofile &
+# shellcheck disable=1090
+[[ -f ~/.xprofile ]] && source ~/.xprofile
 # ~/.local/share/dwm/autostart.sh &
-[ -e ~/.fehbg ] && ~/.fehbg &
+[[ -f ~/.fehbg ]] && ~/.fehbg &
 
 csum=""
 new_csum=$(sha1sum "$(which dwm)")
