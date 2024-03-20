@@ -1,17 +1,7 @@
 #!/bin/bash
 # Return the colorcode for the given color
 color(){
-	declare -A fgcol=(
-	  ["Default"]="\[\e[39m\]"
-	  ["Black"]="\[\e[30m\]"
-	  ["Red"]="\[\e[31m\]"
-	  ["Green"]="\[\e[32m\]"
-	  ["Yellow"]="\[\e[33m\]"
-	  ["Blue"]="\[\e[34m\]"
-	  ["Magenta"]="\[\e[35m\]"
-	  ["Cyan"]="\[\e[36m\]"
-	  ["White"]="\[\e[37m\]"
-  )
+	declare -A fgcol=( ["Default"]="\[\e[39m\]" ["Black"]="\[\e[30m\]" ["Red"]="\[\e[31m\]" ["Green"]="\[\e[32m\]" ["Yellow"]="\[\e[33m\]" ["Blue"]="\[\e[34m\]" ["Magenta"]="\[\e[35m\]" ["Cyan"]="\[\e[36m\]" ["White"]="\[\e[37m\]")
 	echo "${fgcol[$1]}"
 }
 # Print git status if in a git repo
@@ -24,11 +14,11 @@ _git_status(){
 	dirty_color=$(color Yellow)
 	hash=":$(git rev-parse --short HEAD)"
 	cols=$(tput cols)
-	msg="[${branch}${hash}]"
+	msg="${branch}${hash}"
 	if [[ ${#msg} -gt $((cols/4)) ]]; then
-    msg="[${branch}]"
+    msg="${branch}"
   else
-    msg="[${branch}${hash}]"
+    msg="${branch}${hash}"
   fi
 	if [[ -z "$mess" ]]; then
 	  git_color=$clean_color
@@ -60,8 +50,8 @@ _path_print(){
 
 _file_count(){
   files=$(find . -mindepth 1 -maxdepth 1)
-  files_unhidden=$(grep -cv "^\./\." <<< "$files")
-  files_total=$(wc -l <<< "$files")
+  files_unhidden=$(grep -c "^\./[^\.]" <<< "$files")
+  files_total=$(grep -c "^\./" <<< "$files")
   if [[ $files_unhidden -eq $files_total ]]; then
     output="($files_total)"
   else
@@ -73,7 +63,7 @@ _file_count(){
 _exit_code(){
   ec=${1:-0}
   if [[ $ec -ne 0 ]]; then
-    echo "$(color Red) $ec$def"	#then show exit code in red in prompt
+    echo "$(color Red)× $ec$def"	#then show exit code in red in prompt
   fi
 }
 
@@ -97,6 +87,6 @@ prompt(){
 	p+="$(_exit_code $ec) "
 
 	p+="\n"
-	p+="$user_color╰>$def "
+	p+="$user_color╰➤$def "
 	export PS1="$p"
 }
