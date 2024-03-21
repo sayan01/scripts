@@ -6,7 +6,9 @@ color(){
 }
 # Print git status if in a git repo
 _git_status(){
-  if [[ $PWD == "$HOME" ]]; then return ; fi
+  if [[ $PWD == "$HOME" ]]; then
+    return
+  fi
 	if ! git branch --show-current &>/dev/null ; then
 	  return
 	fi
