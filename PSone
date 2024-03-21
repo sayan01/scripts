@@ -7,7 +7,9 @@ color(){
 # Print git status if in a git repo
 _git_status(){
   if [[ $PWD == "$HOME" ]]; then return ; fi
-	if ! git branch --show-current &>/dev/null ; then return ; fi
+	if ! git branch --show-current &>/dev/null ; then
+	  return
+	fi
 	branch=$(git branch --show-current 2>/dev/null)
 	mess=$(git status -z | head -c2)
 	clean_color=$(color Green)
