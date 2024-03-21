@@ -9,27 +9,27 @@ _git_status(){
   if [[ $PWD == "$HOME" ]]; then
     return
   fi
-	if ! git branch --show-current &>/dev/null ; then
-	  return
-	fi
-	branch=$(git branch --show-current 2>/dev/null)
-	mess=$(git status -z | head -c2)
-	clean_color=$(color Green)
-	dirty_color=$(color Yellow)
-	hash=":$(git rev-parse --short HEAD)"
-	cols=$(tput cols)
-	msg="${branch}${hash}"
-	if [[ ${#msg} -gt $((cols/4)) ]]; then
+  if ! git branch --show-current &>/dev/null ; then
+    return
+  fi
+  branch=$(git branch --show-current 2>/dev/null)
+  mess=$(git status -z | head -c2)
+  clean_color=$(color Green)
+  dirty_color=$(color Yellow)
+  hash=":$(git rev-parse --short HEAD)"
+  cols=$(tput cols)
+  msg="${branch}${hash}"
+  if [[ ${#msg} -gt $((cols/4)) ]]; then
     msg="${branch}"
   else
     msg="${branch}${hash}"
   fi
-	if [[ -z "$mess" ]]; then
-	  git_color=$clean_color
-	else
-	  git_color=$dirty_color
-	fi
-	echo "$git_color$msg$def"
+  if [[ -z "$mess" ]]; then
+    git_color=$clean_color
+  else
+    git_color=$dirty_color
+  fi
+  echo "$git_color$msg$def"
 }
 _venv_status(){
   if [[ -n ${VIRTUAL_ENV+x} ]]  ; then
