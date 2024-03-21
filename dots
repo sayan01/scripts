@@ -9,7 +9,7 @@ do
 	then
 		emo=""
 	fi
-	out="$out $emo"
+	out+=" $emo"
 done
 
 echo "$out"
