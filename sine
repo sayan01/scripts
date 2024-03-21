@@ -1,13 +1,12 @@
 #!/bin/bash
 freq=$1
 dur=$2
-if [ "$1" == "" ] || [ "$2" == "" ]
-then
-	echo -e "Usage:\nsine FREQUENCY DURATION"
-	exit 0
+if [[ $# -ne 2 ]]; then
+	echo "Usage:
+$(basename "$0") FREQUENCY DURATION"
+	exit
 fi
-if [ "$2" == "0" ]
-then
+if [ "$2" == "0" ]; then
 	dur="0.000001"
 fi
 ffplay -f lavfi -i "sine=frequency=${freq}:duration=${dur}" -nodisp -autoexit &> /dev/null
