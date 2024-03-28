@@ -1,9 +1,7 @@
 #!/bin/bash
 
 usage(){
-  echo " usage:
-  $(basename "$0") name "
-
+  echo " usage: $(basename "$0") name... "
 }
 
 if [[ -z "$1" ]] ; then
@@ -11,11 +9,11 @@ if [[ -z "$1" ]] ; then
   exit
 fi
 
-name="$1"
-
-output="$(curl -s "https://api.genderize.io/?name=${name}")"
-gender="$(jq -r .gender <<<"$output")"
-probability="$(jq -r .probability <<<"$output")"
-echo "$gender ($probability)"
+for name in "$@"; do
+  output="$(curl -s "https://api.genderize.io/?name=${name}")"
+  gender="$(jq -r .gender <<<"$output")"
+  probability="$(jq -r .probability <<<"$output")"
+  echo "$name: $gender ($probability)"
+done
 
 
