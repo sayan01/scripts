@@ -5,5 +5,5 @@ if [ "$1" == "" ] || [ "$2" == "" ]; then
 fi
 keep=$1
 trim=$2
-keep=${keep%$trim}
+keep=${keep%"$trim"}
 echo "$keep"

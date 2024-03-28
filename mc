@@ -25,13 +25,13 @@ elif [ -r "$confpath" ]; then
 else
 	player=""
 fi
-c="playerctl $player"
-m="metadata"
-mf="metadata --format"
+c=("playerctl" "$player")
+m=("metadata")
+mf=("metadata" "--format")
 tf="{{title}}"
 af="{{artist}}"
 # Usage: /home/sayan/scripts/pctl [player] n|next|p|prev|previous|play|pause|pp|play-pause|s|stop|stat|status|v|vol|volume
-case $1 in
+if ! case $1 in
   n) ;&
   next) ;&
   p) ;&
@@ -51,21 +51,20 @@ case $1 in
     pctl "${player:3}" "$1" ;;
 
 
-	meta) $c $m;;
+	meta) "${c[@]}" "${m[@]}" ;;
 	t) ;&
 	tit) ;&
-	title) $c $m title;;
+	title) "${c[@]}" "${m[@]}" title;;
 	a) ;&
 	art) ;&
-	artist) $c $m artist;;
+	artist) "${c[@]}" "${m[@]}" artist;;
 	ta) ;&
-	titart) $c $mf "$tf - $af";;
+	titart) "${c[@]}" "${mf[@]}" "$tf - $af";;
 	at) ;&
-	arttit) $c $mf "$af - $tf";;
+	arttit) "${c[@]}" "${mf[@]}" "$af - $tf";;
 	*) echo "invalid argument";;
-esac
+esac ; then
 # if player not correct, re-ask
-if [[ "$?" -ne 0 ]]; then
   mc-config -f
   mc "$@"
 fi

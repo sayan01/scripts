@@ -2,7 +2,7 @@
 
 if [ $# = 0 ]
 then
-	page="$(apropos . | rofi -dmenu -i -font 'Roboto 12' -p manpdf -no-custom -scroll-method 1 -theme ~/.local/share/rofi/themes/slate.rasi | cut -d' ' -f1 )"
+	page="$(apropos -s 1 . | rofi -dmenu -i -p manpdf -no-custom -scroll-method 1 | cut -d' ' -f1 )"
 else
 	page="$1"
 fi

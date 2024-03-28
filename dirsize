@@ -4,14 +4,14 @@ calc (){
 	if echo "$rv" | grep -q .00$
 	then
 		echo "$rv" | cut -d"." -f1
-	else 
+	else
 		echo "$rv"
 	fi
 }
 
 help(){
 	echo -e "Usage: dirsize [OPTION]... DIRECTORY...
-Print the cumulative size of all files inside DIRECTORY(ies) 
+Print the cumulative size of all files inside DIRECTORY(ies)
 
 		-h, --help	display this help and exit
 		-c		show number of files, directories, and total files"
@@ -26,7 +26,7 @@ fi
 count=false
 for dir in "$@"
 do
-	if grep -q "^-" <(echo "$dir")
+	if grep -q "^-" <<<"$dir"
 	then
 		case "$dir" in
 			-h) help	;;
@@ -42,18 +42,18 @@ do
 		echo "dirsize: $dir is not a directory" && exit 1
 	fi
 
-	tmp="/tmp/dirsize.tmp"
-	find "$dir" -type f -exec stat -c %s {} \; > $tmp
+	tmp="$(mktemp /tmp/dirsize.XXXXXX)"
+	find "$dir" -type f -exec stat -c %s {} \; > "$tmp"
 
 	if [ $count = true ]
 	then
-		numr=$(wc -l < $tmp)
+		numr=$(wc -l < "$tmp")
 		numdf=$(find "$dir" -mindepth 1 -maxdepth 1 -type f | wc -l)
 		numdd=$(find "$dir" -mindepth 1 -maxdepth 1 -type d | wc -l)
 	fi
 
-	size=$(	tr "\n" "+" < $tmp | sed -e "s/+$/\n/g" | bc)
-	rm -f $tmp
+	size=$(add <"$tmp")
+	rm -f "$tmp"
 
 	tb=1099511627776
 	gb=1073741824
@@ -78,7 +78,7 @@ do
 
 	if [ $count = true ]
 	then
-		output="$output (files: $numdf, dir: $numdd, allfiles: $numr)"
+		output+=" (files: $numdf, dir: $numdd, allfiles: $numr)"
 	fi
 	echo "$dir: $output"
 

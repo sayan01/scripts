@@ -1,3 +1,2 @@
 #!/bin/bash
-cd /dev || exit 1
-lsblk $(< "$HOME/.config/diskspace.conf") -rno FSAVAIL | paste -s -d " "
+xargs -I {} lsblk -rno FSAVAIL /dev/{} < "$HOME/.config/diskspace.conf" | paste -s -d " "

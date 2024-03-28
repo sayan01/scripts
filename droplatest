@@ -1,0 +1,3 @@
+#!/bin/bash
+
+dragon-drop "$(ls -t | head -n1)"

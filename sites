@@ -1,11 +1,9 @@
 #!/bin/bash
 # open favourite sites with browser through rofi menu
-input=$(rofi -dmenu -i -scroll-method 1 -p ' open' <  ~/.config/sites.conf | cut -d'	' -f2)
+read -ra input < <(rofi -dmenu -i -scroll-method 1 -p ' open' <  ~/.config/sites.conf | cut -f2)
 
-if [[ -n "$input" ]] && [ "$input" != "new" ]
-then
-	${BROWSER:-chrome} $input
-elif [ "$input" = "new" ]
-then
-	konsole -e vim "$HOME/.config/sites.conf"
+if [[ "${input[*]}" = "new" ]]; then
+	konsole -e "$EDITOR" "$HOME/.config/sites.conf"
+elif [[ -n "${input[*]}" ]]; then
+	${BROWSER:-firefox} "${input[@]}"
 fi

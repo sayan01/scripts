@@ -20,7 +20,7 @@
 
 
 
-pkglist > ${PACKLIST}
+pkglist > "${PACKLIST}"
 
 # once generated, use pkgsync to install any missing packages in others systems
 # and remove extra packages present

@@ -12,10 +12,10 @@ cd "$( dirname "$PACKLIST" )" || exit
 
 
 # install any missing packages in this systems
-inslist="$(grep -xvf <(pkglist) "$(basename "$PACKLIST")" | tr '\n' ' ')"
-if test -n "$inslist" ; then
-  echo "Installing packages: $inslist"
-  yay -S --noconfirm --needed $inslist
+read -ra inslist < <(grep -xvf <(pkglist) "$(basename "$PACKLIST")" | tr '\n' ' ')
+if test -n "${inslist[*]}" ; then
+  echo "Installing packages: ${inslist[*]}"
+  yay -S --noconfirm --needed "${inslist[@]}"
 else
   echo "Nothing to install"
 fi

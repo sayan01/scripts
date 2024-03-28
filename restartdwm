@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "restart" > ${HOME}/.config/startdwm && killall dwm
+echo "restart" > "${HOME}"/.config/startdwm && killall dwm

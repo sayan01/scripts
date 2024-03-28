@@ -16,10 +16,10 @@ _git_status(){
   mess=$(git status -z | head -c2)
   clean_color=$(color Green)
   dirty_color=$(color Yellow)
-  hash=":$(git rev-parse --short HEAD)"
+  hash=":$(git rev-parse --short HEAD 2>/dev/null)"
   cols=$(tput cols)
   msg="${branch}${hash}"
-  if [[ ${#msg} -gt $((cols/4)) ]]; then
+  if [[ "${#msg}" -gt $((cols/4)) || "$hash" = ":" ]]; then
     msg="${branch}"
   else
     msg="${branch}${hash}"

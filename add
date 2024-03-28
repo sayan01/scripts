@@ -1,3 +1,3 @@
 #!/bin/bash
 
-paste -s -d '+' $@ | bc
+paste -s -d '+' "$@" | bc

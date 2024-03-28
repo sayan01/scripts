@@ -4,7 +4,7 @@
 # looks for the template file with same extension in
 # templates folder and copies it to the cwd with the passed name
 
-# usage: 
+# usage:
 # tmpl tree.cpp
 # tmpl reversal.cp.cpp
 # tmpl sortQ.java
@@ -15,7 +15,7 @@ if test "$#" -lt 1 ; then
 	echo "usage: $(basename "$0") filename.ext"
 	exit 1
 fi
-if test -z "$EDITOR" ; then EDITOR=vi; fi
+if test -z "$EDITOR" ; then EDITOR="vi"; fi
 
 extension=$(echo "$1" | cut -d '.' -f2-)
 TMPDIR="${HOME}/docs/libraries/templates"

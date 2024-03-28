@@ -1,6 +1,6 @@
 #!/bin/bash
 while true
 do
-	echo "$(bar)" > ~/.cache/pbar
+	bar | tr -d '\n' > ~/.cache/pbar
 	~/scripts/barsleep
 done 2> /dev/null &

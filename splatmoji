@@ -4,7 +4,7 @@ shopt -s nullglob
 if [ "${1}" == 'type' ] || [ "${1}" == 'copy' ]; then
   subcommand="${1}"
 else
-  echo "Usage: ${0} [copy|type] [DATAFILES*]"
+  echo "Usage: $(basename "$0") [copy|type] [DATAFILES*]"
   echo "Quickly look up and input emoji and/or emoticons/kaomoji" \
     "on your GNU/Linux desktop via pop-up menu."
   exit 1
@@ -12,55 +12,22 @@ fi
 shift
 
 # Determine config files
-scriptdir="$( cd "$( dirname "$( readlink -f "${BASH_SOURCE[0]}" )" )" && pwd )"
 if [ -f "${XDG_CONFIG_HOME:-${HOME}/.config}/splatmoji/splatmoji.config" ]; then
   conffile="${XDG_CONFIG_HOME:-${HOME}/.config}/splatmoji/splatmoji.config"
-else
-  _old_IFS="$IFS"
-  IFS=":"
-  for dir in ${XDG_CONFIG_DIRS:-/etc/xdg}; do
-    if [ -f "$dir/splatmoji/splatmoji.config" ]; then
-      conffile="$dir/splatmoji/splatmoji.config"
-      break
-    fi
-  done
-  IFS="$_old_IFS"
-fi
-
-# Fallback to script location
-if [ -z "${conffile}" ]; then
-  conffile="${scriptdir}/splatmoji.config"
 fi
 
 datafiles_list=()
 
 # Read command line data files
 if [ $# -ne 0 ]; then
-  datafiles="${@:1}"
-  datafiles_list+=$(IFS=$'\n'; echo "${datafiles[*]}")
+  datafiles_list=("${@:1}")
 fi
 
+USER_DF="${XDG_DATA_HOME:-${HOME}/.local/share}/splatmoji/data"
 # Read per-user data files
-if [ -d "${XDG_DATA_HOME:-${HOME}/.local/share}/splatmoji/data" ]; then
-  datafiles="${XDG_DATA_HOME:-${HOME}/.local/share}/splatmoji/data/*"
-  datafiles_list+=$'\n'$(IFS=$'\n'; echo "${datafiles[*]}")
-fi
-
-# Read global data files
-_old_IFS="$IFS"
-IFS=":"
-for dir in ${XDG_DATA_DIRS:-/usr/local/share/:/usr/share/}; do
-  if [ -d "$dir/splatmoji/data" ]; then
-    datafiles="$dir/splatmoji/data/*"
-    datafiles_list+=$'\n'$(IFS=$'\n'; echo "${datafiles[*]}")
-  fi
-done
-IFS="$_old_IFS"
-
-# Fallback if we haven't found any data files
-if [ -z "${datafiles}" ]; then
-  datafiles=("${scriptdir}/data/*")
-  datafiles_list+=$(IFS=$'\n'; echo "${datafiles[*]}")
+if [ -d "${USER_DF}" ]; then
+  mapfile -O ${#datafiles_list[@]} -t datafiles < <(find "${USER_DF}" -mindepth 1 -maxdepth 1 -type f | sort )
+  datafiles_list+=("${datafiles[@]}")
 fi
 
 # Read config
@@ -75,7 +42,7 @@ while IFS='' read -r line; do
 done < "${conffile}"
 
 # Prompt user for selection
-selection=$(cat ${datafiles_list} | eval ${config[rofi_command]})
+selection=$(cat "${datafiles_list[@]}" | eval "${config[rofi_command]}")
 moji="${selection%%$'\t'*}"
 
 if [ -z "$moji" ]; then exit; fi
