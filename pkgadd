@@ -14,29 +14,35 @@ fi
 
 cd "$( dirname "$PACKLIST" )" || exit
 
-pkg=$1
-while [[ -z "$pkg" ]] ; do
-  read -rp "Enter package name: " pkg
+pkgs=("$@")
+while [[ -z "${pkgs[*]}" ]] ; do
+  read -rp "Enter packages name: " pkgs
 done
 
+need2install=0
+for pkg in "${pkgs[@]}" ; do
+  if grep -xq "$pkg" "$PACKLIST" ; then
+    echo "Package $pkg is already in $PACKLIST"
+  else
+    tmp=$(mktemp /tmp/pkgadd.XXXXXX)
+    trap 'rm -f "$tmp"' EXIT
+    cp "$PACKLIST" "$tmp"
+    echo "$pkg" >> "$tmp"
+    sort -u "$tmp" -o "$tmp" && mv "$tmp" "$PACKLIST" && \
+      echo "Package $pkg added to $PACKLIST"
+  fi
 
-if grep -xq "$pkg" "$PACKLIST" ; then
-  echo "Package $pkg is already in $PACKLIST"
-else
-  tmp=$(mktemp /tmp/pkgadd.XXXXXX)
-  trap 'rm -f "$tmp"' EXIT
-  cp "$PACKLIST" "$tmp"
-  echo "$pkg" >> "$tmp"
-  sort -u "$tmp" -o "$tmp" && mv "$tmp" "$PACKLIST" && \
-    echo "Package $pkg added to $PACKLIST"
-fi
+  if pacman -Q "$pkg" &>/dev/null ; then
+    echo "Package $pkg is already installed"
+  else
+    need2install=1
+  fi
+done
 
-if pacman -Q "$pkg" &>/dev/null ; then
-  echo "Package $pkg is already installed"
-else
-  read -rp 'Run pkgsync? [Y/n]: ' ans
-  case "$ans" in
-    [Nn]*) ;;
-    *) PACKLIST="$PACKLIST" pkgsync ;;
-  esac
+if [[ $need2install -eq 1 ]] ; then
+    read -rp 'Run pkgsync? [Y/n]: ' ans
+    case "$ans" in
+      [Nn]*) ;;
+      *) PACKLIST="$PACKLIST" pkgsync ;;
+    esac
 fi

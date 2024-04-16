@@ -12,7 +12,6 @@ fi
 DOMAIN="$(cat "$XDG_CONFIG_HOME"/servehost/domain)"
 
 http-server -c -1 -p 8080 &> /dev/null &
-server_pid=$!
 xsel -ib <<< "http://$DOMAIN"
 ngrok http --domain="$DOMAIN" 8080
-kill $server_pid
+kill %1

@@ -6,20 +6,20 @@ else
   echo "$apikeypath is not present. store your serpapi.com search API Key there"
   exit 1
 fi
-tmp1="$(mktemp /tmp/imgXXX)"
+tmp="$(mktemp /tmp/imgXXX)"
 df="/tmp/img-google"
 
 query="$(echo "" | rofi -dmenu -p "Enter Query: " )"
 echo "Getting link list of images"
-curl -G "https://serpapi.com/search.json" --data-urlencode "engine=google" --data-urlencode "q=${query}" --data-urlencode "tbm=isch" --data-urlencode "api_key=${apikey}" | jq -r ".images_results[].original" > "$tmp1"
+curl -G "https://serpapi.com/search.json" --data-urlencode "engine=google" --data-urlencode "q=${query}" --data-urlencode "tbm=isch" --data-urlencode "api_key=${apikey}" | jq -r ".images_results[].original" > "$tmp"
 rm "${df}" -rf
 mkdir -p "${df}"
 while IFS="" read -r line || [ -n "$line" ]; do
   timeout 10s wget -P "${df}" --quiet "${line}" &
-done < <(cat "${tmp1}")
+done < "$tmp"
 
 echo "Waiting for downloads to finish"
-while jobs | grep -q "Running" ; do echo > /dev/null ; done
+wait
 echo "Opening images for selection"
 images="$(sxiv "${df}" -otr)"
 if [[ -z "$images" ]]; then exit ; fi

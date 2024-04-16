@@ -1,7 +1,10 @@
 #!/bin/bash
+#
+# Split a video file by a timestamp file
+#
 
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <input_video> <timestamps_file>"
+    echo "Usage: $(basename "$0") <input_video> <timestamps_file>"
     exit 1
 fi
 
@@ -9,17 +12,25 @@ input_video="$1"
 timestamps_file="$2"
 output_prefix="$1"
 
+if [[ ! -r "$input_video" ]]; then
+    echo "Error: input video file '$input_video' is not readable"
+    exit 1
+fi
+
+if [[ ! -r "$timestamps_file" ]]; then
+    echo "Error: timestamps file '$timestamps_file' is not readable"
+    exit 1
+fi
+
 IFS=$'\n' read -d '' -r -a timestamps < "$timestamps_file"
 
 for ((i = 0; i < ${#timestamps[@]}; i++)); do
     start_time="${timestamps[$i]}"
     end_time="${timestamps[$((i + 1))]}"
-
- if [ -z "$end_time" ]; then
-        output_file="${output_prefix}_$(printf "%03d" $((i + 1))).mp4"
+    output_file="${output_prefix}_$(printf "%03d" $((i + 1))).mp4"
+    if [ -z "$end_time" ]; then
         ffmpeg -i "$input_video" -c copy -ss "$start_time" "$output_file"
     else
-        output_file="${output_prefix}_$(printf "%03d" $((i + 1))).mp4"
-        ffmpeg -i "$input_video" -c copy -ss "$start_time" -to "$end_time" "$output_file"
+        ffmpeg -i "$input_video" -c copy -ss "$start_time" -to "$end_time" "$output_file" &
     fi
 done

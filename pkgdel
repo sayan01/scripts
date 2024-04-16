@@ -14,22 +14,23 @@ fi
 
 cd "$( dirname "$PACKLIST" )" || exit
 
-pkg=$1
-while [[ -z "$pkg" ]] ; do
-  read -rp "Enter package name: " pkg
+pkgs=( "$@" )
+while [[ -z "${pkgs[*]}" ]] ; do
+  read -rp "Enter package name: " pkgs
 done
 
-if ! pacman -Q "$pkg" &>/dev/null ; then
-  echo "Package $pkg not installed"
-else
-  echo "Removing package $pkg"
-  sudo pacman -Rns "$pkg"
-fi
+for pkg in "${pkgs[@]}" ; do
+  if ! pacman -Q "$pkg" &>/dev/null ; then
+    echo "Package $pkg not installed"
+  else
+    echo "Removing package $pkg"
+    sudo pacman -Rns "$pkg"
+  fi
 
-if ! grep -xq "$pkg" "$PACKLIST" ; then
-  echo "Package $pkg not in $PACKLIST"
-else
-  echo "Removing package $pkg from $PACKLIST"
-  sed -i "/^$pkg$/d" "$PACKLIST"
-fi
-
+  if ! grep -xq "$pkg" "$PACKLIST" ; then
+    echo "Package $pkg not in $PACKLIST"
+  else
+    echo "Removing package $pkg from $PACKLIST"
+    sed -i "/^$pkg$/d" "$PACKLIST"
+  fi
+done

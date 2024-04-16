@@ -1,2 +1,13 @@
 #!/bin/bash
-file "$(realpath "$1")" | grep -qE 'image|bitmap' && identify "$1" >/dev/null 2>&1
+if [[ $# -ge 1 ]]; then
+  file="$1"
+else
+  read -rp "Enter the file path: " file
+fi
+
+if [[ ! -r "$file" ]]; then
+  echo "$file is not readable"
+  exit 1
+fi
+
+file "$(realpath "$file")" | grep -qE 'image|bitmap' && identify "$1" >/dev/null 2>&1

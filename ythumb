@@ -3,17 +3,27 @@
 # extract a youtube thumbnail from link using yt-dlp
 
 # get the link
+if [[ $# -ge 1 ]]; then
 link="$1"
+else
+  read -rp "Enter the youtube link: " link
+fi
 
-#extract id from link
 
-id="$(echo "$link" | grep -oP '.{11}$')"
 
 # get the thumbnail
 thumbnail="$(yt-dlp --get-thumbnail "$link")"
 
+if [[ -z "$thumbnail" ]]; then
+    echo "no thumbnail found"
+    exit 1
+fi
+
+#extract id from link
+id="$(grep -oE '[a-zA-Z0-9_-]{11}' <<< "$thumbnail" | head -1)"
+
 # get the extension
-ext="$(echo "$thumbnail" | awk -F. '{print $NF}')"
+ext="${thumbnail##*.}"
 
 filename="${id}.${ext}"
 

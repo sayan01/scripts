@@ -1,0 +1,7 @@
+#!/bin/bash
+
+rofi -show run
+
+while [[ $? -eq 139 ]]; do
+    rofi -show run
+done
