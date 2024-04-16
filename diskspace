@@ -1,2 +1,2 @@
 #!/bin/bash
-xargs -I {} lsblk -rno FSAVAIL /dev/{} < "$HOME/.config/diskspace.conf" | paste -s -d " "
+xargs -L1 findmnt -J < "$HOME/.config/diskspace.conf" | jq -r '.filesystems[-1].source' | xargs -L1 lsblk -rno FSAVAIL | paste -s -d " "
