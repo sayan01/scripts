@@ -1,0 +1,94 @@
+#!/bin/bash
+
+export test_name="Test1"
+
+j4(){
+cat > src/"$test_name".java <<EOF
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class $test_name {
+    @Test
+    public void test(){
+        assertEquals("Error Message", 0, 0);
+    }
+}
+EOF
+}
+
+j5(){
+cat > src/"$test_name".java <<EOF
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+
+public class $test_name {
+    @Test
+    public void test(){
+        assertEquals(0, 0, "Error Message");
+    }
+}
+EOF
+}
+
+jsuite(){
+if [ -z "$1" ]; then
+    echo "Please provide JUnit Version (4 or 5) as argument" >&2
+    exit 1
+fi
+if [ "$1" == "4" ]; then
+cat > src/TestSuite.java <<EOF
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@RunWith(Suite.class)
+@SuiteClasses({ $test_name.class })
+public class TestSuite {
+
+}
+EOF
+elif [ "$1" == "5" ]; then
+cat > src/TestSuite.java <<EOF
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.platform.suite.api.Suite;
+
+@SelectClasses({ $test_name.class })
+@Suite
+public class TestSuite {
+
+}
+EOF
+else
+    echo "Please provide JUnit Version (4 or 5) as argument" >&2
+    exit 1
+fi
+}
+
+base(){
+mkdir -p bin lib src .vscode
+cat > .vscode/settings.json <<EOF
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": ["lib/**/*.jar"]
+}
+EOF
+}
+
+base
+
+opstring="45s:n:"
+
+while getopts $opstring opt; do
+    case $opt in
+      n) export test_name=$OPTARG ;;
+      4) j4 ;;
+      5) j5 ;;
+      s) jsuite "$OPTARG" ;;
+      \?) echo "Invalid option: $OPTARG" ;;
+    esac
+done
+
+code .

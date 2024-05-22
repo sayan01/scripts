@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [[ "$*" =~ -h || "$*" =~ --help ]]; then
+    echo "Usage: $(basename "$0") pdffile [level]"
+    echo "Compress a PDF file using ghostscript."
+    echo "  level: 0 (default), 1 (printer), 2 (ebook), 3 (screen)"
+    exit
+fi
+
+declare -i level
+level="$2"
+level=${level:-1}
+
+levels=(default printer ebook screen)
+
+if [[ "$level" -gt 3 ]]; then
+    level=3
+fi
+
+settings=${levels[$level]}
+
+file="$1"
+
+if [[ ! -f "$file" ]]; then
+    echo "File not found: $file"
+    exit 1
+fi
+
+newfile="${file%.pdf}-compressed-$settings.pdf"
+
+if [[ -f "$newfile" ]]; then
+    echo "File already exists: $newfile"
+    echo "remove? (y/n)"
+    read -r answer
+    if [[ "$answer" =~ ^[Yy] ]]; then
+        rm "$newfile"
+    else
+        exit 1
+    fi
+fi
+
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/"$settings" -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$newfile" "$file"
+

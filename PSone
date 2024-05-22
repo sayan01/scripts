@@ -5,7 +5,7 @@ color(){
 	echo "${fgcol[$1]}"
 }
 # Print git status if in a git repo
-_git_status(){
+__git_status(){
   if [[ $PWD == "$HOME" ]]; then
     return
   fi
@@ -38,7 +38,7 @@ _venv_status(){
 }
 
 _path_print(){
-  if [[ $PWD == "$HOME" ]]; then
+  if [[ "$PWD" == "$HOME" ]]; then
     echo "~"
   else
     dir=${PWD%/*}
@@ -85,7 +85,7 @@ prompt(){
 	p="$user_color╭ $def"
 
 	p+="$(_venv_status)"
-	p+="$(_git_status) "
+	p+="$(__git_status) "
   p+="$(_path_print) "
   p+="$(_file_count) "
 	p+="$(_exit_code $ec) "

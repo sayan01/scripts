@@ -1,0 +1,24 @@
+#!/bin/bash
+
+players="$(playerctl -l)"
+
+limit(){
+  lim=$(("$1"))
+  if [[ $lim -lt 1 ]]; then
+    lim=1
+  fi
+  while IFS= read -r line; do
+    if [ ${#line} -gt $lim ]; then
+      echo "${line:0:$lim}..."
+    else
+      echo "$line"
+    fi
+  done
+}
+
+IFS=$'\n'
+for player in $players; do
+    if [ "$(timeout 0.05s playerctl -p "$player" status)" = "Playing" ]; then
+        playerctl -p "$player" metadata title
+    fi
+done | sort -r | head -1 | limit 32
