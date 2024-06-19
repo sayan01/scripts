@@ -1,11 +1,18 @@
 #!/bin/bash
+
+conf=$XDG_CONFIG_HOME/scripts.conf
+
+[ -f "$conf" ] && source "$conf"
+
+grep -q "^scripts_folder=" "$conf" || scripts_folder="$HOME/scripts"
+
 case $2 in
 	here) path="$1";;
-	*) path="${HOME}/scripts/$1";;
+	*) path="$scripts_folder/$1"
 esac
 if [ ! -e "$path" ]
 then
-	cp "${HOME}/scripts/generic" "$path"
+	cp "$scripts_folder/generic" "$path"
 fi
 if [ "$EDITOR" = "" ]; then EDITOR=vim; fi
 "$EDITOR" "$path"

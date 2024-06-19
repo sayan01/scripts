@@ -1,4 +1,11 @@
 #!/bin/bash
 
-cd ~/scripts || exit 1
+
+conf=$XDG_CONFIG_HOME/scripts.conf
+
+[ -f "$conf" ] && source "$conf"
+
+grep -q "^scripts_folder=" "$conf" || scripts_folder="$HOME/scripts"
+
+cd "$scripts_folder" || exit 1
 git add -f .

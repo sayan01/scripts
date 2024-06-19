@@ -1,0 +1,8 @@
+#!/bin/bash
+output=$(xrandr --listactivemonitors | grep '^ \+[0-9]' | rev | cut -d ' ' -f1 | rev)
+
+if xrandr --query --verbose | grep "$MONITOR" | grep "normal (" -q; then
+  xrandr --output $output --rotate inverted
+else
+  xrandr --output $output --rotate normal
+fi

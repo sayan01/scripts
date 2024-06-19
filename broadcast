@@ -20,7 +20,7 @@ if [[ "$#" -eq 1 ]] ; then
     exit 1
   fi
 else
-  command=(ffmpeg -f x11grab -framerate 60 -video_size 1920x1080 -i ":0.0+0,0" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p)
+  command=(ffmpeg -stream_loop -1 -f x11grab -framerate 60 -video_size 1920x1080 -i ":0.0+0,0" -f v4l2 -vcodec rawvideo -pix_fmt yuv420p)
 fi
 
 for device in /dev/video* ; do

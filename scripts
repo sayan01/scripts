@@ -1,11 +1,49 @@
 #!/bin/bash
 
-temulator="konsole -e"
-cd ~/scripts/ || exit 1
-file="$(find -- * -executable -type f | rofi -dmenu -i -p scripts)"
+conf=$XDG_CONFIG_HOME/scripts.conf
 
-if [ "$1" == "here" ]; then temulator=""; fi
+[ -f "$conf" ] && source "$conf"
+
+grep -q "^scripts_folder=" "$conf" || scripts_folder="$HOME/scripts"
+grep -q "^temulator=" "$conf" || temulator="konsole -e"
+
+if ! [ -d "$scripts_folder" ] ; then
+  echo -n "scripts folder ($scripts_folder) not found, make it? [yN] "
+  read -r -n1 ans
+  if grep "[yY]" <<< "$ans" -q; then
+    mkdir -p "$scripts_folder"
+  else
+    exit 1
+  fi
+fi
+
+cd $scripts_folder || exit 1
+
+tui_finder="fzf"
+gui_finder="rofi -dmenu -i -p scripts"
+
+mode="t"
+while getopts "tg" opt; do
+  case $opt in
+    t) ;&
+    g) mode="$opt";;
+    *) "invalid option"; exit 1;;
+  esac
+done
+
+if [ "$mode" = "t" ]; then
+  finder="$tui_finder"
+else
+  finder="$gui_finder"
+  prefix="$temulator"
+fi
+
+file=${@: -1}
+
+if [ $# -lt 1 ] || [ -z "$file" ] || grep -q "-" <<< "$file"; then
+  file="$(find -- * -executable -type f | $finder)"
+fi
 
 if [ "$file" ]; then
-	$temulator initscript "$file"
+	$prefix initscript "$file"
 fi
