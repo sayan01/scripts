@@ -64,9 +64,10 @@ init_filenames "$res"
 
 
 prelock() {
-	if [ -n "$(pidof dunst)" ]; then
-		pkill -u "$USER" -USR1 dunst
-	fi
+	# if [ -n "$(pidof dunst)" ]; then
+	# 	pkill -u "$USER" -USR1 dunst
+	# fi
+  :
 }
 
 
@@ -136,7 +137,7 @@ lockselect() {
 logical_px() {
 	# get dpi value from xrdb
 	local DPI=$(xrdb -query | awk '/Xft.dpi/ {print $2}')
-	
+
 	# return the default value if no DPI is set
 	if [ -z "$DPI" ]; then
 		echo $1
@@ -153,7 +154,7 @@ logical_px() {
 }
 
 update() {
-	# use 
+	# use
 	background="$1"
 
 	# default blur level; fallback to 1

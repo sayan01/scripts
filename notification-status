@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function help(){
+  echo "Usage: $(basename "${BASH_SOURCE[0]}") [-t]"
+  exit 1
+}
+
+while getopts "t" opt; do
+  case $opt in
+    "t") dunstctl set-paused toggle ;;
+    *) help
+  esac
+done
+
+if [[ "$(dunstctl is-paused)" == "false" ]]; then
+  echo ""
+else
+  echo ""
+fi
