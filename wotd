@@ -2,8 +2,7 @@
 
 # inspired from github.com/PrabuddhMathur
 
-CONFIG_FILE="$HOME/.config/wallset.conf"
-source "$CONFIG_FILE"
+source "${XDG_CONFIG_HOME:-$HOME/.config}/wall.conf"
 
 if [[ -z "$WALLPAPER_DIR" ]]; then
   WALLPAPER_DIR="$HOME/.config/wall"

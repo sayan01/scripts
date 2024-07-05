@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# wallpaper chooser
+#
+# requires: sxiv (extra), ubg (sayan01/scripts)
+
+err(){
+  echo "$@" >&2
+  exit 1
+}
+
+source "${XDG_CONFIG_HOME:-$HOME/.config}/wall.conf"
+
+if [[ -z "$WALLPAPER_DIR" ]]; then
+  WALLPAPER_DIR="$HOME/.config/wall"
+fi
+
+if ! test -d "$WALLPAPER_DIR"; then
+  err "Error: $WALLPAPER_DIR is not a directory"
+fi
+
+if ! command -v sxiv &>/dev/null; then
+  err "Error: sxiv is not installed"
+fi
+
+filter_images(){
+  while read -r file; do
+    if isimage "$file"; then
+      echo "$file"
+    fi
+  done
+}
+
+wallpapers=$(find "$WALLPAPER_DIR" -type f | filter_images | sort)
+
+if [[ -z "$wallpapers" ]]; then
+  err "Error: no wallpapers found in $WALLPAPER_DIR"
+fi
+
+wallpaper=$(echo "$wallpapers" | sxiv -tio)
+
+if [[ -z "$wallpaper" ]]; then
+  exit
+fi
+
+echo "$wallpaper"
+
+read -p "Set as wallpaper? [y/N] " -n 1 -r ch >&2
+echo
+
+if [[ $ch =~ ^[Yy]$ ]]; then
+  if ! command -v ubg &>/dev/null; then
+    err "Error: ubg is not installed"
+  fi
+  ubg "$wallpaper"
+fi

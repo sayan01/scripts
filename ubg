@@ -4,13 +4,15 @@
 # changes background as well as lockscreen picture to provided image
 # dont use if you want different images as bg and lockscreen.
 
-# works only with bgclock and betterlockscreen already set up
+# works with bgclock or feh and betterlockscreen
 
-# usage: ubg image [delta]
+# usage: ubg [image] [delta]
 
 # if you feel the accent color generated is too similar or too dissimilar to
 # dominant color of image, then pass 2nd argument delta. higher delta = more difference
 # default value of delta = 50
+
+# if no image is provided, then it will use the image in $WALLPAPER_DIR/wall
 
 error(){
 	echo "$@" >&2
@@ -18,15 +20,21 @@ error(){
 }
 src="$1"
 
-path="${HOME}/.config/wall"
+source "${XDG_CONFIG_HOME:-$HOME/.config}/wall.conf"
+
+if [[ -z "$WALLPAPER_DIR" ]]; then
+  path="${HOME}/.config/wall"
+else
+  path="$WALLPAPER_DIR"
+fi
+
 
 if test -z "$1"; then
   if test -f "${path}/wall"; then
     src="${path}/wall"
-    src="$(realpath "$src")"
     echo "No image provided, reconfiguring current theme"
   else
-    error "No image provided, and no image found in $path"
+    error "No image provided, and no image found in $path/wall"
   fi
 fi
 if test ! -r "$src" ; then error "File $src does not exist or is unreadable"; fi
@@ -35,9 +43,10 @@ if ! isimage "$src"; then error "$src is not a valid image file" ; fi
 
 delta="$2"
 if test -z "$2"; then delta=50; fi
+src="$(realpath "$src")"
 
 if ! mkdir -p "$path"; then echo "unable to create directory"; exit 1; fi
-if [[ $(realpath "$src") != $(realpath "$path/$(basename "$src")") ]]; then
+if [[ "$src" != $(realpath "$path/$(basename "$src")") ]]; then
   cp -f "$src" "${path}/"
 fi
 cd "$path" || exit 1
