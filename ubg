@@ -13,14 +13,22 @@
 # default value of delta = 50
 
 error(){
-	echo "$@"
+	echo "$@" >&2
 	exit 1
 }
 src="$1"
 
 path="${HOME}/.config/wall"
 
-if test -z "$1"; then error "usage: ubg image [delta=50]"; fi
+if test -z "$1"; then
+  if test -f "${path}/wall"; then
+    src="${path}/wall"
+    src="$(realpath "$src")"
+    echo "No image provided, reconfiguring current theme"
+  else
+    error "No image provided, and no image found in $path"
+  fi
+fi
 if test ! -r "$src" ; then error "File $src does not exist or is unreadable"; fi
 if test -d "$src"; then error "$src is a directory, not an image" ; fi
 if ! isimage "$src"; then error "$src is not a valid image file" ; fi
@@ -29,63 +37,81 @@ delta="$2"
 if test -z "$2"; then delta=50; fi
 
 if ! mkdir -p "$path"; then echo "unable to create directory"; exit 1; fi
-cp -f "$src" "${path}/"
+if [[ $(realpath "$src") != $(realpath "$path/$(basename "$src")") ]]; then
+  cp -f "$src" "${path}/"
+fi
 cd "$path" || exit 1
 src="$(basename "$src")"
 rm wall || exit 1
 # set background to be read by bgclock
 ln -s "$src" wall || exit 1
 echo "background symlink set"
-echo "set that as bg itself? (select n if using bgclock) [Y/n]"
-read -r ch
+read -r -n1 -p "set background? [Y/n] " ch
+echo
 if test "$ch" != "n"; then
   feh --bg-fill "$src" || exit 1
   echo "background set"
 fi
-# set lockscreen to be used by betterlockscreen, this takes a while
-betterlockscreen -u "$src" || exit 1
-echo "lockscreen set"
-# get dominant color of picture
-dc="$(domcol "$src")"
-# get if image color is light or dark
-contrast="$(lord "$dc")"
-# if image is dark, make accent lighter. if image is light, make accent darker
-case "$contrast" in
-	"light") tone=-${delta} ;;
-	"dark") tone=${delta} ;;
-esac
-# get accent color
-accentcolor="$(hexcolortoner "$dc" "$tone")"
-# get accentcolor contrast (light or dark)
-contrast="$(lord "$accentcolor")"
 
-# if accentcolor is light, make text black, else make text white
-case "$contrast" in
-	"light") textcolor="#111111";;
-	"dark") textcolor="#eeeeee";;
-esac
+read -r -n1 -p "set lockscreen? [Y/n] " ch
+echo
+if test "$ch" != "n"; then
+  echo "setting lockscreen"
+  # set lockscreen to be used by betterlockscreen, this takes a while
+  betterlockscreen -u "$src" || exit 1
+  echo "lockscreen set"
+fi
 
-echo "dominantcolor= $dc"
-echo "accentcolor= $accentcolor"
-echo "textcolor= $textcolor"
+while true; do
+  # get dominant color of picture
+  dc="$(domcol "$src")"
+  # get if image color is light or dark
+  contrast="$(lord "$dc")"
+  # if image is dark, make accent lighter. if image is light, make accent darker
+  case "$contrast" in
+    "light") tone=-${delta} ;;
+    "dark") tone=${delta} ;;
+  esac
+  # get accent color
+  accentcolor="$(hexcolortoner "$dc" "$tone")"
+  # get accentcolor contrast (light or dark)
+  contrast="$(lord "$accentcolor")"
 
-# write the theme to .theme file in ~/.config/wall
-printf "dwm.selfgcolor:\t%s\ndwm.selbordercolor:\t%s\ndwm.selbgcolor:\t%s\n" \
-	"$textcolor" "$accentcolor" "$accentcolor" > .theme
-echo "theme written to $path"
+  # if accentcolor is light, make text black, else make text white
+  case "$contrast" in
+    "light") textcolor="#111111";;
+    "dark") textcolor="#eeeeee";;
+  esac
 
-echo -n "do you want to write these themes to xresources? [Y/n] "
-read -r ch
+  echo "dominantcolor= $dc"
+  echo "accentcolor= $accentcolor"
+  echo "textcolor= $textcolor"
+
+  # write the theme to .theme file in ~/.config/wall
+  printf "dwm.selfgcolor:\t%s\ndwm.selbordercolor:\t%s\ndwm.selbgcolor:\t%s\n" \
+    "$textcolor" "$accentcolor" "$accentcolor" > .theme
+  echo "theme written to $path"
+
+  read -r -n1 -p "regenerate colors? [Y/n] " ch
+  echo
+
+  if test "$ch" != "y"; then
+    break
+  fi
+done
+
+read -r -n1 -p "write to xresources? [Y/n] " ch
+echo
 
 if test "$ch" != "n"; then
   echo "writing to xresources"
   xrdb -merge .theme
   xrdb -edit "${HOME}/.Xresources"
   echo "theme applied and written to .Xresources. Restart dwm to reflect changes"
-  echo "restart dwm? [Y/n]"
-  read -r ch
-  if test "$ch" != "n"; then
-    restartdwm
-  fi
 fi
 
+read -r -n1 -p "restart dwm? [Y/n] " ch
+echo
+if test "$ch" != "n"; then
+  restartdwm
+fi
