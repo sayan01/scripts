@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# inspired from github.com/PrabuddhMathur
+
+CONFIG_FILE="$HOME/.config/wallset.conf"
+source "$CONFIG_FILE"
+
+if [[ -z "$WALLPAPER_DIR" ]]; then
+  WALLPAPER_DIR="$HOME/.config/wall"
+fi
+
+filename="${WALLPAPER_DIR}/wotd-$(date +%Y_%m_%d).jpg"
+master_url="https://bing.gifposter.com/"
+search_pattern="(?<=itemprop=\"image\" class=\"fl\" src=\")[^\"]*(?=_mb)"
+bing_url="$(curl --silent "$master_url" | grep -Po -m 1 "$search_pattern")"
+echo "url: $bing_url" >&2
+if curl \
+  --create-dirs \
+  --no-progress-meter \
+  --output "$filename" \
+  "$bing_url" ; then
+    echo "$filename"
+  else
+    echo "Failed to download wallpaper" >&2
+    exit 1
+fi
+
+read -n1 -r -p "Set wallpaper? [Y/n]" key
+echo
+if ! [[ "$key" =~ [nN] ]]; then
+  ubg "$filename"
+fi
