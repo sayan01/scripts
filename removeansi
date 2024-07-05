@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import re
+from sys import argv
+import os
+import sys
+
+ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+
+data = ""
+
+if len(argv) >= 2:
+    for i in range(1, len(argv)):
+        if argv[i].startswith('-'):
+            continue
+        if not os.path.isfile(argv[i]):
+            print(f"File {argv[i]} does not exist")
+            continue
+        with open(argv[i], 'r') as file:
+            data = file.read()
+            result = ansi_escape.sub('', data)
+            print(result, end="")
+else:
+    data = sys.stdin.read()
+    result = ansi_escape.sub('', data)
+    print(result,end="")
