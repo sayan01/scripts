@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# check all monitors
+
+monitors=$(xrandr | grep '\bconnected' | cut -d' ' -f1)
+if [[ $(wc -l <<< "$monitors") -gt 1 ]]; then
+  monitor=$(fzf <<< "$monitors")
+else
+  monitor="$monitors"
+fi
+
+read -p "enter brightness fraction [0-∞]: " fraction
+
+xrandr --output "$monitor" --brightness "$fraction"

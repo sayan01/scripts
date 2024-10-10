@@ -24,6 +24,12 @@ if curl \
     exit 1
 fi
 
+read -n1 -r -p "Preview? [Y/n]" key
+echo
+if ! [[ "$key" =~ [nN] ]]; then
+  sxiv "$filename"
+fi
+
 read -n1 -r -p "Set wallpaper? [Y/n]" key
 echo
 if ! [[ "$key" =~ [nN] ]]; then

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+file=$(mktemp)
+
+cp "$1" "$file"
+sudo touch "$1"
+
+"${EDITOR:-vim}" "$file"
+
+if [[ "$file" -nt "$1" ]]; then
+  sudo cp "$1" "$1.backup"
+  sudo mv "$file" "$1"
+else
+  echo "no change, exiting"
+fi

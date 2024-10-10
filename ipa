@@ -1,2 +1,2 @@
 #!/bin/bash
-ipaddr | grep -v lo | cut -d ' ' -f2
+ipaddr | grep -E 'wlan|eth|elo' | cut -d ' ' -f2

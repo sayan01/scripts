@@ -64,33 +64,36 @@ init_filenames "$res"
 
 
 prelock() {
-	# if [ -n "$(pidof dunst)" ]; then
-	# 	pkill -u "$USER" -USR1 dunst
-	# fi
+	if [ -n "$(pidof dunst)" ]; then
+		pkill -u "$USER" -USR1 dunst
+	fi
   :
 }
 
 
 lock() {
 	#$1 image path
+  res=$(xrandr | grep '\*' | awk '{ print $1}' | head -n1)
+  width=${res%x*}
+  height=${res#*x}
 
 	i3lock \
 		-t -i "$1" -en \
-		--time-pos='x+960:h-70' \
-		--date-pos='x+960:h-35' \
+    --time-pos="x+$((width/2)):h-70" \
+    --date-pos="x+$((width/2)):h-35" \
 		--time-size=48 --date-size=24 \
 		--inside-color=$insidecolor --ring-color=$ringcolor --line-uses-inside \
 		--keyhl-color=$keyhlcolor --bshl-color=$bshlcolor --separator-color=$separatorcolor \
 		--insidever-color=$insidevercolor --insidewrong-color=$insidewrongcolor \
 		--ringver-color=$ringvercolor --ringwrong-color=$ringwrongcolor \
-		--radius=100 --ring-width=20 --verif-text='' --wrong-text='' \
+		--radius=100 --ring-width=20 --verif-text='' --wrong-text='womp womp' \
 		--verif-color="$verifcolor" --time-color="$timecolor" --date-color="$datecolor" \
-		--noinput-text=':O' --force-clock --time-str="%H:%M" --date-str="%A, %d %b" "$lockargs"
+		--noinput-text='' --force-clock --time-str="%H:%M" --date-str="%A, %d %b" "$lockargs"
 }
 
 
 postlock() {
-	if [ ! -z "$(pidof dunst)" ] ; then
+	if [ -n "$(pidof dunst)" ] ; then
 		pkill -u "$USER" -USR2 dunst
 	fi
 }
@@ -205,7 +208,7 @@ update() {
 	echo
 	echo 'Applying dim and blur effect to resized image'
 	# dim
-	convert "$resized" -fill black -colorize 40% "$dim"
+	# convert "$resized" -fill black -colorize 40% "$dim"
 
 	# blur
 	blur_shrink=$(echo "scale=2; 20 / $blur_level" | bc)
@@ -218,17 +221,17 @@ update() {
 		"$blur"
 
 	# dimblur
-	convert "$dim" \
-		-filter Gaussian \
-		-resize "$blur_shrink%" \
-		-define "filter:sigma=$blur_sigma" \
-		-resize "$res^" -gravity center -extent "$res" \
-		"$dimblur"
+	# convert "$dim" \
+	# 	-filter Gaussian \
+	# 	-resize "$blur_shrink%" \
+	# 	-define "filter:sigma=$blur_sigma" \
+	# 	-resize "$res^" -gravity center -extent "$res" \
+	# 	"$dimblur"
 
 	# lockscreen backgrounds
 
-	echo
-	echo 'Caching images for faster screen locking'
+	# echo
+	# echo 'Caching images for faster screen locking'
 	# resized
 	#convert "$resized" -draw "fill #$loginbox $rectangles" "$l_resized"
 
@@ -242,49 +245,6 @@ update() {
 	#convert "$dimblur" -draw "fill #$loginbox $rectangles" "$l_dimblur"
 	echo
 	echo 'All required changes have been applied'
-}
-
-
-wallpaper() {
-	case "$1" in
-		'')
-			# set resized image as wallpaper if no argument is supplied by user
-			feh --bg-fill $resized
-			;;
-
-		dim)
-			# set dimmed image as wallpaper
-			feh --bg-fill $dim
-			;;
-
-		blur)
-			# set blurred image as wallpaper
-			feh --bg-fill $blur
-			;;
-
-		dimblur)
-			# set dimmed + blurred image as wallpaper
-			feh --bg-fill $dimblur
-			;;
-	esac
-}
-
-
-empty() {
-	if [ -f $l_dim ]; then
-		echo -e "\nSeems you haven't provided any arguments. See below for usage details."
-	else
-		echo 'Important: Update the image cache (e.g. betterlockscreen -u path/to/image.jpg).'
-		echo
-		echo '		Image cache must be updated to initially configure or update the wallpaper used.'
-	fi
-
-	echo
-	echo 'For other sets of options and help, use the help command.'
-	echo 'e.g. betterlockscreen -h or betterlockscreen --help'
-	echo
-	echo 'See: https://github.com/pavanjadhaw/betterlockscreen for additional info...'
-	exit 1
 }
 
 
@@ -355,8 +315,6 @@ usage() {
 
 
 # Options
-[[ "$1" = '' ]] && empty
-
 for arg in "$@"; do
 	[[ "${arg:0:1}" = '-' ]] || continue
 
@@ -376,25 +334,16 @@ for arg in "$@"; do
 			[[ ${2:0:1} = '-' ]] && shift 1 || { lockstyle="$2"; shift 2; }
 			;;
 
-		-w | --wall | --wallpaper)
-			wallpaper "$2"
-			shift 2
-			;;
-
 		-u | --update)
 			runupdate=true
 			imagepath="$2"
 			shift 2
 			;;
 
-		-t | --text)
-			locktext="$2"
-			shift 2
-			;;
 
 		-r | --resolution)
 			res="$2"
-			init_filenames $res force
+			init_filenames "$res" force
 			shift 2
 			;;
 

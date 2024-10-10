@@ -1,0 +1,12 @@
+#!/bin/bash
+
+device=$(xinput list | grep -i touchscreen | grep -P 'id=\K[0-9]*' -o)
+
+if xinput list "$device" | grep -q disabled; then
+  set="enable"
+else
+  set="disable"
+fi
+
+xinput $set "$device"
+
