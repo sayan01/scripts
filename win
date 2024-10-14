@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 rofi -show window -scroll-method 1 -show-icons -dpi 128 

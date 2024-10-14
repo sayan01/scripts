@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # takes image input, puts clock in the center and renders output.
 if [ -z "$1" ]; then 
 	echo "usage: 

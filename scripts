@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 conf=$XDG_CONFIG_HOME/scripts.conf
 
@@ -41,7 +41,7 @@ fi
 file=${@: -1}
 
 if [ $# -lt 1 ] || [ -z "$file" ] || grep -q "-" <<< "$file"; then
-  file="$(find -- * -executable -type f | $finder)"
+  file="$(find -- * -perm +111 -type f | $finder)"
 fi
 
 if [ "$file" ]; then

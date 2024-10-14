@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if adb devices | grep -q device$; then
 	echo -n ""
 	if [ -e ~/.cache/webcam.lock ]; then echo " "; else echo; fi

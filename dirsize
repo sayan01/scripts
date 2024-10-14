@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 calc (){
 	rv=$(echo "scale=2;$1" | bc)
 	if echo "$rv" | grep -q .00$

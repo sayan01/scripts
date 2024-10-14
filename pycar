@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 f="$1"
 shift
 f=${f%.py} # remove .py from filename if it exists

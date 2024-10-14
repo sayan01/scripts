@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 listpath="${HOME}/.config/autostart"
 if ! test -d "$listpath"; then

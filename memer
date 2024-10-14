@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # dependencies - jq, sxiv, xclip, rofi
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # keeps running and update the wallpaper image with the current
 # time, also calls ~/.fehbg to re-apply new wallpaper.
 # creates .fehbg if doesn't exist.

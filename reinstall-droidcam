@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # check if video0 is working or not
 if videocheck &> /dev/null; then

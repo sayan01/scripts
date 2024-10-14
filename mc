@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # media control script using playerctl
 # the player is chosen from ~/.config/mc.conf if $2 is not passed
 # editing ~/.config/mc.conf directly is discouraged, use mc-config instead

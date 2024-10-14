@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [[ "$*" =~ -h || "$*" =~ --help ]]; then
     echo "Usage: $(basename "$0") pdffile [level]"

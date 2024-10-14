@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 coff="/usr/share/icons/breath/status/22/camera-off.svg"
 con="/usr/share/icons/breeze-dark/status/22/camera-on.svg"
 if [ -e ~/.cache/webcam.lock ] # if client is already running

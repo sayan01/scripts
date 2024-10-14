@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if test -z "$PACKLIST" ;then
   if [[ -r $XDG_CONFIG_HOME/pkgsync/pkgsync.conf ]] ; then

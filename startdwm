@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # relaunch DWM if the binary changes, otherwise bail
 conf="$HOME/.config/startdwm"
 

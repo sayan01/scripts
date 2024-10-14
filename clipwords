@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 words=$(xsel -ob | wc -w)
 chars=$(xsel -ob | wc -c)

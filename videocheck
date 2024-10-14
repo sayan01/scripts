@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if ! lsmod | grep -q v4l2loopback_dc; then
 	echo ""
 	exit 1

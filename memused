@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mu="$(\free -h --giga | awk '/^Mem/ {print $3}')"
 if [[ "$1" == "bar" ]] ; then
   mu="$(\free | awk '/Mem/{ print $3 }')"

@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "$(acpi -b | cut -d, -f3 | cut -d: -f1-2) hr"

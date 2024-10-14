@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 handle_property_change() {
   music_album_dir="$HOME/.cache/music-albumart"

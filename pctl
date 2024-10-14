@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # playerctl, but fast
 # skip the fetching of metadata overhead of playerctl
 # author: Ayose C (ayosec)

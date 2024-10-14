@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 sudo rm -R /etc/pacman.d/gnupg
 sudo rm -R /root/.gnupg
 sudo rm /var/cache/pacman -rf

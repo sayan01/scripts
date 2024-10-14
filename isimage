@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [[ $# -ge 1 ]]; then
   file="$1"
 else

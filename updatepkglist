@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # To be run as a pacman hook, so PACKLIST should be defined in /etc/environment
 # and a hook file to be created and put in /etc/pacman.d/hooks/

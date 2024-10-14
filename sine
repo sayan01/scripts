@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 freq=$1
 dur=$2
 if [[ $# -ne 2 ]]; then

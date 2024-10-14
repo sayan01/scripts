@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 import sys
 colors = {
      "default" : "\033[0m",

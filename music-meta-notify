@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # send libnotify notification about currently playing media
 # get data from playerctl metadata
 # requires: playerctl, libnotify

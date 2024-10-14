@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 beep(){
 	sine 500 0.05
 	sine 600 0.05

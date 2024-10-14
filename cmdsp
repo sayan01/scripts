@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 camera=$(v4l2-ctl --list-devices | \
  sed -e 's/\t//g' -e 's/ (.*$//g' | \
  tr -d '\n' | \

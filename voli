@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # set, increase, decrease, toggle volume of a sink-input (application)
 # 
 # NOTE

@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ip -j addr show | jq -r '.[] | .ifname + " " + (.addr_info[] | select(.family=="inet") | .local + "/" + (.prefixlen|tostring))'

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # one command to set, increase, decrease, mute, and
 # display mic volume
 # usage:

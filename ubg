@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ubg - universal background wallpaper changer
 # changes background as well as lockscreen picture to provided image

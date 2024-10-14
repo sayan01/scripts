@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 device=$(xinput list | grep -i touchscreen | grep -P 'id=\K[0-9]*' -o)
 

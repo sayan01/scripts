@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #    
 ind=$(($(sec) % 4))
 

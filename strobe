@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 prev=$(xbacklight -get)
 reset() {
 	xbacklight -set "$prev"

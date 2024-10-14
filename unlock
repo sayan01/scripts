@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 adb shell input keyevent 82 # send menu click (turn on screen)
 

@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 pacman -Q | cut -d' ' -f1

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ ! -r /sys/class/power_supply/BAT0/capacity ]; then 
 	echo "Can't Access Battery"
 	exit 1

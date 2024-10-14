@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # script to edit ~/.config/mc.conf with currently running music player names
 
 players="$(playerctl -l)"

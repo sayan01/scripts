@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 wmctrl -d | grep "\*" | cut -d' ' -f1

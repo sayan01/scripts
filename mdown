@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Download music from youtube/other platforms using yt-dl
 # set the name to be the second parameter if provided.
 # dont give any extension to the output name, if you want to specify

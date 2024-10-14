@@ -1,2 +1,2 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ipaddr | grep -E 'wlan|eth|elo' | cut -d ' ' -f2

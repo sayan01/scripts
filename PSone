@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Return the colorcode for the given color
 color(){
 	declare -A fgcol=( ["Default"]="\[\e[39m\]" ["Black"]="\[\e[30m\]" ["Red"]="\[\e[31m\]" ["Green"]="\[\e[32m\]" ["Yellow"]="\[\e[33m\]" ["Blue"]="\[\e[34m\]" ["Magenta"]="\[\e[35m\]" ["Cyan"]="\[\e[36m\]" ["White"]="\[\e[37m\]")

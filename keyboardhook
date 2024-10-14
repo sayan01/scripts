@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 scriptfile="${HOME}/.config/keyboardhook"
 
 while true; do

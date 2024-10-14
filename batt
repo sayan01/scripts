@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 for bat in /sys/class/power_supply/BAT*; do
 	level=$(cat "$bat"/capacity)
 	status=$(cat "$bat"/status)

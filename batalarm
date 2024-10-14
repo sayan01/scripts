@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ring(){
 	sine 500 0.1
 	sine 300 0.1

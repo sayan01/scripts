@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #prints the dominant color in supplied image in hexadecimal code. #xxxxxx
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 temp=$(sensors | grep -Pio "^(tctl|cpu):.+\+\K\d+")
 case $temp in
 	[0123]?|?) emo="";;

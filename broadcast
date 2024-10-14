@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # share the entire screen (X11) to v4l2 loopback device
 # if file is passed then broadcast that instead
 
