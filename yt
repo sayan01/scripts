@@ -10,12 +10,20 @@
 
 # NOTE:  if you dont have GNU grep you can replace grep with rg
 
+# utility function to extract field from delimited string
+extract_field() {
+  local input="$1"
+  local delimiter="$2"
+  local field="$3"
+  echo "$input" | cut -d"$delimiter" -f"$field"
+}
+
 # function to save video/playlist to history
 save_to_history() {
   local url="$1"
   local title="$2"
   local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
-  echo "$url	$title	$timestamp" >> "$historypath"
+  echo -e "$url\t$title\t$timestamp" >> "$historypath"
 }
 
 # explain usage
@@ -159,7 +167,7 @@ if [ -z "$query" ]; then
     else
       query=$($promptcmd --print-query <<<"$sublist" | tail -n1)
     fi
-    query=$(echo "$query" | awk '{print $1}')
+    query=$(extract_field "$query" ' ' 1)
   # view watch history
   elif [[ $action = "H" ]]; then
     if [ ! -f "$historypath" ]; then
@@ -174,12 +182,12 @@ if [ -z "$query" ]; then
       query=$($promptcmd --print-query <"$historypath" | tail -n1)
     fi
     # extract URL from history entry
-    query=$(echo "$query" | awk '{print $1}')
+    query=$(extract_field "$query" ' ' 1)
     # play directly from history
     if [ -n "$query" ]; then
       echo "Playing from history: $query"
       # Extract title from history entry for re-saving
-      title=$(echo "$query" | cut -d'	' -f2)
+      title=$(extract_field "$query" $'\t' 2)
       save_to_history "$query" "$title"
       mpv "$query" $mpv_options --ytdl-format="$ytdlformats"
       exit 0
@@ -198,12 +206,12 @@ if [ -z "$query" ]; then
       query=$($promptcmd --print-query <"$playlistspath" | tail -n1)
     fi
     # extract URL from playlist entry
-    query=$(echo "$query" | awk '{print $1}')
+    query=$(extract_field "$query" ' ' 1)
     # play playlist directly
     if [ -n "$query" ]; then
       echo "Playing playlist: $query"
       # Extract title from playlist entry for saving to history
-      title=$(echo "$query" | cut -d'	' -f2)
+      title=$(extract_field "$query" $'\t' 2)
       save_to_history "$query" "$title"
       mpv "$query" $mpv_options --ytdl-format="$ytdlformats"
       exit 0
@@ -232,7 +240,7 @@ if [[ $action = "P" ]]; then
       if [ -z "$playlist_name" ]; then
         playlist_name="Playlist"
       fi
-      echo "$query	$playlist_name	$(date '+%Y-%m-%d %H:%M:%S')" >> "$playlistspath"
+      echo -e "$query\t$playlist_name\t$(date '+%Y-%m-%d %H:%M:%S')" >> "$playlistspath"
       echo "Playlist '$playlist_name' added to saved playlists"
       exit 0
     else
@@ -279,9 +287,9 @@ if [[ $action = "c" ]]; then
 
   # prompt the results to user infinitely until they exit (escape)
   while true; do
-    choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd)       # dont show id
+    choice=$(echo -e "$ids" | cut -d$'\t' -f2 | $promptcmd)       # dont show id
     if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
-    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'\t' -f1) # get id of choice
     echo -e "$choice\t($id)"
     case $id in
     ???????????) 
@@ -320,9 +328,9 @@ else
   playlink="https://youtube.com/playlist?list="
   # prompt the results to user infinitely until they exit (escape)
   while true; do
-    choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd)       # dont show id
+    choice=$(echo -e "$ids" | cut -d$'\t' -f2 | $promptcmd)       # dont show id
     if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
-    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'\t' -f1) # get id of choice
     echo -e "$choice\t($id)"
     case $id in
     # 11 digit id = video
