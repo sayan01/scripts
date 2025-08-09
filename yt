@@ -26,6 +26,14 @@ save_to_history() {
   echo -e "$url\t$title\t$timestamp" >> "$historypath"
 }
 
+# function to save to history and play via mpv
+play() {
+  local url="$1"
+  local choice="$2"
+  save_to_history "$url" "$choice"
+  mpv "$url" $mpv_options --ytdl-format="$ytdlformats"
+}
+
 # explain usage
 function usage() {
   echo "usage: yt"
@@ -188,8 +196,7 @@ if [ -z "$query" ]; then
       echo "Playing from history: $query"
       # Extract title from history entry for re-saving
       title=$(extract_field "$query" $'\t' 2)
-      save_to_history "$query" "$title"
-      mpv "$query" $mpv_options --ytdl-format="$ytdlformats"
+      play "$query" "$title"
       exit 0
     fi
   # view saved playlists
@@ -212,8 +219,7 @@ if [ -z "$query" ]; then
       echo "Playing playlist: $query"
       # Extract title from playlist entry for saving to history
       title=$(extract_field "$query" $'\t' 2)
-      save_to_history "$query" "$title"
-      mpv "$query" $mpv_options --ytdl-format="$ytdlformats"
+      play "$query" "$title"
       exit 0
     fi
   else
@@ -294,8 +300,7 @@ if [[ $action = "c" ]]; then
     case $id in
     ???????????) 
       url="$videolink$id"
-      save_to_history "$url" "$choice"
-      mpv "$url" "$mpv_options" --ytdl-format="$ytdlformats" ;;
+      play "$url" "$choice" ;;
     *) exit ;;
     esac
   done
@@ -336,13 +341,11 @@ else
     # 11 digit id = video
     ???????????) 
       url="$videolink$id"
-      save_to_history "$url" "$choice"
-      mpv "$url" $mpv_options --ytdl-format="$ytdlformats" ;;
+      play "$url" "$choice" ;;
     # 34 digit id = playlist
     ??????????????????????????????????) 
       url="$playlink$id"
-      save_to_history "$url" "$choice"
-      mpv "$url" $mpv_options --ytdl-format="$ytdlformats" ;;
+      play "$url" "$choice" ;;
     *) exit ;;
     esac
   done
