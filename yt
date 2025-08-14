@@ -10,27 +10,55 @@
 
 # NOTE:  if you dont have GNU grep you can replace grep with rg
 
+# utility function to extract field from delimited string
+extract_field() {
+  local input="$1"
+  local delimiter="$2"
+  local field="$3"
+  echo "$input" | cut -d"$delimiter" -f"$field"
+}
+
+# function to save video/playlist to history
+save_to_history() {
+  local url="$1"
+  local title="$2"
+  local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+  echo -e "$url\t$title\t$timestamp" >> "$historypath"
+}
+
+# function to save to history and play via mpv
+play() {
+  local url="$1"
+  local choice="$2"
+  save_to_history "$url" "$choice"
+  mpv "$url" $mpv_options --ytdl-format="$ytdlformats"
+}
+
 # explain usage
-function usage () {
+function usage() {
   echo "usage: yt"
   echo "    -h        help"
   echo "    -c        channels/subscriptions"
   echo "    -s query  search"
   echo "    -g / -r   gui mode (rofi/dmenu)"
   echo "    -m        music mode (audio only) [dont use with -r]"
+  echo "    -H        view watch history"
+  echo "    -p        view saved playlists"
+  echo "    -P url    add playlist to saved playlists"
+  echo "    -x url    play a youtube mix (remember to quote the url)"
   echo "  nothing     use defaults (search from prompt)"
-	echo
-	echo "add channel names to the file $sublistpath to show them"
-	echo "in yt -c option. First word should be channel url, optionally"
-	echo "followed by tab and then anything else (channel name/description)"
-	echo "channels not in sublist can be viewed by typing their url in the prompt"
-	echo
-	echo "example file format:"
-	echo "markrober       Mark Rober"
-	echo "vsauce1         VSauce          Michael Steven's Channel"
-	echo "BlackGryph0n    Black Gryph0n   Gabriel Brown signs stuff"
-	echo "TomScottGo      Tom Scott"
-	echo "danielthrasher  Daniel Thrasher"
+  echo
+  echo "add channel names to the file $sublistpath to show them"
+  echo "in yt -c option. First word should be channel url, optionally"
+  echo "followed by tab and then anything else (channel name/description)"
+  echo "channels not in sublist can be viewed by typing their url in the prompt"
+  echo
+  echo "example file format:"
+  echo "markrober       Mark Rober"
+  echo "vsauce1         VSauce          Michael Steven's Channel"
+  echo "BlackGryph0n    Black Gryph0n   Gabriel Brown signs stuff"
+  echo "TomScottGo      Tom Scott"
+  echo "danielthrasher  Daniel Thrasher"
   exit 0
 }
 
@@ -39,11 +67,11 @@ useDefaults="f"
 
 # no args -> use defaults
 if [[ ${#} -eq 0 ]]; then
-    useDefaults="t"
+  useDefaults="t"
 fi
 
 # available flags
-optstring=":s:cgrhm"
+optstring=":s:c:P:x:grhHpm"
 
 defcmd="fzf"
 defaction="s"
@@ -62,13 +90,13 @@ max_fps="30"
 ignore_codec=""
 ytdlformats="bestvideo"
 
-if [ -n "$max_resolution" ] ; then
+if [ -n "$max_resolution" ]; then
   ytdlformats+="[height<=?$max_resolution]"
 fi
-if [ -n "$max_fps" ] ; then
+if [ -n "$max_fps" ]; then
   ytdlformats+="[fps<=?$max_fps]"
 fi
-if [ -n "$ignore_codec" ] ; then
+if [ -n "$ignore_codec" ]; then
   ytdlformats+="[vcodec!=$ignore_codec]"
 fi
 ytdlformats+="+bestaudio/best"
@@ -76,68 +104,185 @@ ytdlformats+="+bestaudio/best"
 # subscription list
 mkdir -p "${HOME:-}/.config/yt"
 sublistpath="${HOME:-}/.config/yt/sublist"
+historypath="${HOME:-}/.config/yt/history"
+playlistspath="${HOME:-}/.config/yt/playlists"
 sublist=""
 [ -f "$sublistpath" ] && sublist=$(cat "$sublistpath")
 
 # if not using defaults search for flags
 if [[ $useDefaults = "f" ]]; then
-    while getopts ${optstring} arg; do
-        case "${arg}" in
-            s)
-                # search in youtube for a query
-                action="s"
-                query="${OPTARG}" ;;
-            c)
-                # search in subscriptions for specific channel
-                action="c"
-                query="${OPTARG}" ;;
-            g|r)
-                # set gui mode to true and change the prompt to gui prompt
-                isGui="t"
-                promptcmd="$guicmd" ;;
-            m)
-               # make the mpv headless
-                mpv_options+="--no-video" ;;
-            h)
-                # display help / usage
-                usage ;;
-            \?)
-                # wrong args -> exit with explanation of usage
-                echo "invalid option: -${OPTARG}"
-                echo
-                usage ;;
-            :)
-                # missing args -> exit with explanation of usage
-                echo "Option -${OPTARG} needs an argument"
-                echo
-                usage ;;
-        esac
-    done
+  while getopts ${optstring} arg;
+  do
+    case "${arg}" in
+    s)
+      # search in youtube for a query
+      action="s"
+      query="${OPTARG}"
+      ;; 
+    c)
+      # search in subscriptions for specific channel
+      action="c"
+      query="${OPTARG}"
+      ;; 
+    g | r)
+      # set gui mode to true and change the prompt to gui prompt
+      isGui="t"
+      promptcmd="$guicmd"
+      ;; 
+    m)
+      # make the mpv headless
+      mpv_options+="--no-video"
+      ;; 
+    H)
+      # view watch history
+      action="H"
+      ;; 
+    p)
+      # view saved playlists
+      action="p"
+      ;; 
+    P)
+      # add playlist to saved playlists
+      action="P"
+      query="${OPTARG}"
+      ;; 
+    x)
+      # play a youtube mix
+      action="x"
+      query="${OPTARG}"
+      ;; 
+    h)
+      # display help / usage
+      usage
+      ;; 
+    \?)
+      # wrong args -> exit with explanation of usage
+      echo "invalid option: -${OPTARG}"
+      echo
+      usage
+      ;; 
+    :)
+      # missing args -> exit with explanation of usage
+      echo "Option -${OPTARG} needs an argument"
+      echo
+      usage
+      ;; 
+    esac
+  done
 fi
 
 # if no query is set with flags then ask for one
 if [ -z "$query" ]; then
-    # ask for a channel
-    if [[ $action = "c" ]]; then
-        # if in gui mode use gui prompt
-        if [[ $isGui = "t" ]]; then
-			query=$($promptcmd -p "Channel: " <<< "$sublist")
-            promptcmd="$promptcmd -p Video:"
-        else
-            query=$($promptcmd --print-query <<< "$sublist" | tail -n1)
-        fi
-		query=$(echo "$query" | awk '{print $1}')
+  # ask for a channel
+  if [[ $action = "c" ]]; then
+    # if in gui mode use gui prompt
+    if [[ $isGui = "t" ]]; then
+      query=$($promptcmd -p "Channel: " <<<"$sublist")
+      promptcmd="$promptcmd -p Video:"
     else
-        # ask for a query
-        # if in gui mode use gui prompt
-        if [[ $isGui = "t" ]]; then
-            query=$(echo | $promptcmd -p "Search: ")
-            promptcmd="$promptcmd -p Video:"
-        else
-            echo -n "Search: "
-            read -r query
-        fi
+      query=$($promptcmd --print-query <<<"$sublist" | tail -n1)
     fi
+    query=$(extract_field "$query" ' ' 1)
+  # view watch history
+  elif [[ $action = "H" ]]; then
+    if [ ! -f "$historypath" ]; then
+      echo "No watch history found"
+      exit 0
+    fi
+    # if in gui mode use gui prompt
+    if [[ $isGui = "t" ]]; then
+      query=$($promptcmd -p "History: " <"$historypath")
+      promptcmd="$promptcmd -p Video:"
+    else
+      query=$($promptcmd --print-query <"$historypath" | tail -n1)
+    fi
+    # extract URL from history entry
+    query=$(extract_field "$query" ' ' 1)
+    # play directly from history
+    if [ -n "$query" ]; then
+      echo "Playing from history: $query"
+      # Extract title from history entry for re-saving
+      title=$(extract_field "$query" $'	' 2)
+      play "$query" "$title"
+      exit 0
+    fi
+  # view saved playlists
+  elif [[ $action = "p" ]]; then
+    if [ ! -f "$playlistspath" ]; then
+      echo "No saved playlists found"
+      exit 0
+    fi
+    # if in gui mode use gui prompt
+    if [[ $isGui = "t" ]]; then
+      query=$($promptcmd -p "Playlist: " <"$playlistspath")
+      promptcmd="$promptcmd -p Video:"
+    else
+      query=$($promptcmd --print-query <"$playlistspath" | tail -n1)
+    fi
+    # extract URL from playlist entry
+    query=$(extract_field "$query" ' ' 1)
+    # play playlist directly
+    if [ -n "$query" ]; then
+      echo "Playing playlist: $query"
+      # Extract title from playlist entry for saving to history
+      title=$(extract_field "$query" $'	' 2)
+      play "$query" "$title"
+      exit 0
+    fi
+  else
+    # ask for a query
+    # if in gui mode use gui prompt
+    if [[ $isGui = "t" ]]; then
+      query=$(echo | $promptcmd -p "Search: ")
+      promptcmd="$promptcmd -p Video:"
+    else
+      echo -n "Search: "
+      read -r query
+    fi
+  fi
+fi
+
+# handle adding playlist to saved playlists
+if [[ $action = "P" ]]; then
+  if [ -n "$query" ]; then
+    # validate if it's a valid YouTube playlist URL
+    if [[ $query =~ ^https?://(www\.)?youtube\.com/playlist\?list= ]] || [[ $query =~ ^https?://youtu\.be/.*\&list= ]]; then
+      # Try to get playlist title (basic extraction)
+      echo -n "Enter playlist name (or press Enter to use URL): "
+      read -r playlist_name
+      if [ -z "$playlist_name" ]; then
+        playlist_name="Playlist"
+      fi
+      echo -e "$query\t$playlist_name\t$(date '+%Y-%m-%d %H:%M:%S')" >> "$playlistspath"
+      echo "Playlist '$playlist_name' added to saved playlists"
+      exit 0
+    else
+      echo "Invalid playlist URL. Please provide a valid YouTube playlist URL"
+      echo "Example: https://www.youtube.com/playlist?list=PLxxxxxxxxxxxxxxx"
+      exit 1
+    fi
+  else
+    echo "Please provide a playlist URL"
+    echo "Usage: yt -P 'https://www.youtube.com/playlist?list=PLxxxxxxxxxxxxxxx'"
+    exit 1
+  fi
+fi
+
+# handle playing a mix
+if [[ $action = "x" ]]; then
+  if [ -n "$query" ]; then
+    echo "Playing mix: $query"
+    # Add playlist options for mix playback
+    mix_options="$mpv_options --playlist-start=0 --ytdl-raw-options=yes-playlist="
+    save_to_history "$query" "YouTube Mix"
+    mpv "$query" $mix_options --ytdl-format="$ytdlformats"
+    exit 0
+  else
+    echo "Please provide a mix URL"
+    echo "Usage: yt -x 'URL'"
+    echo "Note: Remember to quote the URL if it contains special characters like '&'."
+    exit 1
+  fi
 fi
 
 # program cancelled -> exit
@@ -145,76 +290,89 @@ if [ -z "$query" ]; then exit; fi
 
 # clean query / channel
 query=$(sed \
-  -e 's|+|%2B|g'\
-  -e 's|#|%23|g'\
-  -e 's|&|%26|g'\
-  -e 's| |+|g' <<< "$query")
-
+  -e 's|+|%2B|g' \
+  -e 's|#|%23|g' \
+  -e 's|&|%26|g' \
+  -e 's| |+|g' <<<"$query")
 
 # if channel look for channel vids
 if [[ $action = "c" ]]; then
-    response=$(curl -s "https://www.youtube.com/c/$query/videos" |\
-      sed "s/{\"videoRenderer/\n\n&/g" |\
-      sed "s/}]}}}]}}/&\n\n/g" |\
-      awk -v ORS="\n\n" '/videoRenderer/')
+  response=$(curl -s "https://www.youtube.com/c/$query/videos" |
+    sed "s/{\"videoRenderer/\n\n&/g" |
+    sed "s/}]}}}]}}/&\n\n/g" |
+    awk -v ORS="\n\n" '/videoRenderer/')
 
-    # if unable to fetch the youtube results page, inform and exit
-    if ! grep -q "videoRenderer" <<< "$response"; then echo "unable to fetch yt"; exit 1; fi
+  # if unable to fetch the youtube results page, inform and exit
+  if ! grep -q "videoRenderer" <<<"$response"; then
+    echo "unable to fetch yt"
+    exit 1
+  fi
 
-    # regex expression to match video entries from yt channel page
-    # get the list of videos and their ids to ids
-    ids=$(awk -F '[""]' '{print $6 "\t" $50;}' <<< "$response" | grep "^\S")
+  # regex expression to match video entries from yt channel page
+  # get the list of videos and their ids to ids
+  ids=$(awk -F '[""]' '{print $6 "\t" $50;}' <<<"$response" | grep "^\S")
 
-    # url prefix for videos
-    videolink="https://youtu.be/"
+  # url prefix for videos
+  videolink="https://youtu.be/"
 
-    # prompt the results to user infinitely until they exit (escape)
-    while true; do
-      choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd) # dont show id
-      if [ -z "$choice" ]; then exit; fi	# if esc-ed then exit
-      id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
-      echo -e "$choice\t($id)"
-      case $id in
-          ???????????) mpv "$videolink$id" "$mpv_options" --ytdl-format="$ytdlformats";;
-          *) exit ;;
-      esac
-    done
+  # prompt the results to user infinitely until they exit (escape)
+  while true; do
+    choice=$(echo -e "$ids" | cut -d$'	' -f2 | $promptcmd)       # dont show id
+    if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'	' -f1) # get id of choice
+    echo -e "$choice\t($id)"
+    case $id in
+    ???????????)
+      url="$videolink$id"
+      play "$url" "$choice" ;; 
+    *)
+      exit ;; 
+    esac
+  done
 else
-    # if in search show query result vids
-    response="$(curl -s "https://www.youtube.com/results?search_query=$query" |\
-      sed 's|\\.||g')"
-    # if unable to fetch the youtube results page, inform and exit
-    if ! grep -q "script" <<< "$response"; then echo "unable to fetch yt"; exit 1; fi
-    # regex expression to match video and playlist entries from yt result page
-    vgrep='"videoRenderer":{"videoId":"\K.{11}".+?"text":".+?[^\\](?=")'
-    pgrep='"playlistRenderer":{"playlistId":"\K.{34}?","title":{"simpleText":".+?[^\"](?=")'
-    # grep the id and title
-    # return them in format id (type) title
-    getresults() {
-        grep -oP "$1" <<< "$response" |\
-          awk -F\" -v p="$2" '{ print $1 "\t" p " " $NF}'
-    }
-    # get the list of videos/playlists and their ids in videoids and playlistids
-    videoids=$(getresults "$vgrep")
-    playlistids=$(getresults "$pgrep" "(playlist)")
-    # if there are playlists or videos, append them to list
-    [ -n "$playlistids" ] && ids="$playlistids\n"
-    [ -n "$videoids" ] && ids="$ids$videoids"
-    # url prefix for videos and playlists
-    videolink="https://youtu.be/"
-    playlink="https://youtube.com/playlist?list="
-    # prompt the results to user infinitely until they exit (escape)
-    while true; do
-        choice=$(echo -e "$ids" | cut -d'	' -f2 | $promptcmd) # dont show id
-        if [ -z "$choice" ]; then exit; fi	# if esc-ed then exit
-        id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d'	' -f1) # get id of choice
-        echo -e "$choice\t($id)"
-        case $id in
-            # 11 digit id = video
-            ???????????) mpv "$videolink$id" $mpv_options --ytdl-format="$ytdlformats";;
-            # 34 digit id = playlist
-            ??????????????????????????????????) mpv "$playlink$id" $mpv_options --ytdl-format="$ytdlformats";;
-            *) exit ;;
-        esac
-    done
+  # if in search show query result vids
+  response="$(curl -s "https://www.youtube.com/results?search_query=$query" |
+    sed 's|\.||g')"
+  # if unable to fetch the youtube results page, inform and exit
+  if ! grep -q "script" <<<"$response"; then
+    echo "unable to fetch yt"
+    exit 1
+  fi
+  # regex expression to match video and playlist entries from yt result page
+  vgrep='"videoRenderer":{"videoId":"\K.{11}".+?"text":".+?[^\\](?="'
+  pgrep='"playlistRenderer":{"playlistId":"\K.{34}?","title":{"simpleText":".+?[^\"](?="'
+  # grep the id and title
+  # return them in format id (type) title
+  getresults() {
+    grep -oP "$1" <<<"$response" |
+      awk -F\" -v p="$2" '{ print $1 "\t" p " " $NF}'
+  }
+  # get the list of videos/playlists and their ids in videoids and playlistids
+  videoids=$(getresults "$vgrep")
+  playlistids=$(getresults "$pgrep" "(playlist)")
+  # if there are playlists or videos, append them to list
+  [ -n "$playlistids" ] && ids="$playlistids\n"
+  [ -n "$videoids" ] && ids="$ids$videoids"
+  # url prefix for videos and playlists
+  videolink="https://youtu.be/"
+  playlink="https://youtube.com/playlist?list="
+  # prompt the results to user infinitely until they exit (escape)
+  while true; do
+    choice=$(echo -e "$ids" | cut -d$'	' -f2 | $promptcmd)       # dont show id
+    if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'	' -f1) # get id of choice
+    echo -e "$choice\t($id)"
+    case $id in
+    # 11 digit id = video
+    ???????????)
+      url="$videolink$id"
+      play "$url" "$choice" ;; 
+    # 34 digit id = playlist
+    ??????????????????????????????????)
+      url="$playlink$id"
+      play "$url" "$choice" ;; 
+    *)
+      exit ;; 
+    esac
+  done
 fi
