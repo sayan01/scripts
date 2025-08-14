@@ -45,6 +45,7 @@ function usage() {
   echo "    -H        view watch history"
   echo "    -p        view saved playlists"
   echo "    -P url    add playlist to saved playlists"
+  echo "    -x url    play a youtube mix (remember to quote the url)"
   echo "  nothing     use defaults (search from prompt)"
   echo
   echo "add channel names to the file $sublistpath to show them"
@@ -70,7 +71,7 @@ if [[ ${#} -eq 0 ]]; then
 fi
 
 # available flags
-optstring=":s:c:P:grhHpm"
+optstring=":s:c:P:x:grhHpm"
 
 defcmd="fzf"
 defaction="s"
@@ -110,56 +111,62 @@ sublist=""
 
 # if not using defaults search for flags
 if [[ $useDefaults = "f" ]]; then
-  while getopts ${optstring} arg; do
+  while getopts ${optstring} arg;
+  do
     case "${arg}" in
     s)
       # search in youtube for a query
       action="s"
       query="${OPTARG}"
-      ;;
+      ;; 
     c)
       # search in subscriptions for specific channel
       action="c"
       query="${OPTARG}"
-      ;;
+      ;; 
     g | r)
       # set gui mode to true and change the prompt to gui prompt
       isGui="t"
       promptcmd="$guicmd"
-      ;;
+      ;; 
     m)
       # make the mpv headless
       mpv_options+="--no-video"
-      ;;
+      ;; 
     H)
       # view watch history
       action="H"
-      ;;
+      ;; 
     p)
       # view saved playlists
       action="p"
-      ;;
+      ;; 
     P)
       # add playlist to saved playlists
       action="P"
       query="${OPTARG}"
-      ;;
+      ;; 
+    x)
+      # play a youtube mix
+      action="x"
+      query="${OPTARG}"
+      ;; 
     h)
       # display help / usage
       usage
-      ;;
+      ;; 
     \?)
       # wrong args -> exit with explanation of usage
       echo "invalid option: -${OPTARG}"
       echo
       usage
-      ;;
+      ;; 
     :)
       # missing args -> exit with explanation of usage
       echo "Option -${OPTARG} needs an argument"
       echo
       usage
-      ;;
+      ;; 
     esac
   done
 fi
@@ -195,7 +202,7 @@ if [ -z "$query" ]; then
     if [ -n "$query" ]; then
       echo "Playing from history: $query"
       # Extract title from history entry for re-saving
-      title=$(extract_field "$query" $'\t' 2)
+      title=$(extract_field "$query" $'	' 2)
       play "$query" "$title"
       exit 0
     fi
@@ -218,7 +225,7 @@ if [ -z "$query" ]; then
     if [ -n "$query" ]; then
       echo "Playing playlist: $query"
       # Extract title from playlist entry for saving to history
-      title=$(extract_field "$query" $'\t' 2)
+      title=$(extract_field "$query" $'	' 2)
       play "$query" "$title"
       exit 0
     fi
@@ -261,6 +268,23 @@ if [[ $action = "P" ]]; then
   fi
 fi
 
+# handle playing a mix
+if [[ $action = "x" ]]; then
+  if [ -n "$query" ]; then
+    echo "Playing mix: $query"
+    # Add playlist options for mix playback
+    mix_options="$mpv_options --playlist-start=0 --ytdl-raw-options=yes-playlist="
+    save_to_history "$query" "YouTube Mix"
+    mpv "$query" $mix_options --ytdl-format="$ytdlformats"
+    exit 0
+  else
+    echo "Please provide a mix URL"
+    echo "Usage: yt -x 'URL'"
+    echo "Note: Remember to quote the URL if it contains special characters like '&'."
+    exit 1
+  fi
+fi
+
 # program cancelled -> exit
 if [ -z "$query" ]; then exit; fi
 
@@ -293,29 +317,30 @@ if [[ $action = "c" ]]; then
 
   # prompt the results to user infinitely until they exit (escape)
   while true; do
-    choice=$(echo -e "$ids" | cut -d$'\t' -f2 | $promptcmd)       # dont show id
+    choice=$(echo -e "$ids" | cut -d$'	' -f2 | $promptcmd)       # dont show id
     if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
-    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'\t' -f1) # get id of choice
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'	' -f1) # get id of choice
     echo -e "$choice\t($id)"
     case $id in
-    ???????????) 
+    ???????????)
       url="$videolink$id"
-      play "$url" "$choice" ;;
-    *) exit ;;
+      play "$url" "$choice" ;; 
+    *)
+      exit ;; 
     esac
   done
 else
   # if in search show query result vids
   response="$(curl -s "https://www.youtube.com/results?search_query=$query" |
-    sed 's|\\.||g')"
+    sed 's|\.||g')"
   # if unable to fetch the youtube results page, inform and exit
   if ! grep -q "script" <<<"$response"; then
     echo "unable to fetch yt"
     exit 1
   fi
   # regex expression to match video and playlist entries from yt result page
-  vgrep='"videoRenderer":{"videoId":"\K.{11}".+?"text":".+?[^\\](?=")'
-  pgrep='"playlistRenderer":{"playlistId":"\K.{34}?","title":{"simpleText":".+?[^\"](?=")'
+  vgrep='"videoRenderer":{"videoId":"\K.{11}".+?"text":".+?[^\\](?="'
+  pgrep='"playlistRenderer":{"playlistId":"\K.{34}?","title":{"simpleText":".+?[^\"](?="'
   # grep the id and title
   # return them in format id (type) title
   getresults() {
@@ -333,20 +358,21 @@ else
   playlink="https://youtube.com/playlist?list="
   # prompt the results to user infinitely until they exit (escape)
   while true; do
-    choice=$(echo -e "$ids" | cut -d$'\t' -f2 | $promptcmd)       # dont show id
+    choice=$(echo -e "$ids" | cut -d$'	' -f2 | $promptcmd)       # dont show id
     if [ -z "$choice" ]; then exit; fi                          # if esc-ed then exit
-    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'\t' -f1) # get id of choice
+    id=$(echo -e "$ids" | grep -Fwm1 "$choice" | cut -d$'	' -f1) # get id of choice
     echo -e "$choice\t($id)"
     case $id in
     # 11 digit id = video
-    ???????????) 
+    ???????????)
       url="$videolink$id"
-      play "$url" "$choice" ;;
+      play "$url" "$choice" ;; 
     # 34 digit id = playlist
-    ??????????????????????????????????) 
+    ??????????????????????????????????)
       url="$playlink$id"
-      play "$url" "$choice" ;;
-    *) exit ;;
+      play "$url" "$choice" ;; 
+    *)
+      exit ;; 
     esac
   done
 fi
