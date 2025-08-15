@@ -153,7 +153,7 @@ query=$(sed \
 
 # if channel look for channel vids
 if [[ $action = "c" ]]; then
-    response=$(curl -s "https://www.youtube.com/c/$query/videos" |\
+    response=$(curl -s "https://www.youtube.com/$query/videos" |\
       sed "s/{\"videoRenderer/\n\n&/g" |\
       sed "s/}]}}}]}}/&\n\n/g" |\
       awk -v ORS="\n\n" '/videoRenderer/')
