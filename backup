@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Variables
+SOURCE_DIR=~/Downloads                 # Source directory (change as needed)
+DEST_DIR="/Volumes/tony/downloads"     # Destination directory on the external drive
+DRIVE_NAME="tony"                      # External drive name
+
+# Check if the external drive is mounted
+if mount | grep -q "/Volumes/$DRIVE_NAME"; then
+    echo "Drive '$DRIVE_NAME' is mounted."
+
+    # Check if the destination folder exists; if not, create it
+    if [ ! -d "$DEST_DIR" ]; then
+        echo "Destination folder '$DEST_DIR' does not exist. Creating it now..."
+        mkdir -p "$DEST_DIR"
+    fi
+
+    # Run rsync to sync files from source to destination
+    echo "Starting backup from '$SOURCE_DIR' to '$DEST_DIR'..."
+    rsync -av "$SOURCE_DIR/" "$DEST_DIR/"
+    echo "Backup complete!"
+    date +%Y-%m-%d-%H:%M:%S > "$DEST_DIR/../last_backup.txt"
+	osascript -e 'display notification "Backup Complete!" with title "Backup Script"'
+
+else
+    echo "Drive '$DRIVE_NAME' is not mounted. Please connect the drive and try again."
+fi

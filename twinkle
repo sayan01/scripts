@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Play "Twinkle Twinkle Little Star" melody using sine wave tones
+# Usage: twinkle [verses]
+# verses: number of verses to play (1-6, default: 6)
+
+verses=${1:-6}
+
+if ! [[ "$verses" =~ ^[1-6]$ ]]; then
+	echo "Usage: $(basename "$0") [verses]"
+	echo "verses: number of verses to play (1-6, default: 6)"
+	exit 1
+fi
+
+verse1() {
+	sine 262 0.3  # C
+	sine 262 0.3  # C
+	sine 392 0.3  # G
+	sine 392 0.3  # G
+	sine 440 0.3  # A
+	sine 440 0.3  # A
+	sine 392 0.5  # G
+}
+
+verse2() {
+	sine 349 0.3  # F
+	sine 349 0.3  # F
+	sine 330 0.3  # E
+	sine 330 0.3  # E
+	sine 294 0.3  # D
+	sine 294 0.3  # D
+	sine 262 0.5  # C
+}
+
+verse3() {
+	sine 392 0.3  # G
+	sine 392 0.3  # G
+	sine 349 0.3  # F
+	sine 349 0.3  # F
+	sine 330 0.3  # E
+	sine 330 0.3  # E
+	sine 294 0.5  # D
+}
+
+verse4() {
+	sine 392 0.3  # G
+	sine 392 0.3  # G
+	sine 349 0.3  # F
+	sine 349 0.3  # F
+	sine 330 0.3  # E
+	sine 330 0.3  # E
+	sine 294 0.5  # D
+}
+
+verse5() {
+	sine 262 0.3  # C
+	sine 262 0.3  # C
+	sine 392 0.3  # G
+	sine 392 0.3  # G
+	sine 440 0.3  # A
+	sine 440 0.3  # A
+	sine 392 0.5  # G
+}
+
+verse6() {
+	sine 349 0.3  # F
+	sine 349 0.3  # F
+	sine 330 0.3  # E
+	sine 330 0.3  # E
+	sine 294 0.3  # D
+	sine 294 0.3  # D
+	sine 262 0.8  # C (final note - longer)
+}
+
+for i in $(seq 1 "$verses"); do
+	verse$i
+done
